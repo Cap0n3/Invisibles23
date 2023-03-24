@@ -1,14 +1,4 @@
-{# Load the tag library #}
-{% load bootstrap5 %}
-
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
-
-{% load bootstrap_icons %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,17 +6,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Bootstrap 5 (manual) -->
+    <link rel="stylesheet" type="text/css" href="{% static 'website/css/bootstrap.css' %}" />
+    <script src="{% static 'website/js/bootstrap.min.js' %}"></script>  
     <title>Les Invisibles</title>
   </head>
   <body>
   <!-- Navbar -->
   {% include "website/nav.html" %}
-  
+
+  <img src="{% static 'website/test1.jpg' %}" alt="My image">
+
   <!-- Content -->
 	{% block content %}
     Replace me
     {% endblock%}
   </body>
 </html>
-
-
