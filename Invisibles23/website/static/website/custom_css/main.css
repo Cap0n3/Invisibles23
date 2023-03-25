@@ -2,8 +2,10 @@
     --white: #ffffff;
 }
 
-main {
-    padding-top: 100px;
+.imageBlock {
+    width: 100%;
+    height: 400px;
+    background-color: grey;
 }
 
 /* lg breakpoint */

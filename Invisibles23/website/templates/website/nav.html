@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg py-3 bg-body-tertiary fixed-top">
+<nav class="navbar navbar-expand-lg py-3 bg-body-tertiary sticky-top">
     <div class="container-fluid">
         <!-- MOBILE HAMBURGER MENU -->
         <button class="navbar-toggler"
@@ -9,12 +9,19 @@
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <!-- OFFCANVA -->
         <div class="offcanvas offcanvas-start"
              tabindex="-1"
              id="offcanvasNavbar"
              aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-                <img class="offcanvas-title" id="offcanvasNavbarLabel" src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="60" height="48">
+            <!-- OFFCANVA LOGO -->
+            <div class="offcanvas-header px-4">
+                <img class="offcanvas-title"
+                     id="offcanvasNavbarLabel"
+                     src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg"
+                     alt="Bootstrap"
+                     width="60"
+                     height="48" />
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="offcanvas"
@@ -23,37 +30,64 @@
             <div class="offcanvas-body">
                 <!-- NAVBAR MENU -->
                 <ul class="navbar-nav justify-content-center align-items-lg-center flex-grow-1 pe-3">
-                    <li class="nav-item">
+                    <li class="nav-item px-4">
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
-                    
-                    <a class="nav-link" id="navLogo" href="#">
-                        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="60" height="48">
-                    </a>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                    <li class="nav-item px-4">
+                        <a class="nav-link" href="#">À propos</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <!-- THEMATIQUES DROPDOWN -->
+                    <li class="nav-item dropdown px-4">
                         <a class="nav-link dropdown-toggle"
                            href="#"
                            role="button"
                            data-bs-toggle="dropdown"
-                           aria-expanded="false">Dropdown</a>
+                           aria-expanded="false">Thématiques</a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Maladies invisibles</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Maladies chroniques</a>
                             </li>
                             <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Something else here</a>
+                                <a class="dropdown-item" href="#">Autres invisibles</a>
                             </li>
                         </ul>
+                    </li>
+                    <!-- LOGO NAV -->
+                    <li class="nav-item px-4">
+                        <a class="nav-link" id="navLogo" href="#">
+                            <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg"
+                                alt="Bootstrap"
+                                width="60"
+                                height="48" />
+                        </a>
+                    </li>
+                    <li class="nav-item px-4">
+                        <a class="nav-link" href="#">Podcast</a>
+                    </li>
+                    <!-- RESSOURCES DROPDOWN -->
+                    <li class="nav-item dropdown px-4">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">Ressources</a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">Ressources thérapeutiques</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Ressources financières</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Ressources administratives</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item px-4">
+                        <a class="nav-link" href="#">Association</a>
                     </li>
                 </ul>
             </div>
