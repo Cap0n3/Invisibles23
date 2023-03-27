@@ -8,10 +8,12 @@
 		<meta name="description" content="Site de sensibilisation aux maladies chroniques et invisibles" />
 		<meta name="keywords" content="Maladies invisibles, Maladies chroniques, Association" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<!-- Bootstrap 5 (manual) -->
-		<link rel="stylesheet" type="text/css" href="{% static 'website/css/bootstrap.css' %}" />
-		<link rel="stylesheet" type="text/css" href="{% static 'website/custom_css/main.css' %}" />
-		<script type="text/javascript" src="{% static 'website/js/bootstrap.bundle.min.js' %}"></script>  
+		<!-- Bootstrap 5 CSS -->
+		<link rel="stylesheet" type="text/css" href="{% static 'website/bootstrap/css/bootstrap.css' %}" />
+		<!-- Custom CSS -->
+		<link rel="stylesheet" type="text/css" href="{% static 'website/css/main.css' %}" />
+		<!-- Bootstrap 5 JS -->
+		<script type="text/javascript" src="{% static 'website/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 		<title>Les Invisibles</title>
 	</head>
 	<body class="container-fluid px-0">
@@ -24,5 +26,7 @@
 			Replace me
 			{% endblock content %}
 		</main>
+		<!-- Custom JS -->
+		<script type="text/javascript" src="{% static 'website/js/main.js' %}"></script>
 	</body>
 </html>

@@ -1,0 +1,61 @@
+:root {
+    --white: #ffffff;
+    --slides-height: 600px;
+}
+
+/* NAVBAR */
+nav {
+    background-color: rgba(0,0,0,0); /* transparent */
+    transition: background-color 500ms;
+}
+
+nav.show {
+    background-color: var(--white);
+}
+
+/* Navbar links */
+.navbar-nav li a {
+    color: black;
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.navbar-nav li > .active {
+    color: purple !important;
+}
+
+/* IMAGES */
+.imageBlock {
+    width: 100%;
+    height: 400px;
+    background-color: grey;
+}
+
+/* HERO HEADER */
+#slide1 {
+    height: var(--slides-height);
+    background-image: url("https://cdn.wallpapersafari.com/80/6/2r3aAN.jpg");
+    background-size: cover;
+}
+
+#slide2 {
+    height: var(--slides-height);
+    background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
+    background-size: cover;
+}
+
+#slide3 {
+    height: var(--slides-height);
+    background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
+    background-size: cover;
+}
+
+
+/* lg breakpoint */
+@media screen and (max-width: 992px) {
+    #navLogo {
+        /* Make logo disappear in offcanvas */
+        display: none;
+    }
+}
