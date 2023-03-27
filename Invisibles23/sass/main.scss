@@ -3,28 +3,6 @@
 @import "global/breakpoints";
 @import "components/navbar";
 
-// /* NAVBAR */
-// nav {
-//     background-color: rgba(0,0,0,0); /* transparent */
-//     transition: background-color 500ms;
-// }
-
-// nav.show {
-//     background-color: $white;
-// }
-
-// /* Navbar links */
-// .navbar-nav li a {
-//     color: black;
-//     font-size: 1rem;
-//     font-weight: 400;
-//     text-transform: uppercase;
-// }
-
-// .navbar-nav li > .active {
-//     color: purple !important;
-// }
-
 /* IMAGES */
 .imageBlock {
     width: 100%;
@@ -50,17 +28,3 @@
     background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
     background-size: cover;
 }
-
-// @media screen and (max-width: 992px) {
-//     #navLogo {
-//         /* Make logo disappear in offcanvas */
-//         display: none;
-//     }
-// }
-
-// @xs {
-//     #navLogo {
-//         /* Make logo disappear in offcanvas */
-//         display: none;
-//     }
-// }

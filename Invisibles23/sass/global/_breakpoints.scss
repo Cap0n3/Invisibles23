@@ -8,38 +8,38 @@ $bootstrapBreakpoints: (
 );
 
 @mixin xs {
-    @media (min-width: map-get($bootstrapBreakpoints, "xs")) {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "xs")) {
         @content;
     }
 }
 
 @mixin sm {
-    @media (min-width: map-get($bootstrapBreakpoints, "sm")) {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "sm")) {
         @content;
     }
 }
 
 @mixin md {
-    @media (min-width: map-get($bootstrapBreakpoints, "md")) {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "md")) {
         @content;
     }
 }
 
 @mixin lg {
-    @media (min-width: map-get($bootstrapBreakpoints, "lg")) {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "lg")) {
         @content;
     }
 }
 
 @mixin xl {
-    @media (min-width: map-get($bootstrapBreakpoints, "xl")) {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "xl")) {
         @content;
     }
 }
 
 // Custom breakpoints
 @mixin breakpoint($bp: 0) {
-    @media (min-width: $bp) {
+    @media screen and (min-width: $bp) {
         @content;
     }
 }

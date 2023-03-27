@@ -21,8 +21,9 @@ nav.show {
 }
 
 #navLogo {
+    display: none;
     @include lg {
         /* Make logo disappear in offcanvas */
-        display: none;
+        display: inline-block;
     }
 }

@@ -20,10 +20,13 @@ nav.show {
   color: purple !important;
 }
 
-@media (min-width: 992px) {
+#navLogo {
+  display: none;
+}
+@media screen and (min-width: 992px) {
   #navLogo {
     /* Make logo disappear in offcanvas */
-    display: none;
+    display: inline-block;
   }
 }
 
