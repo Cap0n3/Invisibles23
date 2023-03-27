@@ -1,0 +1,28 @@
+/* NAVBAR */
+nav {
+    background-color: rgba(0,0,0,0); /* transparent */
+    transition: background-color 500ms;
+}
+
+nav.show {
+    background-color: $white;
+}
+
+/* Navbar links */
+.navbar-nav li a {
+    color: black;
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.navbar-nav li > .active {
+    color: purple !important;
+}
+
+#navLogo {
+    @include lg {
+        /* Make logo disappear in offcanvas */
+        display: none;
+    }
+}
