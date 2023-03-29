@@ -3,10 +3,22 @@
 @import "global/breakpoints";
 @import "components/navbar";
 
+.mobile-sectionTitle {
+    @include lg {
+        display: none;
+    }
+}
+
+.desktop-sectionTitle {
+    @media screen and (max-width: 992px) {
+        display: none;
+    }
+}
+
 /* IMAGES */
 .imageBlock {
     width: 100%;
-    height: 400px;
+    height: 500px;
     background-color: grey;
 }
 
