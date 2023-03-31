@@ -1,4 +1,6 @@
-<nav class="navbar navbar-expand-lg py-3 fixed-top">
+<!--NAV-->
+{% load static %}
+<nav class="navbar navbar-expand-lg py-sm-3 py-lg-1 fixed-top">
     <div class="container-fluid">
         <!-- MOBILE HAMBURGER MENU -->
         <button class="navbar-toggler"
@@ -18,10 +20,10 @@
             <div class="offcanvas-header px-4">
                 <img class="offcanvas-title"
                      id="offcanvasNavbarLabel"
-                     src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg"
+                     src={% static "website/medias/LogoInvisible.gif" %}
                      alt="Bootstrap"
-                     width="60"
-                     height="48" />
+                     width="120"
+                     height="120" />
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="offcanvas"
@@ -58,10 +60,10 @@
                     <!-- LOGO NAV -->
                     <li class="nav-item px-4">
                         <a class="nav-link" id="navLogo" href="#">
-                            <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg"
+                            <img src={% static "website/medias/LogoInvisible.gif" %}
                                 alt="Bootstrap"
-                                width="60"
-                                height="48" />
+                                width="120"
+                                height="120" />
                         </a>
                     </li>
                     <li class="nav-item px-4">

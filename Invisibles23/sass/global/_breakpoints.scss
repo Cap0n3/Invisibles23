@@ -43,3 +43,10 @@ $bootstrapBreakpoints: (
         @content;
     }
 }
+
+// Reverse breakpoint (less than specified breakpoint)
+@mixin lessThan-lg {
+    @media screen and (max-width: map-get($bootstrapBreakpoints, "lg")) {
+        @content;
+    }
+}
