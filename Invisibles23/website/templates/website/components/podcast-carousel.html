@@ -1,9 +1,10 @@
 <div class="card m-4 small-podcast-card">
     <div class="card-body">
         <div class="row h-100">
-            <div class="col-4">
+            <div class="col-6 d-flex flex-column align-items-center gap-2">
                 <img src="https://i.stack.imgur.com/3F4ia.jpg" class="img-thumbnail mb-3" id="podcast-thumbnail" alt="..." width="200" height="200" />
                 <div class="d-flex justify-content-center align-items-center gap-2">
+                    <!--MINI-PODCAST CONTROLS-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
                         <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
@@ -17,8 +18,13 @@
                         <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
                     </svg>
                 </div>
+                <div class="slider_container">
+                    <div class="current-time">00:00</div>
+                    <input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()" />
+                    <div class="total-duration">00:00</div>
+                </div>
             </div>
-            <div class="col-8 d-flex flex-column justify-content-between">
+            <div class="col-6 d-flex flex-column justify-content-between">
                 <div>
                     <h5 class="card-title">Podcast Title</h5>
                     <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisis nisl eu diam pulvinar vehicula. Pellentesque varius vestibulum dolor sit amet pellentesque. Ut in urna vel tellus rutrum sagittis nec eget quam. Fusce vehicula massa ac mi sagittis rutrum. Proin ac ligula ut felis faucibus pharetra.</p>

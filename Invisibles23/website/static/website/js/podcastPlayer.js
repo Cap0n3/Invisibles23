@@ -13,6 +13,7 @@ var playpause_btn = document.querySelector(".playpause-track");
 var seek_slider = document.querySelector(".seek_slider");
 var curr_time = document.querySelector(".current-time");
 var total_duration = document.querySelector(".total-duration");
+var volume_slider = document.querySelector(".volume_slider");
 
 // === Functions === //
 function loadSound(_trackURL) {
@@ -31,6 +32,11 @@ function pausePodcast() {
     currPodcast.pause();
     playpause_btn.innerHTML =
         '<i class="bi bi-play-circle" style="font-size: 3em;"></i>';
+}
+
+function resetPlayer() {
+    currPodcast.load();
+    playpause_btn.innerHTML = '<i class="bi bi-play-circle" style="font-size: 3em;"></i>';
 }
 
 function seekUpdate() {
@@ -101,11 +107,14 @@ function forwardTenSeconds() {
         currPodcast.currentTime = trackTimePlusTen;
     }
     else {
-        // Reset track;
-        currPodcast.load();
-        playpause_btn.innerHTML =
-            '<i class="bi bi-play-circle" style="font-size: 3em;"></i>';
+        resetPlayer();
     }
+}
+
+function setVolume() {
+    // Set the volume according to the
+    // percentage of the volume slider set
+    currPodcast.volume = volume_slider.value / 100;
 }
 
 
@@ -114,3 +123,6 @@ playpause_btn.addEventListener("click", (e) => {
     if (!isPlaying) playPodcast();
     else pausePodcast();
 });
+
+// When podcast is over, reset player
+currPodcast.addEventListener("ended", resetPlayer);
