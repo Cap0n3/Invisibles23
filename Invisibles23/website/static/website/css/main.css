@@ -30,6 +30,15 @@ nav.show {
   }
 }
 
+.small-podcast-card {
+  width: 500px;
+  height: 350px;
+}
+
+#podcast-thumbnail {
+  border-radius: 100%;
+}
+
 .mobile-sectionTitle {
   /* Show mobile title on mobile */
 }
