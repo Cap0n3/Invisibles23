@@ -1,5 +1,5 @@
 // Define content to play
-var trackURL = "http://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg";
+var trackURL = "https://audiofiles.ausha.co/fr-par/08/0ab129cbdff1b2af9f62448480a57ba472d005f1.mp3?token=1680855793-Aip9y9mPXmC1AvpoTERp8bNxrzF42JHJJyNQvN39XMg%3D";
 // Create audio tag element
 var currPodcast = document.createElement("audio");
 // Load track
