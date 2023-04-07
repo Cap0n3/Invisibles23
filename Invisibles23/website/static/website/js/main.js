@@ -1,11 +1,10 @@
-window.addEventListener("scroll", event => {
-    const scrollPos = document.documentElement.scrollTop
-    const nav = document.getElementsByClassName("navbar")
-    
-    if(scrollPos >= 70) {
-        nav.item(0).classList.add("show")
-    }
-    else {
-        nav.item(0).classList.remove("show")
-    }  
-}, {passive: true})
+import { navbar } from "./modules/common/navbar.js";
+import { getLastPodcasts } from "./modules/common/utils/api.js";
+
+function initialize() {
+    // Call functions to initialize the webpage
+    navbar();
+    getLastPodcasts();
+}
+
+window.onload = initialize;
