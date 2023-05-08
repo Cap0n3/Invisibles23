@@ -10,7 +10,7 @@ nav.show {
 
 /* Navbar links */
 .navbar-nav li a {
-  color: black;
+  color: #002E48 !important;
   font-size: 1rem;
   font-weight: 400;
   text-transform: uppercase;
@@ -30,6 +30,51 @@ nav.show {
   }
 }
 
+/* HERO HEADER (Home page) */
+#heroHeader h2 {
+  color: #002E48 !important;
+}
+#heroHeader p {
+  color: #002E48 !important;
+}
+#heroHeader #slide1 {
+  height: 600px;
+  background-image: url("../medias/headers/Header_Montains.jpg");
+  background-size: cover;
+}
+#heroHeader #slide2 {
+  height: 600px;
+  background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
+  background-size: cover;
+}
+#heroHeader #slide3 {
+  height: 600px;
+  background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
+  background-size: cover;
+}
+#heroHeader .desktop-arrow {
+  /* Hide arrows on mobile */
+}
+@media screen and (max-width: 992px) {
+  #heroHeader .desktop-arrow {
+    display: none;
+  }
+}
+#heroHeader .carousel-indicators button {
+  background-color: #002E48;
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+  margin-right: 20px;
+}
+#heroHeader .carousel-indicators button:last-child {
+  margin-right: 0;
+}
+#heroHeader .carousel-caption {
+  top: 50%;
+  transform: translateY(-50%);
+  bottom: initial;
+}
 .small-podcast-card {
   width: 550px;
   height: 400px;
@@ -102,6 +147,10 @@ nav.show {
   width: 0.4rem;
 }
 
+body {
+  color: #002E48;
+}
+
 .mobile-sectionTitle {
   /* Show mobile title on mobile */
 }
@@ -128,45 +177,3 @@ nav.show {
 }
 
 /* === HERO HEADER === */
-#slide1 {
-  height: 600px;
-  background-image: url("https://cdn.wallpapersafari.com/80/6/2r3aAN.jpg");
-  background-size: cover;
-}
-
-#slide2 {
-  height: 600px;
-  background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
-  background-size: cover;
-}
-
-#slide3 {
-  height: 600px;
-  background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
-  background-size: cover;
-}
-
-.desktop-arrow {
-  /* Hide arrows on mobile */
-}
-@media screen and (max-width: 992px) {
-  .desktop-arrow {
-    display: none;
-  }
-}
-
-.carousel .carousel-indicators button {
-  width: 15px;
-  height: 15px;
-  border-radius: 100%;
-  margin-right: 20px;
-}
-.carousel .carousel-indicators button:last-child {
-  margin-right: 0;
-}
-
-.carousel-caption {
-  top: 50%;
-  transform: translateY(-50%);
-  bottom: initial;
-}

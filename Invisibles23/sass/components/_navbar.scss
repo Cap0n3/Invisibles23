@@ -1,4 +1,5 @@
 /* NAVBAR */
+
 nav {
     background-color: rgba(0,0,0,0); /* transparent */
     transition: background-color 500ms;
@@ -10,7 +11,7 @@ nav.show {
 
 /* Navbar links */
 .navbar-nav li a {
-    color: black;
+    color: $font-deep-blue !important;
     font-size: 1rem;
     font-weight: 400;
     text-transform: uppercase;
