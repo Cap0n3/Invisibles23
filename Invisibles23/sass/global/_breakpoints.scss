@@ -50,3 +50,9 @@ $bootstrapBreakpoints: (
         @content;
     }
 }
+
+@mixin lessThan-md {
+    @media screen and (max-width: map-get($bootstrapBreakpoints, "md")) {
+        @content;
+    }
+}

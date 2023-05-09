@@ -2,34 +2,47 @@
 nav {
   background-color: rgba(0, 0, 0, 0); /* transparent */
   transition: background-color 500ms;
+  /* Navbar links */
+}
+nav .navbar-nav li a {
+  color: #002E48 !important;
+  font-size: 1rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+nav .navbar-nav li > .active {
+  color: purple !important;
+}
+nav #navLogo {
+  display: none;
+}
+@media screen and (min-width: 992px) {
+  nav #navLogo {
+    /* Make logo disappear in offcanvas */
+    display: inline-block;
+  }
+}
+nav .navbar-toggler {
+  border-color: #002E48;
+  color: #002E48;
+}
+nav .navbar-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,46,72, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+nav .offcanvas {
+  /* Make menu width 100% on mobile */
+}
+@media screen and (max-width: 768px) {
+  nav .offcanvas {
+    width: 100% !important;
+  }
 }
 
 nav.show {
   background-color: #ffffff;
 }
 
-/* Navbar links */
-.navbar-nav li a {
-  color: #002E48 !important;
-  font-size: 1rem;
-  font-weight: 400;
-  text-transform: uppercase;
-}
-
-.navbar-nav li > .active {
-  color: purple !important;
-}
-
-#navLogo {
-  display: none;
-}
-@media screen and (min-width: 992px) {
-  #navLogo {
-    /* Make logo disappear in offcanvas */
-    display: inline-block;
-  }
-}
-
+/** Remove legacy code below if navbar is working properly **/
 /* === HERO HEADER (Home page) === */
 #heroHeader {
   /* == CONTROLS == */
@@ -84,10 +97,11 @@ nav.show {
   top: 50%;
   transform: translateY(-50%);
   bottom: initial;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.4);
   padding: 30px;
   border-radius: 15px;
 }
+
 .small-podcast-card {
   width: 550px;
   height: 400px;
@@ -194,5 +208,3 @@ body p {
   height: 500px;
   background-color: grey;
 }
-
-/* === HERO HEADER === */

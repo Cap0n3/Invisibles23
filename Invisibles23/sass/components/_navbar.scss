@@ -3,28 +3,83 @@
 nav {
     background-color: rgba(0,0,0,0); /* transparent */
     transition: background-color 500ms;
+
+    /* Navbar links */
+    .navbar-nav li a {
+        color: $font-deep-blue !important;
+        font-size: 1rem;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    .navbar-nav li > .active {
+        color: purple !important;
+    }
+
+    #navLogo {
+        display: none;
+        @include lg {
+            /* Make logo disappear in offcanvas */
+            display: inline-block;
+        }
+    }
+
+    .navbar-toggler {
+        border-color: $font-deep-blue;
+        color: $font-deep-blue;
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,46,72, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+        }
+    }
+
+    .offcanvas {
+        /* Make menu width 100% on mobile */
+        @include lessThan-md {
+            width: 100% !important;
+        }
+    }
 }
 
 nav.show {
     background-color: $white;
 }
 
-/* Navbar links */
-.navbar-nav li a {
-    color: $font-deep-blue !important;
-    font-size: 1rem;
-    font-weight: 400;
-    text-transform: uppercase;
-}
 
-.navbar-nav li > .active {
-    color: purple !important;
-}
+/** Remove legacy code below if navbar is working properly **/
 
-#navLogo {
-    display: none;
-    @include lg {
-        /* Make logo disappear in offcanvas */
-        display: inline-block;
-    }
-}
+// nav {
+//     background-color: rgba(0,0,0,0); /* transparent */
+//     transition: background-color 500ms;
+// }
+
+// nav.show {
+//     background-color: $white;
+// }
+
+// /* Navbar links */
+// .navbar-nav li a {
+//     color: $font-deep-blue !important;
+//     font-size: 1rem;
+//     font-weight: 400;
+//     text-transform: uppercase;
+// }
+
+// .navbar-nav li > .active {
+//     color: purple !important;
+// }
+
+// #navLogo {
+//     display: none;
+//     @include lg {
+//         /* Make logo disappear in offcanvas */
+//         display: inline-block;
+//     }
+// }
+
+// .offcanvas {
+//     /* Make menu width 100% on mobile */
+//     @include lessThan-md {
+//         width: 100% !important;
+//     }
+// }
