@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito:wght@200&display=swap');
 @import "global/variables";
 @import "global/colors";
 @import "global/breakpoints";
@@ -7,6 +8,15 @@
 
 body {
     color: $font-deep-blue;
+
+    h2 {
+        font-family: 'Cormorant Garamond', serif;
+    }
+
+    p {
+        font-family: 'Nunito', sans-serif;
+    }
+    
 }
 
 

@@ -1,7 +1,6 @@
-/* HERO HEADER (Home page) */
+/* === HERO HEADER (Home page) === */
 
-#heroHeader {
-    
+#heroHeader {   
     h2 {
         color: $font-deep-blue !important;
     }
@@ -28,14 +27,21 @@
         background-size: cover;
     }
     
+    /* == CONTROLS == */
+    /* Arrows */
     .desktop-arrow {
         /* Hide arrows on mobile */
+        .bi-chevron-left, .bi-chevron-right {
+            color: $font-deep-blue;
+            font-size: 2rem;
+        }
 
         @include lessThan-lg {
             display: none;
         }
     }
-    
+
+    /* Rounded indicators */
     .carousel-indicators {
         button {
             background-color: $font-deep-blue;
@@ -50,10 +56,14 @@
         }    
     }
     
+    /* == CAPTIONS (Hero text block) == */
     .carousel-caption {
         top: 50%;
         transform: translateY(-50%);
         bottom: initial;
+        background: rgba(255, 255, 255, .5);
+        padding: 30px;
+        border-radius: 15px;
     
         @include lessThan-lg {
             

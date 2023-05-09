@@ -1,4 +1,4 @@
-/* NAVBAR */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito:wght@200&display=swap"); /* NAVBAR */
 nav {
   background-color: rgba(0, 0, 0, 0); /* transparent */
   transition: background-color 500ms;
@@ -30,7 +30,13 @@ nav.show {
   }
 }
 
-/* HERO HEADER (Home page) */
+/* === HERO HEADER (Home page) === */
+#heroHeader {
+  /* == CONTROLS == */
+  /* Arrows */
+  /* Rounded indicators */
+  /* == CAPTIONS (Hero text block) == */
+}
 #heroHeader h2 {
   color: #002E48 !important;
 }
@@ -38,22 +44,26 @@ nav.show {
   color: #002E48 !important;
 }
 #heroHeader #slide1 {
-  height: 600px;
+  height: 800px;
   background-image: url("../medias/headers/Header_Montains.jpg");
   background-size: cover;
 }
 #heroHeader #slide2 {
-  height: 600px;
+  height: 800px;
   background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
   background-size: cover;
 }
 #heroHeader #slide3 {
-  height: 600px;
+  height: 800px;
   background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
   background-size: cover;
 }
 #heroHeader .desktop-arrow {
   /* Hide arrows on mobile */
+}
+#heroHeader .desktop-arrow .bi-chevron-left, #heroHeader .desktop-arrow .bi-chevron-right {
+  color: #002E48;
+  font-size: 2rem;
 }
 @media screen and (max-width: 992px) {
   #heroHeader .desktop-arrow {
@@ -74,6 +84,9 @@ nav.show {
   top: 50%;
   transform: translateY(-50%);
   bottom: initial;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 30px;
+  border-radius: 15px;
 }
 .small-podcast-card {
   width: 550px;
@@ -149,6 +162,12 @@ nav.show {
 
 body {
   color: #002E48;
+}
+body h2 {
+  font-family: "Cormorant Garamond", serif;
+}
+body p {
+  font-family: "Nunito", sans-serif;
 }
 
 .mobile-sectionTitle {
