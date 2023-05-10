@@ -63,13 +63,20 @@ nav.show {
 }
 #heroHeader #slide2 {
   height: 800px;
-  background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
+  background-image: url("../medias/headers/Header_Interview.jpg");
   background-size: cover;
+  background-position: 0% 0%;
 }
 #heroHeader #slide3 {
   height: 800px;
-  background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
+  background-image: url("../medias/headers/Header_Woman1.jpg");
   background-size: cover;
+  background-position: 0% 40%;
+}
+@media screen and (max-width: 768px) {
+  #heroHeader #slide3 {
+    background-position: 60% 0%;
+  }
 }
 #heroHeader .desktop-arrow {
   /* Hide arrows on mobile */
@@ -97,7 +104,7 @@ nav.show {
   top: 50%;
   transform: translateY(-50%);
   bottom: initial;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.55);
   padding: 30px;
   border-radius: 15px;
 }
@@ -176,12 +183,20 @@ nav.show {
 
 body {
   color: #002E48;
+  font-family: "Nunito", sans-serif;
 }
 body h2 {
   font-family: "Cormorant Garamond", serif;
 }
-body p {
-  font-family: "Nunito", sans-serif;
+body .btn-primary {
+  border-radius: 15px;
+  padding: 11px;
+  background-color: #002E48;
+  border-color: #002E48;
+}
+body .btn-primary:hover {
+  background-color: #002E48;
+  border-color: #002E48;
 }
 
 .mobile-sectionTitle {

@@ -17,14 +17,20 @@
     
     #slide2 {
         height: $slides-height;
-        background-image: url("https://www.movaglobes.com/blog/wp-content/uploads/2022/09/A-Mova-Globe-in-every-room-header-image-of-a-globe-in-a-study-1200x600.jpg");
+        background-image: url("../medias/headers/Header_Interview.jpg");
         background-size: cover;
+        background-position: 0% 0%;
     }
     
     #slide3 {
         height: $slides-height;
-        background-image: url("https://timberanddamp.co.uk/wp-content/uploads/2022/06/Wet-Rot-1200x600-Header.png");
+        background-image: url("../medias/headers/Header_Woman1.jpg");
         background-size: cover;
+        background-position: 0% 40%;
+
+        @include lessThan-md {
+            background-position: 60% 0%;
+        }
     }
     
     /* == CONTROLS == */
@@ -61,7 +67,7 @@
         top: 50%;
         transform: translateY(-50%);
         bottom: initial;
-        background: rgba(255, 255, 255, .4);
+        background: rgba(255, 255, 255, .55);
         padding: 30px;
         border-radius: 15px;
     }

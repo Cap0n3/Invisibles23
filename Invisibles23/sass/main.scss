@@ -8,14 +8,23 @@
 
 body {
     color: $font-deep-blue;
+    font-family: 'Nunito', sans-serif;
 
     h2 {
         font-family: 'Cormorant Garamond', serif;
     }
 
-    p {
-        font-family: 'Nunito', sans-serif;
-    }    
+    .btn-primary {
+        border-radius: 15px;
+        padding: 11px;
+        background-color: $font-deep-blue;
+        border-color: $font-deep-blue;
+
+        &:hover {
+            background-color: $font-deep-blue;
+            border-color: $font-deep-blue;
+        }
+    }
 }
 
 .mobile-sectionTitle {
