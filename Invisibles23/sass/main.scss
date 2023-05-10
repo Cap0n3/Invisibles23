@@ -16,13 +16,15 @@ body {
 
     .btn-primary {
         border-radius: 15px;
-        padding: 11px;
+        padding: 12px 0 12px 0;
+        min-width: 150px;
+        font-size: 0.9rem;
         background-color: $font-deep-blue;
         border-color: $font-deep-blue;
 
         &:hover {
-            background-color: $font-deep-blue;
-            border-color: $font-deep-blue;
+            background-color: lighten($font-deep-blue, 5%);
+            border-color: lighten($font-deep-blue, 5%);
         }
     }
 }

@@ -190,13 +190,15 @@ body h2 {
 }
 body .btn-primary {
   border-radius: 15px;
-  padding: 11px;
+  padding: 12px 0 12px 0;
+  min-width: 150px;
+  font-size: 0.9rem;
   background-color: #002E48;
   border-color: #002E48;
 }
 body .btn-primary:hover {
-  background-color: #002E48;
-  border-color: #002E48;
+  background-color: #003e62;
+  border-color: #003e62;
 }
 
 .mobile-sectionTitle {
