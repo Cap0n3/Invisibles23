@@ -222,6 +222,9 @@ body {
 body h2, body h5 {
   font-family: "Cormorant Garamond", serif;
 }
+body h2 {
+  font-size: 1.6rem;
+}
 body h5 {
   font-size: 1.1rem;
   margin-bottom: 20px;

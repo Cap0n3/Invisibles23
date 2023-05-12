@@ -6,13 +6,18 @@
     {% include "website/components/hero-header.html" %}
     <!--PODCAST CARDS-->
     {% comment %} {% include "website/components/podcast-carousel.html" %} {% endcomment %}
-    <!--SECTIONS-->
-    {% for section in object_list %}
-            <li>{{ section.title }}</li>
+    <!--SECTION ABOUT-->
+    {% for section in sections_content %}
+        {% if section.name == "About" %}
+            {% include "website/components/normal-section.html" with data=section %}
+        {% endif %}
     {% endfor %}
-    
-    {% include "website/components/normal-section.html" with title="HELLO" %}
-    {% include "website/components/normal-section.html" with title="YOU MY DEAR" %}
+     <!--SECTION BOOK-->
+    {% for section in sections_content %}
+        {% if section.name == "Book" %}
+            {% include "website/components/normal-section.html" with data=section %}
+        {% endif %}
+    {% endfor %}
     <!--SECTION-->
     
     {% endblock content %}
