@@ -4,14 +4,20 @@
 @import "global/breakpoints";
 @import "components/navbar";
 @import "components/headers/hero-header";
+@import "components/footer/footer";
 @import "components/podcast-card/mini-podcast";
 
 body {
     color: $font-deep-blue;
     font-family: 'Nunito', sans-serif;
 
-    h2 {
+    h2, h5 {
         font-family: 'Cormorant Garamond', serif;
+    }
+
+    h5 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
     }
 
     .btn-primary {

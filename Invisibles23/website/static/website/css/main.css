@@ -109,6 +109,28 @@ nav.show {
   border-radius: 15px;
 }
 
+#footer a {
+  font-size: 0.9rem;
+  color: #002E48;
+  text-decoration: none;
+}
+#footer .socials-block {
+  display: inline-flex; /* must be inline to be centered in bs column */
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20% 60px 20%;
+  gap: 40%;
+  border-bottom: 1px solid #002E48;
+  background-color: grey;
+}
+#footer .socials-block .social-icons {
+  font-size: 2rem;
+  color: #002E48;
+}
+#footer .credits {
+  font-size: 0.8rem;
+}
+
 .small-podcast-card {
   width: 550px;
   height: 400px;
@@ -185,8 +207,12 @@ body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
 }
-body h2 {
+body h2, body h5 {
   font-family: "Cormorant Garamond", serif;
+}
+body h5 {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
 }
 body .btn-primary {
   border-radius: 15px;

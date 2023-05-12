@@ -1,0 +1,27 @@
+#footer {
+    a {
+        font-size: 0.9rem;
+        color: $font-deep-blue;
+        text-decoration: none;
+    }
+
+    .socials-block {
+        display: inline-flex; /* must be inline to be centered in bs column */
+        justify-content: center;
+        align-items: center;
+        // width: 40%;
+        padding: 60px 20% 60px 20%;
+        gap: 40%;
+        border-bottom: 1px solid $font-deep-blue;
+        background-color: grey;
+    
+        .social-icons {
+            font-size: 2rem;
+            color: $font-deep-blue;
+        }
+    }
+
+    .credits {
+        font-size: 0.8rem;
+    }
+}
