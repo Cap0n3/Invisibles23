@@ -226,9 +226,6 @@ body h5 {
   font-size: 1.1rem;
   margin-bottom: 20px;
 }
-body input[type] {
-  background-color: transparent;
-}
 body .btn-primary {
   border-radius: 15px;
   padding: 12px 0 12px 0;
