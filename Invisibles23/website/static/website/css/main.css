@@ -109,6 +109,11 @@ nav.show {
   border-radius: 15px;
 }
 
+#footer {
+  background-image: url("../medias/footer/footerbackground.jpg");
+  background-size: cover;
+  background-position: 0% 50%;
+}
 #footer a {
   font-size: 0.9rem;
   color: #002E48;
@@ -120,12 +125,19 @@ nav.show {
   align-items: center;
   padding: 60px 20% 60px 20%;
   gap: 40%;
-  border-bottom: 1px solid #002E48;
-  background-color: grey;
+  border-bottom: 0.5px solid #002E48;
 }
 #footer .socials-block .social-icons {
-  font-size: 2rem;
+  font-size: 2.2rem;
   color: #002E48;
+}
+#footer #emailInputNewsletter {
+  background-color: transparent;
+  border: 1px solid #002E48;
+}
+#footer #emailInputNewsletter:focus {
+  border-color: #002E48;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
 }
 #footer .credits {
   font-size: 0.8rem;
@@ -214,11 +226,15 @@ body h5 {
   font-size: 1.1rem;
   margin-bottom: 20px;
 }
+body input[type] {
+  background-color: transparent;
+}
 body .btn-primary {
   border-radius: 15px;
   padding: 12px 0 12px 0;
   min-width: 150px;
   font-size: 0.9rem;
+  text-transform: uppercase;
   background-color: #002E48;
   border-color: #002E48;
 }

@@ -1,4 +1,8 @@
 #footer {
+    background-image: url("../medias/footer/footerbackground.jpg");
+    background-size: cover;
+    background-position: 0% 50%;
+    
     a {
         font-size: 0.9rem;
         color: $font-deep-blue;
@@ -9,19 +13,33 @@
         display: inline-flex; /* must be inline to be centered in bs column */
         justify-content: center;
         align-items: center;
-        // width: 40%;
         padding: 60px 20% 60px 20%;
         gap: 40%;
-        border-bottom: 1px solid $font-deep-blue;
-        background-color: grey;
+        border-bottom: .5px solid $font-deep-blue;
     
         .social-icons {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: $font-deep-blue;
+        }
+    }
+
+    #emailInputNewsletter {
+        background-color : transparent;
+        border: 1px solid $font-deep-blue;
+        
+        &:focus {
+            border-color: $font-deep-blue;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
         }
     }
 
     .credits {
         font-size: 0.8rem;
     }
+
+    // @include lessThan-md {
+    //     h5 {
+    //         margin-top: 30px;
+    //     }
+    // }
 }
