@@ -7,6 +7,10 @@
     <!--PODCAST CARDS-->
     {% comment %} {% include "website/components/podcast-carousel.html" %} {% endcomment %}
     <!--SECTIONS-->
+    {% for section in object_list %}
+            <li>{{ section.title }}</li>
+    {% endfor %}
+    
     {% include "website/components/normal-section.html" with title="HELLO" %}
     {% include "website/components/normal-section.html" with title="YOU MY DEAR" %}
     <!--SECTION-->
