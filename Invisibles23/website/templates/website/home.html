@@ -9,7 +9,7 @@
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name == "About" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-primary" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-primary" reverse="true" %}
         {% endif %}
     {% endfor %}
      <!--SECTION BOOK-->

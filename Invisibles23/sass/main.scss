@@ -39,7 +39,7 @@ body {
             border-color: lighten($font-deep-blue, 5%);
         }
 
-        @include lessThan-md {
+        @include lessThan-lg {
             width: 100%;
         }
     }
@@ -63,14 +63,16 @@ body {
 .socials-group {
     display: flex;
     justify-content: flex-start;
+    margin-top: 15px;
     align-items: center;
-    gap: 40px;
+    gap: 10%;
 
-    @include lessThan-md {
+    @include lessThan-lg {
         justify-content: space-between;
+        margin-top: 15px;
     }
     .social-icons {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
         color: $font-deep-blue;
     }
 }

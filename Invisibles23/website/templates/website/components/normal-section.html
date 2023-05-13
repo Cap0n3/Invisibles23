@@ -1,37 +1,16 @@
-{% comment %} 
-<section class="container-fluid text-center py-3 bg-info">
-    <h2 class="py-3 mobile-sectionTitle">{{ data.title }}</h2>
-    <div class="row justify-content-evenly bg-warning">
-        <div class="col-lg-5 px-5 px-lg-0 pb-3 text-start bg-danger">
-            <h2 class="py-3 desktop-sectionTitle text-uppercase bg-primary">{{ data.title }}</h2>
-            {{ data.text|linebreaks }}
-           
-            {% if data.custom_html %}
-                <div class="d-flex flex-column mt-5 gap-5 justify-content-center bg-success">
-                    {{ data.custom_html|safe }}
-                </div>
-            {% endif %}  
+<section class="container-fluid text-center p-4 p-lg-5 {{ bg }}">
+    <h2 class="d-lg-none py-3 fs-4 text-uppercase">{{ data.title }}</h2>
+    <div class="row gx-lg-5">
+        <div class="col-12 col-lg-6 py-2 px-lg-5 {{ reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
+            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="" height="" />
         </div>
-        <div class="col-lg-5 px-5 px-lg-0 my-md-auto bg-success">
-            <img src="{{ data.image.url }}" class="img-fluid" alt="{{ data.image_alt }}" width="500" height="500" />
-        </div>
-    </div>
-</section> 
-{% endcomment %}
-
-<section class="container-fluid text-center p-4 p-md-5 {{ bg }}">
-    <h2 class="d-md-none py-3 fs-4 text-uppercase">{{ data.title }}</h2>
-    <div class="row">
-        <div class="col-12 col-md-6 py-2 py-md-0 order-md-2 d-flex justify-content-center justify-content-md-end">
-            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="500" height="500" />
-        </div>
-        <div class="col-12 col-md-6 py-2 py-md-0 order-md-1">
-            <h2 class="d-none d-md-block py-3 fs-3 text-md-start text-uppercase">{{ data.title }}</h2>
-            <div class="my-4 text-md-start">
+        <div class="col-12 col-lg-6 py-2 px-lg-5 {{ reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
+            <h2 class="d-none d-lg-block fs-3 text-lg-start text-uppercase">{{ data.title }}</h2>
+            <div class="my-4 my-lg-5 text-lg-start">
                 {{ data.text|linebreaks }}
             </div>
             {% if data.custom_html %}
-            <div class="d-flex flex-column py-2 py-md-4 gap-5">
+            <div class="d-flex flex-column py-2 py-lg-4 gap-5">
                 {{ data.custom_html|safe }}
             </div>
             {% endif %}  
