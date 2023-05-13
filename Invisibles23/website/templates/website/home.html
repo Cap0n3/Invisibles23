@@ -9,13 +9,13 @@
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name == "About" %}
-            {% include "website/components/normal-section.html" with data=section %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-primary" %}
         {% endif %}
     {% endfor %}
      <!--SECTION BOOK-->
     {% for section in sections_content %}
         {% if section.name == "Book" %}
-            {% include "website/components/normal-section.html" with data=section %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-info" %}
         {% endif %}
     {% endfor %}
     <!--SECTION-->

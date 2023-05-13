@@ -19,18 +19,19 @@
 </section> 
 {% endcomment %}
 
-<section class="container-fluid text-center py-3 bg-info">
-    <h2 class="d-md-none py-3 fs-4 text-uppercase bg-secondary">{{ data.title }}</h2>
-    <div class="row bg-warning">
-        <div class="col-12 col-md-6 order-md-2 bg-success">
-            <img src="{{ data.image.url }}" class="img-fluid" alt="{{ data.image_alt }}" width="500" height="500" />
+<section class="container-fluid text-center p-4 p-md-5 {{ bg }}">
+    <h2 class="d-md-none py-3 fs-4 text-uppercase">{{ data.title }}</h2>
+    <div class="row">
+        <div class="col-12 col-md-6 py-2 py-md-0 order-md-2 d-flex justify-content-center justify-content-md-end">
+            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="500" height="500" />
         </div>
-        <div class="col-12 col-md-6 order-md-1 bg-warning">
-            <h2 class="d-none d-md-block py-3 fs-3 text-uppercase bg-secondary">{{ data.title }}</h2>
-            {{ data.text|linebreaks }}
-
+        <div class="col-12 col-md-6 py-2 py-md-0 order-md-1">
+            <h2 class="d-none d-md-block py-3 fs-3 text-uppercase">{{ data.title }}</h2>
+            <div class="my-4 text-md-start">
+                {{ data.text|linebreaks }}
+            </div>
             {% if data.custom_html %}
-            <div class="d-flex flex-column bg-success">
+            <div class="d-flex flex-column py-2 py-md-4 gap-5">
                 {{ data.custom_html|safe }}
             </div>
             {% endif %}  

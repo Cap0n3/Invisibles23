@@ -64,9 +64,11 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 30px;
-    background-color: blue;
+    gap: 40px;
 
+    @include lessThan-md {
+        justify-content: space-between;
+    }
     .social-icons {
         font-size: 2.2rem;
         color: $font-deep-blue;
