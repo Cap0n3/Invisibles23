@@ -7,6 +7,7 @@ class WebpageSection (models.Model):
     text = models.TextField(max_length=10000)
     custom_html = models.TextField(blank=True)
     image = models.ImageField(upload_to='')
+    image_alt = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return self.title

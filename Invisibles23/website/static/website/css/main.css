@@ -119,7 +119,7 @@ nav.show {
   color: #002E48;
   text-decoration: none;
 }
-#footer .socials-block {
+#footer .footer-socials-block {
   display: inline-flex; /* must be inline to be centered in bs column */
   justify-content: center;
   align-items: center;
@@ -127,7 +127,7 @@ nav.show {
   gap: 40%;
   border-bottom: 0.5px solid #002E48;
 }
-#footer .socials-block .social-icons {
+#footer .footer-socials-block .social-icons {
   font-size: 2.2rem;
   color: #002E48;
 }
@@ -232,7 +232,7 @@ body h5 {
 body .btn-primary {
   border-radius: 15px;
   padding: 12px 0 12px 0;
-  min-width: 150px;
+  width: 160px;
   font-size: 0.9rem;
   text-transform: uppercase;
   background-color: #002E48;
@@ -241,6 +241,11 @@ body .btn-primary {
 body .btn-primary:hover {
   background-color: #003e62;
   border-color: #003e62;
+}
+@media screen and (max-width: 768px) {
+  body .btn-primary {
+    width: 100%;
+  }
 }
 
 .mobile-sectionTitle {
@@ -266,4 +271,15 @@ body .btn-primary:hover {
   width: 100%;
   height: 500px;
   background-color: grey;
+}
+
+.socials-group {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 30px;
+}
+.socials-group .social-icons {
+  font-size: 2.2rem;
+  color: #002E48;
 }
