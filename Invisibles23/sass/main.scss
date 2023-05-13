@@ -65,7 +65,7 @@ body {
     justify-content: flex-start;
     margin-top: 15px;
     align-items: center;
-    gap: 10%;
+    gap: 8%;
 
     @include lessThan-lg {
         justify-content: space-between;

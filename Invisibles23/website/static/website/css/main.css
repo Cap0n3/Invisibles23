@@ -271,7 +271,7 @@ body .btn-primary:hover {
   justify-content: flex-start;
   margin-top: 15px;
   align-items: center;
-  gap: 10%;
+  gap: 8%;
 }
 @media screen and (max-width: 992px) {
   .socials-group {
