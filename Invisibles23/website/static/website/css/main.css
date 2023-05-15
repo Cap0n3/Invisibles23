@@ -253,41 +253,25 @@ body .social-icons:hover {
 }
 
 /* === SECTIONS === */
-.bg-light-beige {
-  background: linear-gradient(180deg, rgb(255, 246, 238) 0%, rgba(252, 246, 236, 0) 100%);
+.normal-section .section-text p:last-child {
+  margin-bottom: 0;
 }
-
-.bg-light-green {
-  background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
-}
-
-.mobile-sectionTitle {
-  /* Show mobile title on mobile */
-}
-@media screen and (min-width: 992px) {
-  .mobile-sectionTitle {
-    display: none;
-  }
-}
-
-.desktop-sectionTitle {
-  /* Hide desktop title on mobile */
-}
-@media screen and (max-width: 992px) {
-  .desktop-sectionTitle {
-    display: none;
-  }
-}
-
-.socials-group {
+.normal-section .socials-group {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 8%;
 }
 @media screen and (max-width: 992px) {
-  .socials-group {
+  .normal-section .socials-group {
     justify-content: space-between;
-    margin-top: 15px;
   }
+}
+
+.bg-light-beige {
+  background: linear-gradient(180deg, rgb(255, 246, 238) 0%, rgba(252, 246, 236, 0) 100%);
+}
+
+.bg-light-green {
+  background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
 }

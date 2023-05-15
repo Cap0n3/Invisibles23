@@ -1,20 +1,20 @@
 <!--Normal section of website with text, image and optional HTML code -->
-<section class="container-fluid text-center p-5 p-lg-5 {{ bg }}">
+<section class="normal-section container-fluid text-center p-5 p-lg-5 {{ bg }}">
     <h2 class="d-lg-none mb-5 fs-4 text-uppercase">{{ data.title }}</h2>
     <div class="row p-lg-3">
         <div class="col-12 col-lg-6 px-lg-5 {{ reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
             <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="" height="" />
         </div>
-        <div class="col-12 col-lg-6 py-2 px-lg-5 {{ reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
-            <h2 class="d-none d-lg-block fs-3 text-lg-start text-uppercase">{{ data.title }}</h2>
-            <div class="my-4 my-lg-5 text-lg-start">
+        <div class="col-12 col-lg-6 px-lg-5 {{ reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
+            <h2 class="d-none d-lg-block mb-5 fs-3 text-lg-start text-uppercase">{{ data.title }}</h2>
+            <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
                 {{ data.text|linebreaks }}
             </div>
             {% if data.custom_html %}
-            <div class="d-flex flex-column py-2 gap-3 gap-lg-5">
+            <div class="d-flex flex-column gap-5">
                 {{ data.custom_html|safe }}
             </div>
-            {% endif %}  
+            {% endif %}
         </div>
     </div>
-</section> 
+</section>

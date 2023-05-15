@@ -57,39 +57,33 @@ body {
 }
 
 /* === SECTIONS === */
+.normal-section {
+    .section-text {
+        p:last-child {
+            // To have maximum control over element spacing (and avoid weird margins)
+            margin-bottom: 0;
+        }
+    }
 
+    // Used in about section
+    .socials-group {
+        display: flex;
+        justify-content: flex-start;
+        // margin-top: 15px;
+        align-items: center;
+        gap: 8%;
+    
+        @include lessThan-lg {
+            justify-content: space-between;
+        }
+    }
+}
+
+// Section background color gradients
 .bg-light-beige {
     background: linear-gradient(180deg, rgba(255, 246, 238, 1) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
 .bg-light-green {
     background: linear-gradient(180deg, rgba(238, 243, 239, 1) 0%, rgba(252, 246, 236, 0) 100%);
-}
-
-.mobile-sectionTitle {
-    /* Show mobile title on mobile */
-    @include lg {
-        display: none;
-    }
-}
-
-.desktop-sectionTitle {
-    /* Hide desktop title on mobile */
-    @include lessThan-lg {
-        display: none;
-    }
-}
-
-// Used in about section
-.socials-group {
-    display: flex;
-    justify-content: flex-start;
-    // margin-top: 15px;
-    align-items: center;
-    gap: 8%;
-
-    @include lessThan-lg {
-        justify-content: space-between;
-        margin-top: 15px;
-    }
 }
