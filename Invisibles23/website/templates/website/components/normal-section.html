@@ -1,7 +1,8 @@
-<section class="container-fluid text-center p-4 p-lg-5 {{ bg }}">
-    <h2 class="d-lg-none py-3 fs-4 text-uppercase">{{ data.title }}</h2>
-    <div class="row gx-lg-0 p-lg-3">
-        <div class="col-12 col-lg-6 py-2 px-lg-5 {{ reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
+<!--Normal section of website with text, image and optional HTML code -->
+<section class="container-fluid text-center p-5 p-lg-5 {{ bg }}">
+    <h2 class="d-lg-none mb-5 fs-4 text-uppercase">{{ data.title }}</h2>
+    <div class="row p-lg-3">
+        <div class="col-12 col-lg-6 px-lg-5 {{ reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
             <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="" height="" />
         </div>
         <div class="col-12 col-lg-6 py-2 px-lg-5 {{ reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
