@@ -9,13 +9,13 @@
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name == "About" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-primary" reverse="true" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
         {% endif %}
     {% endfor %}
      <!--SECTION BOOK-->
     {% for section in sections_content %}
         {% if section.name == "Book" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-info" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--SECTION-->

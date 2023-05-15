@@ -35,14 +35,35 @@ body {
         border-color: $font-deep-blue;
 
         &:hover {
-            background-color: lighten($font-deep-blue, 5%);
-            border-color: lighten($font-deep-blue, 5%);
+            background-color: lighten($font-deep-blue, 7%);
+            border-color: lighten($font-deep-blue, 7%);
         }
 
         @include lessThan-lg {
             width: 100%;
         }
     }
+
+    .social-icons {
+        font-size: 2.5rem;
+        color: $font-deep-blue;
+        cursor: pointer;
+
+        &:hover {
+            color: lighten($font-deep-blue, 7%);
+        }
+    }
+
+}
+
+/* === SECTIONS === */
+
+.bg-light-beige {
+    background: linear-gradient(180deg, rgba(255, 246, 238, 1) 0%, rgba(252, 246, 236, 0) 100%);
+}
+
+.bg-light-green {
+    background: linear-gradient(180deg, rgba(238, 243, 239, 1) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
 .mobile-sectionTitle {
@@ -63,16 +84,12 @@ body {
 .socials-group {
     display: flex;
     justify-content: flex-start;
-    margin-top: 15px;
+    // margin-top: 15px;
     align-items: center;
     gap: 8%;
 
     @include lessThan-lg {
         justify-content: space-between;
         margin-top: 15px;
-    }
-    .social-icons {
-        font-size: 2.8rem;
-        color: $font-deep-blue;
     }
 }
