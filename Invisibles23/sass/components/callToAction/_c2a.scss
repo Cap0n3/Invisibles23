@@ -1,0 +1,46 @@
+/* ==================== */
+/* === C2A SECTIONS === */
+/* ==================== */
+.c2a-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+
+    .column-top {
+        width: 65%;
+
+        @include lessThan-lg {
+            width: 100%;
+        }
+    }
+
+    .column-bottom {
+        width: 65%;
+
+        @include lessThan-lg {
+            width: 100%;
+        }
+    }
+
+    .bubble-bg {
+        background-color: rgba(255, 255, 255, 0.5);
+
+        // avoid weird margins
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.bg-c2a-woman1 {
+    background-image: url("../medias/c2a/c2a_woman1.jpg");
+    background-size: cover;
+    background-position: 0% 40%;
+}
+
+.bg-c2a-hands {
+    background-image: url("../medias/c2a/c2a_hands.jpg");
+    background-size: cover;
+    background-position: 0% 70%;
+}

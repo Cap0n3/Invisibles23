@@ -1,6 +1,10 @@
 <section class="c2a-section container-fluid text-center p-5 p-lg-5 {{ bg }}">
-    <div class="row gap-5">
+    <div class="row column-top gap-5">
         <!-- Include c2a content here-->
-        {% include "website/components/c2a-content/c2a_content_newsletter.html" %}
+        {% if c2aType == "newsletter" %}
+            {% include "website/components/c2a-content/c2a_content_newsletter.html" %}
+        {% elif c2aType == "meetings" %}
+            {% include "website/components/c2a-content/c2a_content_meetings.html" %}
+        {% endif %}
     </div> 
 </section> 

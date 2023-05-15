@@ -12,14 +12,15 @@
             {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
         {% endif %}
     {% endfor %}
-    <!--CALL TO ACTION-->
-    {% include "website/components/c2a_section.html" with bg="bg-c2a-woman1" %}
+    <!--CALL TO ACTION - NEWSLETTER-->
+    {% include "website/components/c2a_section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
      <!--SECTION BOOK-->
     {% for section in sections_content %}
         {% if section.name == "Book" %}
             {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
-    <!--SECTION-->
+    <!--CALL TO ACTION - MEETINGS-->
+    {% include "website/components/c2a_section.html" with c2aType="meetings" bg="bg-c2a-hands" %}
     
     {% endblock content %}

@@ -127,14 +127,6 @@ nav.show {
   gap: 40%;
   border-bottom: 0.5px solid #002E48;
 }
-#footer #emailInputNewsletter {
-  background-color: transparent;
-  border: 1px solid #002E48;
-}
-#footer #emailInputNewsletter:focus {
-  border-color: #002E48;
-  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
-}
 #footer .credits {
   font-size: 0.8rem;
 }
@@ -211,6 +203,50 @@ nav.show {
   width: 0.4rem;
 }
 
+/* ==================== */
+/* === C2A SECTIONS === */
+/* ==================== */
+.c2a-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+.c2a-section .column-top {
+  width: 65%;
+}
+@media screen and (max-width: 992px) {
+  .c2a-section .column-top {
+    width: 100%;
+  }
+}
+.c2a-section .column-bottom {
+  width: 65%;
+}
+@media screen and (max-width: 992px) {
+  .c2a-section .column-bottom {
+    width: 100%;
+  }
+}
+.c2a-section .bubble-bg {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.c2a-section .bubble-bg p:last-child {
+  margin-bottom: 0;
+}
+
+.bg-c2a-woman1 {
+  background-image: url("../medias/c2a/c2a_woman1.jpg");
+  background-size: cover;
+  background-position: 0% 40%;
+}
+
+.bg-c2a-hands {
+  background-image: url("../medias/c2a/c2a_hands.jpg");
+  background-size: cover;
+  background-position: 0% 70%;
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
@@ -251,6 +287,14 @@ body .social-icons {
 body .social-icons:hover {
   color: #00456c;
 }
+body .normal-input {
+  background-color: transparent;
+  border: 1px solid #002E48;
+}
+body .normal-input:focus {
+  border-color: #002E48;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
+}
 
 /* ================ */
 /* === SECTIONS === */
@@ -276,31 +320,4 @@ body .social-icons:hover {
 
 .bg-light-green {
   background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
-}
-
-/* ==================== */
-/* === C2A SECTIONS === */
-/* ==================== */
-.c2a-section {
-  display: flex;
-  align-items: center;
-  min-height: 500px;
-}
-.c2a-section .bubble-bg {
-  width: 65%;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-.c2a-section .bubble-bg p:last-child {
-  margin-bottom: 0;
-}
-@media screen and (max-width: 992px) {
-  .c2a-section .bubble-bg {
-    width: 100%;
-  }
-}
-
-.bg-c2a-woman1 {
-  background-image: url("../medias/c2a/c2a_woman1.jpg");
-  background-size: cover;
-  background-position: 0% 40%;
 }

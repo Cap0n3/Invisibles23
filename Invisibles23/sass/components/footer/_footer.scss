@@ -18,16 +18,6 @@
         border-bottom: .5px solid $font-deep-blue;
     }
 
-    #emailInputNewsletter {
-        background-color : transparent;
-        border: 1px solid $font-deep-blue;
-        
-        &:focus {
-            border-color: $font-deep-blue;
-            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
-        }
-    }
-
     .credits {
         font-size: 0.8rem;
     }

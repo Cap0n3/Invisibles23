@@ -6,6 +6,7 @@
 @import "components/headers/hero-header";
 @import "components/footer/footer";
 @import "components/podcast-card/mini-podcast";
+@import "components/callToAction/c2a";
 
 body {
     color: $font-deep-blue;
@@ -54,6 +55,16 @@ body {
         }
     }
 
+    .normal-input {
+        background-color : transparent;
+        border: 1px solid $font-deep-blue;
+        
+        &:focus {
+            border-color: $font-deep-blue;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
+        }
+    }
+
 }
 
 /* ================ */
@@ -90,31 +101,49 @@ body {
     background: linear-gradient(180deg, rgba(238, 243, 239, 1) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
-/* ==================== */
-/* === C2A SECTIONS === */
-/* ==================== */
-.c2a-section {
-    display: flex;
-    align-items: center;
-    min-height: 500px;
+// /* ==================== */
+// /* === C2A SECTIONS === */
+// /* ==================== */
+// .c2a-section {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     min-height: 500px;
 
-    .bubble-bg {
-        width: 65%;
-        background-color: rgba(255, 255, 255, 0.5);
+//     .column-top {
+//         width: 65%;
 
-        // avoid weird margins
-        p:last-child {
-            margin-bottom: 0;
-        }
+//         @include lessThan-lg {
+//             width: 100%;
+//         }
+//     }
 
-        @include lessThan-lg {
-            width: 100%;
-        }
-    }
-}
+//     .column-bottom {
+//         width: 65%;
 
-.bg-c2a-woman1 {
-    background-image: url("../medias/c2a/c2a_woman1.jpg");
-    background-size: cover;
-    background-position: 0% 40%;
-}
+//         @include lessThan-lg {
+//             width: 100%;
+//         }
+//     }
+
+//     .bubble-bg {
+//         background-color: rgba(255, 255, 255, 0.5);
+
+//         // avoid weird margins
+//         p:last-child {
+//             margin-bottom: 0;
+//         }
+//     }
+// }
+
+// .bg-c2a-woman1 {
+//     background-image: url("../medias/c2a/c2a_woman1.jpg");
+//     background-size: cover;
+//     background-position: 0% 40%;
+// }
+
+// .bg-c2a-hands {
+//     background-image: url("../medias/c2a/c2a_hands.jpg");
+//     background-size: cover;
+//     background-position: 0% 70%;
+// }
