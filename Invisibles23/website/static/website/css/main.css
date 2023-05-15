@@ -252,7 +252,9 @@ body .social-icons:hover {
   color: #00456c;
 }
 
+/* ================ */
 /* === SECTIONS === */
+/* ================ */
 .normal-section .section-text p:last-child {
   margin-bottom: 0;
 }
@@ -274,4 +276,31 @@ body .social-icons:hover {
 
 .bg-light-green {
   background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
+}
+
+/* ==================== */
+/* === C2A SECTIONS === */
+/* ==================== */
+.c2a-section {
+  display: flex;
+  align-items: center;
+  min-height: 500px;
+}
+.c2a-section .bubble-bg {
+  width: 65%;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.c2a-section .bubble-bg p:last-child {
+  margin-bottom: 0;
+}
+@media screen and (max-width: 992px) {
+  .c2a-section .bubble-bg {
+    width: 100%;
+  }
+}
+
+.bg-c2a-woman1 {
+  background-image: url("../medias/c2a/c2a_woman1.jpg");
+  background-size: cover;
+  background-position: 0% 40%;
 }
