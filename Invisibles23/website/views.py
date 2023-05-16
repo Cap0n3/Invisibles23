@@ -14,5 +14,7 @@ class HomeView(View):
     queryset = WebpageSection.objects.all()
 
     def get(self, request):
-        context = { 'sections_content' : self.queryset }
+        context = { 
+            'sections_content' : self.queryset,
+        }
         return render(request, self.template_name, context)
