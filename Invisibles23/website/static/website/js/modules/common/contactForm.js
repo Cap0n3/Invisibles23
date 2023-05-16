@@ -8,12 +8,13 @@ export function contactForm() {
         // form fields are valid.
         
         if (email.validity.valid) {
-            // In case there is an error message visible, if the field
-            // is valid, we remove the error message.
-            console.log("Not valid")
+            console.log("Valid")
+            email.classList.remove('is-invalid') // if it was invalid before
+            email.classList.add('is-valid')
+
         } else {
-            // If there is still an error, show the correct error
             console.log("Not valid")
+            email.classList.add('is-invalid')
         }
     });
 }
