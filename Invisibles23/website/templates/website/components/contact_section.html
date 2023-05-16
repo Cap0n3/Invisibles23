@@ -2,7 +2,7 @@
     <h2 class="d-lg-none mb-5 text-uppercase">Contact</h2>
     <div class="row p-lg-3 bg-danger">
         <div class="col-12 col-lg-6 px-lg-5 mb-5 mb-lg-0 bg-success">
-            <form class="contactForm form d-flex flex-column p-4 p-lg-5 rounded-4 gap-4 bg-info" novalidate>
+            <form id="contactForm" class="form d-flex flex-column p-4 p-lg-5 rounded-4 gap-4 bg-info" novalidate>
                 {% csrf_token %}
                 <div class="form-group">
                     <input type="text" name="first_name" id="id_first_name" class="form-control normal-input" placeholder="Votre nom" required />
