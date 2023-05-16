@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito:wght@200&display=swap"); /* NAVBAR */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito:wght@200;400;600;700&display=swap"); /* NAVBAR */
 nav {
   background-color: rgba(0, 0, 0, 0); /* transparent */
   transition: background-color 500ms;
