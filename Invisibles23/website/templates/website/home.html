@@ -13,7 +13,7 @@
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - NEWSLETTER-->
-    {% include "website/components/c2a_section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
+    {% include "website/components/c2a-section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
      <!--SECTION BOOK-->
     {% for section in sections_content %}
         {% if section.name == "Book" %}
@@ -21,8 +21,8 @@
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - MEETINGS-->
-    {% include "website/components/c2a_section.html" with c2aType="meetings" bg="bg-c2a-hands" %}
+    {% include "website/components/c2a-section.html" with c2aType="meetings" bg="bg-c2a-hands" %}
     <!--CONTACT SECTION-->
-    {% include "website/components/contact_section.html" with bg="bg-light-beige" %}
+    {% include "website/components/contact-section.html" with bg="bg-light-beige" %}
     
     {% endblock content %}
