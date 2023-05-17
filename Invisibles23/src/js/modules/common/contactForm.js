@@ -1,19 +1,26 @@
 import JustValidate from 'just-validate';
 
 export function contactForm() {
-    const validator = new JustValidate('#contactForm');
+    const validator = new JustValidate('#contactForm', 
+        {
+            successFieldCssClass: ['is-valid'],
+            errorFieldCssClass: ['is-invalid'],
+            //errorLabelStyle: { marginTop: '15px', background: 'red', color: '#fff' },
+            errorLabelCssClass: ['invalid-feedback'],
+        }
+      );
 
-    validator.addField('#id_email', [
-        {
-            rule: 'required',
-        },
-        {
-            rule: 'required',
-        },
-        {
-            rule: 'email',
-        },
-    ])
+    validator
+        .addField('#id_email', [
+            {
+                rule: "required",
+                errorMessage: "Merci d'indiquer votre adresse email",
+            },
+            {
+                rule: "email",
+                errorMessage: "Votre adresse email n'est pas valide",
+            },
+        ])
 
 }
 
