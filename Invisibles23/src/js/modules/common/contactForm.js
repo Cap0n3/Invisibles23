@@ -9,8 +9,9 @@ export function contactForm() {
             successFieldCssClass: ['is-valid'], // CSS class to add when input is valid
             errorFieldCssClass: ['is-invalid'], // CSS class to add when input is invalid
             errorLabelCssClass: ['invalid-feedback'], // CSS class to add for error message
+            validateBeforeSubmitting: false,
         }
-      );
+    );
 
     validator
         .addField('#id_first_name', [
@@ -86,4 +87,27 @@ export function contactForm() {
                 errorMessage: "Un caractère invalide a été détecté",
             },
         ])
+        .onSuccess(function() {
+            // If all inputs are valid, send email
+            if (sendEmail()) {
+                // Show success message
+                document.getElementById("successMessage").classList.remove("d-none");
+                //reset form
+                document.getElementById("contactForm").reset();
+            }
+            else {
+                console.log("ERROR");
+                // Create error message
+                let errorContainer = document.getElementById("errorMessage");
+                let errorMessage = document.createTextNode("Une erreur est survenue");
+                errorContainer.appendChild(errorMessage);
+                // Show error message
+                errorContainer.classList.remove("d-none");
+            }
+        })
+}
+
+function sendEmail() {
+    console.log("SENDING EMAIL");
+    return false;
 }
