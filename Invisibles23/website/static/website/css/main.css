@@ -321,3 +321,24 @@ body .normal-input:focus {
 .bg-light-green {
   background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
 }
+
+/* ============ */
+/* === FORM === */
+/* ============ */
+.hideMessage {
+  height: 0;
+  padding: 0 0 0 0 !important;
+  margin: 0 0 0 0 !important;
+  transition: all 1s ease-out;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.showMessage {
+  height: auto;
+  transition: all 1s ease-out;
+  padding: 20px 0 20px 0 !important;
+  margin: 20px 0 20px 0 !important;
+  opacity: 1;
+  overflow: hidden;
+}

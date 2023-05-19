@@ -64,7 +64,6 @@ body {
             box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
         }
     }
-
 }
 
 /* ================ */
@@ -101,49 +100,25 @@ body {
     background: linear-gradient(180deg, rgba(238, 243, 239, 1) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
-// /* ==================== */
-// /* === C2A SECTIONS === */
-// /* ==================== */
-// .c2a-section {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     min-height: 500px;
 
-//     .column-top {
-//         width: 65%;
+/* ============ */
+/* === FORM === */
+/* ============ */
 
-//         @include lessThan-lg {
-//             width: 100%;
-//         }
-//     }
+.hideMessage {
+    height: 0;
+    padding: 0 0 0 0 !important;
+    margin: 0 0 0 0 !important;
+    transition: all 1s ease-out;
+    opacity: 0;
+    overflow: hidden;    
+}
 
-//     .column-bottom {
-//         width: 65%;
-
-//         @include lessThan-lg {
-//             width: 100%;
-//         }
-//     }
-
-//     .bubble-bg {
-//         background-color: rgba(255, 255, 255, 0.5);
-
-//         // avoid weird margins
-//         p:last-child {
-//             margin-bottom: 0;
-//         }
-//     }
-// }
-
-// .bg-c2a-woman1 {
-//     background-image: url("../medias/c2a/c2a_woman1.jpg");
-//     background-size: cover;
-//     background-position: 0% 40%;
-// }
-
-// .bg-c2a-hands {
-//     background-image: url("../medias/c2a/c2a_hands.jpg");
-//     background-size: cover;
-//     background-position: 0% 70%;
-// }
+.showMessage {
+    height: auto;
+    transition: all 1s ease-out;
+    padding: 20px 0 20px 0 !important;
+    margin: 20px 0 20px 0 !important;
+    opacity: 1;
+    overflow: hidden;
+}

@@ -87,7 +87,7 @@ export function contactForm() {
                 errorMessage: "Un caractère invalide a été détecté",
             },
         ])
-        //.onSuccess((form) => {handleFormSubmit(form)})
+        .onSuccess((form) => {handleFormSubmit(form)})
 }
 
 function handleFormSubmit(formObject) {
@@ -96,23 +96,23 @@ function handleFormSubmit(formObject) {
     // Get containers for success and error messages
     let successContainer = currentForm.querySelector("#successMessage");
     let errorContainer = currentForm.querySelector("#errorMessage");
-    
+    // Get all inputs
+    let inputs = currentForm.querySelectorAll("input, textarea");
+    Array.from(inputs).forEach(input => input.blur());
+
     // Send email and get response
     if (sendEmail()) {
         // Show success message
-        successContainer.classList.remove("d-none");
+        successContainer.classList.replace("hideMessage", "showMessage");
         // Wait 2 seconds before resetting form
         setTimeout(function() {
             // Remove "is-valid" class from all inputs
-            var inputs = currentForm.querySelectorAll("input, textarea");
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].classList.remove("is-valid");
-            }
+            Array.from(inputs).forEach(input => input.classList.remove("is-valid"));
             // Reset form
             currentForm.reset();
             // Hide success message
-            successContainer.classList.add("d-none");
-        }, 2000);
+            successContainer.classList.replace("showMessage", "hideMessage");
+        },5000);
     }
     else {
         console.log("ERROR");
