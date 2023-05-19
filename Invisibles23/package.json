@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "dotenv-webpack": "^8.0.1",
     "gulp": "^4.0.2",
     "gulp-sass": "^5.1.0",
     "sass": "^1.60.0",
@@ -19,6 +20,6 @@
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
     "just-validate": "^4.2.0",
-    "mailtrap": "^3.1.1"
+    "node-polyfill-webpack-plugin": "^2.0.1"
   }
 }

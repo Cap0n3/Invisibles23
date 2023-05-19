@@ -1,5 +1,5 @@
 import JustValidate from 'just-validate';
-import emailjs from '@emailjs/browser';
+import emailjs, { send } from '@emailjs/browser';
 
 const nameRegex = /^[^#+*/()=?°§$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
@@ -88,56 +88,84 @@ export function contactForm() {
                 errorMessage: "Un caractère invalide a été détecté",
             },
         ])
-        .onSuccess((form) => {handleFormSubmit(form)})
+        .onSuccess((form) => {handleSubmit(form)})
 }
 
-function handleFormSubmit(formObject) {
+function handleSubmit(formObject) {
+    // Get form input values and put them in an object
+    const formData = {
+        first_name: formObject.target.elements["first_name"].value,
+        last_name: formObject.target.elements["last_name"].value,
+        email: formObject.target.elements["email"].value,
+        message: formObject.target.elements["message"].value,
+    };
+
+    sendEmail(formData)
+    .then(function(response) {
+        // Display success message
+        displayMessage(formObject, "Votre message a bien été envoyé", "success");
+        console.log("SUCCESS!", response.status, response.text);
+    })
+    .catch(function(error) {
+        // Display error message
+        displayMessage(formObject, "Une erreur est survenue", "error");
+        console.log("FAILED...", error);
+    });
+}
+
+function sendEmail(data) {
+    return new Promise(function(resolve, reject) {
+        // Get environment variables from .env file
+        let serviceId = process.env.EMAILJS_SERVICE_ID;
+        let templateId = process.env.EMAILJS_TEMPLATE_ID;
+        let userId = process.env.EMAILJS_USER_ID;
+        // Use EmailJS library or service to send the email  
+        emailjs.send(serviceId, templateId, {
+            to_email: "afra.amaya7@gmail.com",
+            from_email: "test@dev_invisibles23.com",
+            subject: "Test message for DEV",
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+            message: data.message,
+        }, userId)
+        .then(function(response) {
+            resolve(response); // Resolve the Promise when email is sent successfully
+        })
+        .catch(function(error) {
+            reject(error); // Reject the Promise if there is an error in sending the email
+        });
+    });
+}
+
+function displayMessage(formObject, statusMessage, type) {
+    // Code to display the message based on the type (success or error)
     // Get current form
     let currentForm = formObject.target;
     // Get containers for success and error messages
     let successContainer = currentForm.querySelector("#successMessage");
     let errorContainer = currentForm.querySelector("#errorMessage");
-    // Get all inputs
-    let inputs = currentForm.querySelectorAll("input, textarea");
-    Array.from(inputs).forEach(input => input.blur());
-
-    // Send email and get response
-    if (sendEmail()) {
+    // Get all inputs and convert to array
+    let inputs = Array.from(currentForm.querySelectorAll("input, textarea"));
+    
+    if (type === "success") {
+        successContainer.innerHTML = statusMessage;
         // Show success message
         successContainer.classList.replace("hideMessage", "showMessage");
-        // Wait 2 seconds before resetting form
+        // Wait 2 seconds before resetting form and hiding success message
         setTimeout(function() {
             // Remove "is-valid" class from all inputs
-            Array.from(inputs).forEach(input => input.classList.remove("is-valid"));
+            inputs.forEach(input => input.classList.remove("is-valid"));
             // Reset form
             currentForm.reset();
             // Hide success message
             successContainer.classList.replace("showMessage", "hideMessage");
-        },5000);
+        }, 5000);
     }
-    else {
-        console.log("ERROR");
-        // Create error message
-        let errorMessage = "Une erreur est survenue";
-        errorContainer.innerHTML = errorMessage;
+    else if (type === "error") {
+        // Set error message
+        errorContainer.innerHTML = statusMessage;
         // Show error message
         errorContainer.classList.replace("hideMessage", "showMessage");
     }
-}
-
-function sendEmail() {
-    console.log("SENDING EMAIL");
-    var templateParams = {
-        name: 'James',
-        notes: 'Check this out!'
-    };
-     
-    emailjs.send('service_tjy46fw', 'template_xr7tydo', templateParams, 'iizyhd3n6xCNfKq-0')
-        .then(function(response) {
-           console.log('SUCCESS!', response.status, response.text);
-        }, function(error) {
-           console.log('FAILED...', error);
-        });
-    
-    return true;
 }
