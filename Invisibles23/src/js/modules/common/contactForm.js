@@ -87,27 +87,44 @@ export function contactForm() {
                 errorMessage: "Un caractère invalide a été détecté",
             },
         ])
-        .onSuccess(function() {
-            // If all inputs are valid, send email
-            if (sendEmail()) {
-                // Show success message
-                document.getElementById("successMessage").classList.remove("d-none");
-                //reset form
-                document.getElementById("contactForm").reset();
+        //.onSuccess((form) => {handleFormSubmit(form)})
+}
+
+function handleFormSubmit(formObject) {
+    // Get current form
+    let currentForm = formObject.target;
+    // Get containers for success and error messages
+    let successContainer = currentForm.querySelector("#successMessage");
+    let errorContainer = currentForm.querySelector("#errorMessage");
+    
+    // Send email and get response
+    if (sendEmail()) {
+        // Show success message
+        successContainer.classList.remove("d-none");
+        // Wait 2 seconds before resetting form
+        setTimeout(function() {
+            // Remove "is-valid" class from all inputs
+            var inputs = currentForm.querySelectorAll("input, textarea");
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].classList.remove("is-valid");
             }
-            else {
-                console.log("ERROR");
-                // Create error message
-                let errorContainer = document.getElementById("errorMessage");
-                let errorMessage = document.createTextNode("Une erreur est survenue");
-                errorContainer.appendChild(errorMessage);
-                // Show error message
-                errorContainer.classList.remove("d-none");
-            }
-        })
+            // Reset form
+            currentForm.reset();
+            // Hide success message
+            successContainer.classList.add("d-none");
+        }, 2000);
+    }
+    else {
+        console.log("ERROR");
+        // Create error message
+        let errorMessage = document.createTextNode("Une erreur est survenue");
+        errorContainer.appendChild(errorMessage);
+        // Show error message
+        errorContainer.classList.remove("d-none");
+    }
 }
 
 function sendEmail() {
     console.log("SENDING EMAIL");
-    return false;
+    return true;
 }
