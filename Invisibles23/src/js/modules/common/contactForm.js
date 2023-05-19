@@ -1,4 +1,5 @@
 import JustValidate from 'just-validate';
+import emailjs from '@emailjs/browser';
 
 const nameRegex = /^[^#+*/()=?°§$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
@@ -117,14 +118,26 @@ function handleFormSubmit(formObject) {
     else {
         console.log("ERROR");
         // Create error message
-        let errorMessage = document.createTextNode("Une erreur est survenue");
-        errorContainer.appendChild(errorMessage);
+        let errorMessage = "Une erreur est survenue";
+        errorContainer.innerHTML = errorMessage;
         // Show error message
-        errorContainer.classList.remove("d-none");
+        errorContainer.classList.replace("hideMessage", "showMessage");
     }
 }
 
 function sendEmail() {
     console.log("SENDING EMAIL");
+    var templateParams = {
+        name: 'James',
+        notes: 'Check this out!'
+    };
+     
+    emailjs.send('service_tjy46fw', 'template_xr7tydo', templateParams, 'iizyhd3n6xCNfKq-0')
+        .then(function(response) {
+           console.log('SUCCESS!', response.status, response.text);
+        }, function(error) {
+           console.log('FAILED...', error);
+        });
+    
     return true;
 }

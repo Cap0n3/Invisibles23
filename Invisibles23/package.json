@@ -17,6 +17,8 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "just-validate": "^4.2.0"
+    "@emailjs/browser": "^3.11.0",
+    "just-validate": "^4.2.0",
+    "mailtrap": "^3.1.1"
   }
 }
