@@ -33,35 +33,6 @@
         }
     }
     
-    /* == CONTROLS == */
-    /* Arrows */
-    .desktop-arrow {
-        /* Hide arrows on mobile */
-        .bi-chevron-left, .bi-chevron-right {
-            color: $font-deep-blue;
-            font-size: 2rem;
-        }
-
-        @include lessThan-lg {
-            display: none;
-        }
-    }
-
-    /* Rounded indicators */
-    .carousel-indicators {
-        button {
-            background-color: $font-deep-blue;
-            width: 15px;
-            height: 15px;
-            border-radius: 100%;
-            margin-right: 20px;
-        
-            &:last-child { 
-                margin-right: 0;
-            }
-        }    
-    }
-    
     /* == CAPTIONS (Hero text block) == */
     .carousel-caption {
         top: 50%;

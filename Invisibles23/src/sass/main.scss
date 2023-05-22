@@ -130,3 +130,35 @@ body {
     opacity: 1;
     overflow: hidden;
 }
+
+/* ================ */
+/* === CONTROLS === */
+/* ================ */
+
+/* Arrows */
+.desktop-arrow {
+    /* Hide arrows on mobile */
+    .bi-chevron-left, .bi-chevron-right {
+        color: $font-deep-blue !important;
+        font-size: 2rem !important;
+    }
+
+    @include lessThan-lg {
+        display: none;
+    }
+}
+
+/* Rounded indicators */
+.carousel-indicators {
+    button {
+        background-color: $font-deep-blue !important;
+        width: 15px !important;
+        height: 15px !important;
+        border-radius: 100% !important;
+        margin-right: 20px !important;
+    
+        &:last-child { 
+            margin-right: 0 !important;
+        }
+    }    
+}

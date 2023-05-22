@@ -45,9 +45,6 @@ nav.show {
 /** Remove legacy code below if navbar is working properly **/
 /* === HERO HEADER (Home page) === */
 #heroHeader {
-  /* == CONTROLS == */
-  /* Arrows */
-  /* Rounded indicators */
   /* == CAPTIONS (Hero text block) == */
 }
 #heroHeader h2 {
@@ -77,28 +74,6 @@ nav.show {
   #heroHeader #slide3 {
     background-position: 60% 0%;
   }
-}
-#heroHeader .desktop-arrow {
-  /* Hide arrows on mobile */
-}
-#heroHeader .desktop-arrow .bi-chevron-left, #heroHeader .desktop-arrow .bi-chevron-right {
-  color: #002E48;
-  font-size: 2rem;
-}
-@media screen and (max-width: 992px) {
-  #heroHeader .desktop-arrow {
-    display: none;
-  }
-}
-#heroHeader .carousel-indicators button {
-  background-color: #002E48;
-  width: 15px;
-  height: 15px;
-  border-radius: 100%;
-  margin-right: 20px;
-}
-#heroHeader .carousel-indicators button:last-child {
-  margin-right: 0;
 }
 #heroHeader .carousel-caption {
   top: 50%;
@@ -132,8 +107,19 @@ nav.show {
 }
 
 .small-podcast-card {
-  width: 540px;
-  height: 380px;
+  width: 300px;
+  height: auto;
+}
+@media screen and (min-width: 768px) {
+  .small-podcast-card {
+    width: 400px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .small-podcast-card {
+    width: 540px;
+    height: 380px;
+  }
 }
 
 #podcast-thumbnail {
@@ -349,4 +335,33 @@ body .normal-input:focus {
   margin: 20px 0 20px 0 !important;
   opacity: 1;
   overflow: hidden;
+}
+
+/* ================ */
+/* === CONTROLS === */
+/* ================ */
+/* Arrows */
+.desktop-arrow {
+  /* Hide arrows on mobile */
+}
+.desktop-arrow .bi-chevron-left, .desktop-arrow .bi-chevron-right {
+  color: #002E48 !important;
+  font-size: 2rem !important;
+}
+@media screen and (max-width: 992px) {
+  .desktop-arrow {
+    display: none;
+  }
+}
+
+/* Rounded indicators */
+.carousel-indicators button {
+  background-color: #002E48 !important;
+  width: 15px !important;
+  height: 15px !important;
+  border-radius: 100% !important;
+  margin-right: 20px !important;
+}
+.carousel-indicators button:last-child {
+  margin-right: 0 !important;
 }

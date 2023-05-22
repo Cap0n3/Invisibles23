@@ -1,7 +1,7 @@
-<section class="c2a-section container-fluid text-center {{ bg }}">
-    <div class="row w-100">
+<section class="container-fluid text-center p-5 {{ bg }}">
+    <div class="row bg-danger">
         <!-- SLIDER FOR LARGE SCREEN -->
-        <div id="myCarousel1" class="carousel slide d-none d-lg-block bg-danger" data-bs-ride="carousel">
+        <div id="PodCarousel-large" class="carousel slide d-none d-lg-block bg-danger" data-bs="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <!-- Slide 1 content -->
@@ -31,17 +31,24 @@
                 </div>
             </div>
             <!-- Controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel1" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <button class="carousel-control-prev desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="prev">
+                <span><i class="bi bi-chevron-left" aria-hidden="true"></i></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#myCarousel1" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <button class="carousel-control-next desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="next">
+                <span><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
         <!-- SLIDER FOR MEDIUM/SMALL SCREEN -->
-        <div id="myCarousel2" class="carousel slide d-lg-none" data-bs-ride="carousel">
+        <div id="PodCarousel-small" class="carousel slide d-lg-none py-3" data-bs="carousel">
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <!-- Slide 1 content -->
@@ -80,41 +87,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel2" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#myCarousel2" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
-        {% comment %} <div class="d-none d-lg-flex justify-content-between col-12">
-            {% include "./podcast-card.html" %}
-            {% include "./podcast-card.html" %}
-        </div> {% endcomment %}
-        {% comment %} <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner bg-warning">
-                <div class="carousel-item active bg-success">
-                    <div class="d-flex justify-content-center bg-secondary">
-                        {% include "./podcast-card.html" %}
-                        {% include "./podcast-card.html" %}
-                        
-                    </div>
-                </div>
-                <div class="carousel-item">{% include "./podcast-card.html" %}</div>
-                <div class="carousel-item">{% include "./podcast-card.html" %}</div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div> {% endcomment %}
     </div>
 </section>

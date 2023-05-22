@@ -5,8 +5,17 @@ $sliderThumbColor: #053a5f;
 $timerFontSize: 0.7rem;
 
 .small-podcast-card {
-    width: 540px;
-    height: 380px;
+    width: 300px;
+    height: auto;
+
+    @include md {
+        width: 400px;
+    }
+
+    @include lg {
+        width: 540px;
+        height: 380px;
+    }
 }
 
 #podcast-thumbnail {
