@@ -105,6 +105,14 @@ body {
 /* === FORM === */
 /* ============ */
 
+#contactForm {
+    background-image: url("../medias/headers/Header_Woman1.jpg");
+    background-size: 270%;
+    background-position: 100% 95%;
+    border: .5px solid #000000;
+    filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.25));
+}
+
 .hideMessage {
     height: 0;
     padding: 0 0 0 0 !important;
@@ -117,7 +125,7 @@ body {
 .showMessage {
     height: auto;
     transition: all 1s ease-out;
-    padding: 20px 0 20px 0 !important;
+    padding: 20px !important;
     margin: 20px 0 20px 0 !important;
     opacity: 1;
     overflow: hidden;

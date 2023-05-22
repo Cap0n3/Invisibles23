@@ -1,8 +1,8 @@
 <section class="normal-section container-fluid text-center p-5 p-lg-5 {{ bg }}">
     <h2 class="d-lg-none mb-5 text-uppercase">Contact</h2>
-    <div class="row p-lg-3 bg-danger">
-        <div class="col-12 col-lg-6 px-lg-5 mb-5 mb-lg-0 bg-success">
-            <form id="contactForm" class="form d-flex flex-column p-4 p-lg-5 rounded-4 bg-info" novalidate>
+    <div class="row p-lg-3">
+        <div class="col-12 col-lg-6 px-lg-5 mb-5 mb-lg-0">
+            <form id="contactForm" class="form d-flex flex-column p-4 p-lg-5 rounded-4" novalidate>
                 {% csrf_token %}
                 <div class="form-group mb-4">
                     <input type="text" name="first_name" id="id_first_name" class="form-control normal-input" placeholder="Votre nom" required />
@@ -22,10 +22,10 @@
                 <div id="errorMessage" class="hideMessage alert alert-danger" role="alert"></div>
             </form>
         </div>
-        <div class="col-12 col-lg-6 px-lg-5 text-start bg-warning">
+        <div class="col-12 col-lg-6 px-lg-5 text-start">
             <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">Contact</h2>
-            <p>Vous pouvez m'envoyer un message en utilisant le formulaire, ou me contacter directement par téléphone ou email. Je m'efforcerai de vous répondre dans les meilleurs délais.</p>
-            <ul class="list-unstyled">
+            <p class="text-center text-lg-start">Vous pouvez m'envoyer un message en utilisant le formulaire, ou me contacter directement par téléphone ou email. Je m'efforcerai de vous répondre dans les meilleurs délais.</p>
+            <ul class="list-unstyled text-center text-lg-start">
                 <li><span class="fw-bolder">Nom :</span> Tamara Pellegrini</li>
                 <li><span class="fw-bolder">Adresse :</span> Chemin des passants 3</li>
                 <li><span class="fw-bolder">E-mail :</span> lesinvisiblesp@gmail.com</li>

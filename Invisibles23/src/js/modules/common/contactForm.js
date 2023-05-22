@@ -108,7 +108,7 @@ function handleSubmit(formObject) {
     })
     .catch(function(error) {
         // Display error message
-        displayMessage(formObject, "Une erreur est survenue", "error");
+        displayMessage(formObject, "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site ...", "error");
         console.log("FAILED...", error);
     });
 }
