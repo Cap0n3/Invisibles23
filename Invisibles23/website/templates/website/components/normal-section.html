@@ -3,7 +3,7 @@
     <h2 class="d-lg-none mb-5 text-uppercase">{{ data.title }}</h2>
     <div class="row p-lg-3">
         <div class="col-12 col-lg-6 px-lg-5 {{ reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
-            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" width="" height="" />
+            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" title="{{ data.image_title }}" width="" height="" />
         </div>
         <div class="col-12 col-lg-6 px-lg-5 {{ reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
             <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ data.title }}</h2>
