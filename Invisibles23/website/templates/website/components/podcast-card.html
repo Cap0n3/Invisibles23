@@ -1,8 +1,9 @@
-<div class="card m-4 small-podcast-card">
+<div class="card small-podcast-card rounded-4 bg-info">
     <div class="card-body">
-        <div class="row h-100">
+        <div class="row h-100 p-2">
             <div class="col-6 d-flex flex-column align-items-center gap-2">
-                <img src="https://i.stack.imgur.com/3F4ia.jpg" class="img-thumbnail mb-3" id="podcast-thumbnail" alt="..." width="200" height="200" />
+                <!--MINI-PODCAST IMAGE-->
+                <img src="https://i.stack.imgur.com/3F4ia.jpg" class="img-thumbnail mb-3" id="podcast-thumbnail" alt="..." width="180" height="180" />
                 <div class="podControlsGroup d-flex justify-content-center align-items-center gap-2">
                     <!--MINI-PODCAST CONTROLS-->
                     <i class="bi bi-arrow-counterclockwise backTenBtn" onclick="backTenSeconds()"></i>
@@ -19,8 +20,8 @@
             </div>
             <div class="col-6 d-flex flex-column justify-content-between">
                 <div>
-                    <h5 class="card-title">Podcast Title</h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisis nisl eu diam pulvinar vehicula. Pellentesque varius vestibulum dolor sit amet pellentesque. Ut in urna vel tellus rutrum sagittis nec eget quam. Fusce vehicula massa ac mi sagittis rutrum. Proin ac ligula ut felis faucibus pharetra.</p>
+                    <h5 class="card-title text-uppercase text-start mb-4">{{ podcast_title }}</h5>
+                    <p class="card-text text-start">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisis nisl eu diam pulvinar vehicula. Pellentesque varius vestibulum dolor sit amet pellentesque.</p>
                 </div>
                 <!--PODACAST DATE & HOUR-->
                 <div class="d-flex align-items-center gap-5">
