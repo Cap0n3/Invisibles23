@@ -3,8 +3,106 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 350px;
+    min-width: 280px;
+    height: auto;
     padding: 20px;
     background-color: aqua;
     border-radius: 15px;
+    overflow: hidden;
+
+    @include lg {
+        height: 350px;
+    }
+
+    /* ====== COLUMN 1 ====== */
+    .col-one {
+        width: 100%;
+        min-width: 230px;
+        height: 100%;
+        padding: 15px;
+        background-color: beige;
+
+        @include lg {
+            width: 45%;
+        }
+        
+        .podcast-image {
+            width: 100%;
+            min-width: 120px;
+            max-width: 200px;
+            height: auto;
+            border-radius: 100%;
+        }
+
+        .mobile-text-group {
+            display: block;
+
+            @include lg {
+                display: none;
+            }
+
+        }
+
+        .seek-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+
+            .seek-bar {
+                -webkit-appearance: none;
+                appearance: none;
+                background: transparent;
+                cursor: pointer;
+                width: 8rem;
+                height: 2px;
+                border-radius: 5px;
+                outline: none;
+                background-color: #ccc;
+                transition: background-color 0.2s;
+            }
+
+            .seek-bar::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #4CAF50;
+                cursor: pointer;
+            }
+
+            .seek-bar::-moz-range-thumb {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #4CAF50;
+                cursor: pointer;
+            }
+
+            .current-time, .total-time {
+                font-size: 0.8rem;
+            }
+        }
+    }
+
+    /* ====== COLUMN 2 ====== */
+    .col-two {
+        display: none;
+
+        @include lg {
+            width: 55%;
+            height: 100%;
+            display: block;
+            background-color: blueviolet;
+        }
+
+        .desktop-text-group {
+            p {
+                text-align: start;
+            }
+        }
+    }
+    
 }

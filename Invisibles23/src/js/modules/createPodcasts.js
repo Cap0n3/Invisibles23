@@ -12,7 +12,6 @@ export function createPodcasts() {
 
     linkArray.forEach((link) => {
         let podcastPlayer = new PodcastPlayer(link);
-        console.log("Created a new instance of PodcastPlayer");
         podcastPlayer.attachTo(playerContainer);
     });
 }

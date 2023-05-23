@@ -194,10 +194,98 @@ nav.show {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 350px;
+  min-width: 280px;
+  height: auto;
   padding: 20px;
   background-color: aqua;
   border-radius: 15px;
+  overflow: hidden;
+  /* ====== COLUMN 1 ====== */
+  /* ====== COLUMN 2 ====== */
+}
+@media screen and (min-width: 992px) {
+  .podcast-player {
+    height: 350px;
+  }
+}
+.podcast-player .col-one {
+  width: 100%;
+  min-width: 230px;
+  height: 100%;
+  padding: 15px;
+  background-color: beige;
+}
+@media screen and (min-width: 992px) {
+  .podcast-player .col-one {
+    width: 45%;
+  }
+}
+.podcast-player .col-one .podcast-image {
+  width: 100%;
+  min-width: 120px;
+  max-width: 200px;
+  height: auto;
+  border-radius: 100%;
+}
+.podcast-player .col-one .mobile-text-group {
+  display: block;
+}
+@media screen and (min-width: 992px) {
+  .podcast-player .col-one .mobile-text-group {
+    display: none;
+  }
+}
+.podcast-player .col-one .seek-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.podcast-player .col-one .seek-group .seek-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 8rem;
+  height: 2px;
+  border-radius: 5px;
+  outline: none;
+  background-color: #ccc;
+  transition: background-color 0.2s;
+}
+.podcast-player .col-one .seek-group .seek-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+.podcast-player .col-one .seek-group .seek-bar::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+.podcast-player .col-one .seek-group .current-time, .podcast-player .col-one .seek-group .total-time {
+  font-size: 0.8rem;
+}
+.podcast-player .col-two {
+  display: none;
+}
+@media screen and (min-width: 992px) {
+  .podcast-player .col-two {
+    width: 55%;
+    height: 100%;
+    display: block;
+    background-color: blueviolet;
+  }
+}
+.podcast-player .col-two .desktop-text-group p {
+  text-align: start;
 }
 
 /* ==================== */
