@@ -205,7 +205,7 @@ nav.show {
 }
 @media screen and (min-width: 992px) {
   .podcast-player {
-    height: 350px;
+    height: 450px;
   }
 }
 .podcast-player .col-one {
@@ -371,6 +371,11 @@ body .social-icons {
 }
 body .social-icons:hover {
   color: #00456c;
+}
+body i {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #002E48;
 }
 body .normal-input {
   background-color: transparent;

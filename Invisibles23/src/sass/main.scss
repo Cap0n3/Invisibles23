@@ -56,6 +56,12 @@ body {
         }
     }
 
+    i {
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: $font-deep-blue;
+    }
+
     .normal-input {
         background-color : transparent;
         border: 1px solid $font-deep-blue;

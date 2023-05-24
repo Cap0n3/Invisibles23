@@ -11,6 +11,10 @@ function initialize() {
 
     // For testing purposes
     createPodcasts();
+
+    // Initialize bootstrap popovers (to remove if not used)
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 }
 
 window.onload = initialize;
