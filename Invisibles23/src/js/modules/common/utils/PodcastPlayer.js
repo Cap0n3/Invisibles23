@@ -230,21 +230,27 @@ export class PodcastPlayer {
         const shareButton = document.createElement('i');
         shareButton.className = 'bi bi-share';
         shareButton.setAttribute('data-bs-toggle', 'modal');
-        shareButton.setAttribute('data-bs-target', '#shareModal');
+        shareButton.setAttribute('data-bs-target', `#shareModal_${this.audioUrl}`);
         playerControls.appendChild(shareButton);
 
         // Share modal
         const shareModal = document.createElement('div');
         shareModal.className = 'modal fade';
-        shareModal.id = 'shareModal';
+        shareModal.id = `shareModal_${this.audioUrl}`; // Add unique identifier to the modal ID
         shareModal.setAttribute('tabindex', '-1');
         shareModal.setAttribute('aria-labelledby', 'shareModalLabel');
         shareModal.setAttribute('aria-hidden', 'true');
+        // shareButton.addEventListener('click', () => {
+        //     const modal = document.getElementById(shareModal.id);
+        //     const bootstrapModal = new bootstrap.Modal(modal); // Create a new Bootstrap modal instance
+        //     bootstrapModal.show(); // Show the modal
+        // });
+
         shareModal.innerHTML = `
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 id="shareModalLabel" class="modal-title">Partagez le podcast !</h4>
+                        <h4 id="${shareModal.id}" class="modal-title">Partagez le podcast !</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -253,6 +259,11 @@ export class PodcastPlayer {
                             <i class="share-icons social-icons bi bi-twitter"></i>
                             <i class="share-icons social-icons bi bi-linkedin"></i>
                             <i class="share-icons social-icons bi bi-envelope"></i>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-center">
+                            <input type="text" class="share-link" value="${this.audioUrl}" />
+                            <button class="btn btn-primary copy-button">Copier</button>
                         </div>
                     </div>
                 </div>
