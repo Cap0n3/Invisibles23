@@ -113,6 +113,8 @@ export class PodcastPlayer {
     // Function to attach event listeners to the share icons
     attachShareEventListeners() {
         const shareIcons = document.querySelectorAll('.share-icons');
+        const copyLinkButton = document.getElementById(`copyButton_${this.audioUrl}`);
+        
         shareIcons.forEach((icon) => {
             icon.addEventListener('click', (event) => {
                 const linkToShare = this.audioUrl;
@@ -136,6 +138,12 @@ export class PodcastPlayer {
                         break;
                 }
             });
+        });
+
+        copyLinkButton.addEventListener('click', () => {
+            const linkToShare = this.audioUrl;
+            navigator.clipboard.writeText(linkToShare);
+            console.log(this.audioUrl);
         });
     }
 
@@ -240,12 +248,7 @@ export class PodcastPlayer {
         shareModal.setAttribute('tabindex', '-1');
         shareModal.setAttribute('aria-labelledby', 'shareModalLabel');
         shareModal.setAttribute('aria-hidden', 'true');
-        // shareButton.addEventListener('click', () => {
-        //     const modal = document.getElementById(shareModal.id);
-        //     const bootstrapModal = new bootstrap.Modal(modal); // Create a new Bootstrap modal instance
-        //     bootstrapModal.show(); // Show the modal
-        // });
-
+        
         shareModal.innerHTML = `
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -261,9 +264,9 @@ export class PodcastPlayer {
                             <i class="share-icons social-icons bi bi-envelope"></i>
                         </div>
                         <hr />
-                        <div class="d-flex justify-content-center">
-                            <input type="text" class="share-link" value="${this.audioUrl}" />
-                            <button class="btn btn-primary copy-button">Copier</button>
+                        <div class="d-flex justify-content-center gap-5">   
+                            <input type="text" class="share-link form-control" value="${this.audioUrl}" />
+                            <button class="btn btn-primary copy-button" id="copyButton_${this.audioUrl}">Copier</button>
                         </div>
                     </div>
                 </div>
