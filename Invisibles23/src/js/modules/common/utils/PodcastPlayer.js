@@ -2,9 +2,15 @@
  * PodcastPlayer class to play audio files from a URL
  */
 export class PodcastPlayer {
-    constructor(audioUrl) {
-        this.audioUrl = audioUrl;
-        this.audioElement = new Audio(audioUrl);
+    constructor(podcastData) {
+        this.podcastID = podcastData.id;
+        this.podcastImage = podcastData.image_url;
+        this.podcastTitle = podcastData.title;
+        this.podcastDescription = podcastData.description;
+        this.podcastDateCreation = this.convertDateFormat(podcastData.created_at);
+        this.audioUrl = podcastData.audioUrl;
+        // Create the <audio> element
+        this.audioElement = new Audio(podcastData.audioUrl);
         // Play button
         this.playButton = document.createElement('i');
         this.playButton.className = 'bi bi-play-circle';
@@ -112,8 +118,8 @@ export class PodcastPlayer {
 
     // Function to attach event listeners to the share icons
     attachShareEventListeners() {
-        const shareIcons = document.querySelectorAll('.share-icons');
-        const copyLinkButton = document.getElementById(`copyButton_${this.audioUrl}`);
+        const shareIcons = document.querySelectorAll(`.share-icons-${this.podcastID}`);
+        const copyLinkButton = document.getElementById(`copyButton_${this.podcastID}`);
         
         shareIcons.forEach((icon) => {
             icon.addEventListener('click', (event) => {
@@ -142,7 +148,22 @@ export class PodcastPlayer {
 
         copyLinkButton.addEventListener('click', () => {
             const linkToShare = this.audioUrl;
-            navigator.clipboard.writeText(linkToShare);
+            // navigator.clipboard.writeText(linkToShare);
+            
+            navigator.clipboard.writeText(linkToShare).then(
+                () => {
+                    /* clipboard successfully set */
+                    console.log("clipboard successfully set");
+                    copyLinkButton.textContent = 'Copié !';
+                    setTimeout(() => {
+                        copyLinkButton.textContent = 'Copier';
+                    }, 2000);
+                },
+                () => {
+                    /* clipboard write failed */
+                    console.log("clipboard write failed");
+                }
+            );
             console.log(this.audioUrl);
         });
     }
@@ -190,6 +211,34 @@ export class PodcastPlayer {
          */
         window.location.reload();
     }
+
+    convertDateFormat(dateString) {
+        const date = new Date(dateString);
+        
+        // Extracting the components
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+        
+        // Padding the values with leading zeros if needed
+        const formattedMonth = month.toString().padStart(2, '0');
+        const formattedDay = day.toString().padStart(2, '0');
+        const formattedHours = hours.toString().padStart(2, '0');
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        // const formattedSeconds = seconds.toString().padStart(2, '0');
+        
+        // Creating the readable date and time string
+        const readableDate = `${formattedDay}-${formattedMonth}-${year}`;
+        const readableTime = `${formattedHours}:${formattedMinutes}`;
+        
+        return {
+          date: readableDate,
+          time: readableTime
+        };
+    }
   
     // =============================================== //
     // === Attach the podcast player to an element === //
@@ -207,16 +256,15 @@ export class PodcastPlayer {
         // Podcast Image
         const image = document.createElement('img');
         image.className = 'podcast-image';
-        image.src = 'https://profilemagazine.com/wp-content/uploads/2020/04/Ajmere-Dale-Square-thumbnail.jpg';
+        image.src = this.podcastImage;
 
         // Mobile text group (hidden by default)
         const mobileTextGroup = document.createElement('div');
         mobileTextGroup.className = 'mobile-text-group hidden';
         const mobileTitle = document.createElement('h3');
-        mobileTitle.textContent = 'Podcast Title';
+        mobileTitle.textContent = this.podcastTitle || 'Sans titre';
         const mobileText = document.createElement('p');
-        mobileText.textContent =
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla euismod, nisl quis ultrices ultricies, nunc nisl aliquam nunc, quis aliquet nisl nunc eget nisl.';
+        mobileText.textContent = this.podcastDescription || 'Pas de description disponible ...';
 
         mobileTextGroup.appendChild(mobileTitle);
         mobileTextGroup.appendChild(mobileText);
@@ -238,13 +286,13 @@ export class PodcastPlayer {
         const shareButton = document.createElement('i');
         shareButton.className = 'bi bi-share';
         shareButton.setAttribute('data-bs-toggle', 'modal');
-        shareButton.setAttribute('data-bs-target', `#shareModal_${this.audioUrl}`);
+        shareButton.setAttribute('data-bs-target', `#shareModal_${this.podcastID}`);
         playerControls.appendChild(shareButton);
 
         // Share modal
         const shareModal = document.createElement('div');
         shareModal.className = 'modal fade';
-        shareModal.id = `shareModal_${this.audioUrl}`; // Add unique identifier to the modal ID
+        shareModal.setAttribute('id', `shareModal_${this.podcastID}`);
         shareModal.setAttribute('tabindex', '-1');
         shareModal.setAttribute('aria-labelledby', 'shareModalLabel');
         shareModal.setAttribute('aria-hidden', 'true');
@@ -253,20 +301,20 @@ export class PodcastPlayer {
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 id="${shareModal.id}" class="modal-title">Partagez le podcast !</h4>
+                        <h4 class="modal-title" id="shareModalLabel">Partagez le podcast !</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="d-flex gap-5 justify-content-center">
-                            <i class="share-icons social-icons bi bi-facebook"></i>
-                            <i class="share-icons social-icons bi bi-twitter"></i>
-                            <i class="share-icons social-icons bi bi-linkedin"></i>
-                            <i class="share-icons social-icons bi bi-envelope"></i>
+                            <i class="share-icons-${this.podcastID} social-icons bi bi-facebook"></i>
+                            <i class="share-icons-${this.podcastID} social-icons bi bi-twitter"></i>
+                            <i class="share-icons-${this.podcastID} social-icons bi bi-linkedin"></i>
+                            <i class="share-icons-${this.podcastID} social-icons bi bi-envelope"></i>
                         </div>
                         <hr />
-                        <div class="d-flex justify-content-center gap-5">   
+                        <div class="d-flex justify-content-center gap-3">   
                             <input type="text" class="share-link form-control" value="${this.audioUrl}" />
-                            <button class="btn btn-primary copy-button" id="copyButton_${this.audioUrl}">Copier</button>
+                            <button class="btn btn-primary copy-button" id="copyButton_${this.podcastID}">Copier</button>
                         </div>
                     </div>
                 </div>
@@ -291,21 +339,27 @@ export class PodcastPlayer {
         // Podcast Title and Text
         const desktopTextGroup = document.createElement('div');
         desktopTextGroup.className = 'desktop-text-group';
-        const title = document.createElement('h3');
-        title.textContent = 'Podcast Title';
-
+        const title = document.createElement('h4');
+        title.textContent = this.podcastTitle || 'Sans titre';
         const text = document.createElement('p');
-        text.textContent =
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla euismod, nisl quis ultrices ultricies, nunc nisl aliquam nunc, quis aliquet nisl nunc eget nisl.';
-
-        // Append to text groups
+        text.textContent = this.podcastDescription || 'Pas de description disponible ...';
         desktopTextGroup.appendChild(title);
         desktopTextGroup.appendChild(text);
         
+        const dateContainer = document.createElement('div');
+        dateContainer.className = 'date-container d-flex justify-content-between';
+        const timeSpan = document.createElement('span');
+        timeSpan.classList.add('time-group');
+        timeSpan.innerHTML = `<i class="podcast-time-icon bi bi-clock"></i> ${this.podcastDateCreation.time}` || "Pas d'heure disponible ...";
+        const dateSpan = document.createElement('span');
+        dateSpan.classList.add('date-group');
+        dateSpan.innerHTML = `<i class="podcast-date-icon bi bi-calendar"></i> ${this.podcastDateCreation.date}` || "Pas de date disponible ...";
+        dateContainer.appendChild(timeSpan);
+        dateContainer.appendChild(dateSpan);
 
         // Append to colTwo
         colTwo.appendChild(desktopTextGroup);
-        //colTwo.appendChild(mobileTextGroup);
+        colTwo.appendChild(dateContainer);
 
         // === Append columns to podcast container === //
         podcastContainer.appendChild(colOne);

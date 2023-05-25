@@ -280,12 +280,16 @@ nav.show {
   .podcast-player .col-two {
     width: 55%;
     height: 100%;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: blueviolet;
   }
 }
 .podcast-player .col-two .desktop-text-group p {
   text-align: start;
+  max-height: 220px;
+  overflow: auto;
 }
 
 /* ==================== */
