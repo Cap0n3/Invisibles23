@@ -233,6 +233,10 @@ nav.show {
   align-items: center;
   gap: 15px;
 }
+.podcast-player .col-one .audio-controls .play-btn {
+  font-size: 1.8rem;
+  cursor: pointer;
+}
 .podcast-player .col-one .mobile-text-group {
   display: block;
 }

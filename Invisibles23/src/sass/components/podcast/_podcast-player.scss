@@ -39,6 +39,12 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
+
+            .play-btn {
+                font-size: 1.8rem;
+                cursor: pointer;
+            }
+            
         }
 
         .mobile-text-group {
