@@ -227,6 +227,12 @@ nav.show {
   height: auto;
   border-radius: 100%;
 }
+.podcast-player .col-one .audio-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
 .podcast-player .col-one .mobile-text-group {
   display: block;
 }

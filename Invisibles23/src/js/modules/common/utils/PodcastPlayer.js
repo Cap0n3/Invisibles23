@@ -13,17 +13,17 @@ export class PodcastPlayer {
         this.audioElement = new Audio(podcastData.audioUrl);
         // Play button
         this.playButton = document.createElement('i');
-        this.playButton.className = 'bi bi-play-circle';
+        this.playButton.className = 'play-btn bi bi-play-circle';
         this.playButton.style.fontSize = '3em';
         this.playButton.addEventListener('click', this.togglePlayback.bind(this));
         this.isPlaying = false;
         // Back and forward buttons
         this.backButton = document.createElement('i');
-        this.backButton.className = 'bi bi-arrow-counterclockwise';
+        this.backButton.className = 'bck-btn bi bi-arrow-counterclockwise';
         this.backButton.addEventListener('click', this.backTenSeconds.bind(this));
 
         this.forwardButton = document.createElement('i');
-        this.forwardButton.className = 'bi bi-arrow-clockwise';
+        this.forwardButton.className = 'fwd-btn bi bi-arrow-clockwise';
         this.forwardButton.addEventListener('click', this.forwardTenSeconds.bind(this));
         // Seek bar
         this.seekBar = document.createElement('input');
@@ -196,7 +196,7 @@ export class PodcastPlayer {
             'linkedin-share-dialog',
             'width=800,height=600'
         );
-    }    
+    } 
 
     // Function to share the podcast via email
     shareViaEmail(linkToShare) {
@@ -211,6 +211,53 @@ export class PodcastPlayer {
          */
         window.location.reload();
     }
+
+    // ======================== //
+    // === Helper functions === //
+    // ======================== //
+
+    /*
+    * Function to create an HTML element
+    * @param {string} tag - The HTML tag to create
+    * @param {string} content - The content of the element
+    * @param {object} attributes - The attributes of the element
+    * @returns {HTMLElement} The HTML element
+    * 
+    * Example of use :
+    * const element = createHTML('div', 'Hello world', { className: 'container', id: 'main' });
+    * document.body.appendChild(element);
+    * 
+    */
+
+    /**
+     * Function to create an HTML element
+     * @param {string} tag - The HTML tag to create 
+     * @param {string} content - The content of the element 
+     * @param {object} attributes - The attributes of the element 
+     * @returns {HTMLElement} The HTML element
+     * 
+     * Example of use :
+     * const element = createHTML('div', 'Hello world', { className: 'container', id: 'main' });
+     * document.body.appendChild(element);
+     */
+    createHTML(tag, content, { className = '', ...attributes } = {}) {
+        const element = document.createElement(tag);
+    
+        if (content) {
+          element.textContent = content;
+        }
+    
+        if (className) {
+          element.classList.add(className);
+        }
+    
+        Object.entries(attributes).forEach(([key, value]) => {
+          element.setAttribute(key, value);
+        });
+    
+        return element;
+    }
+    
 
     convertDateFormat(dateString) {
         const date = new Date(dateString);
@@ -253,12 +300,10 @@ export class PodcastPlayer {
         const colOne = document.createElement('div');
         colOne.className = 'col-one';
 
-        // Podcast Image
-        const image = document.createElement('img');
-        image.className = 'podcast-image';
-        image.src = this.podcastImage;
+        // == Podcast Image == //
+        const image = this.createHTML('img', null, { className: 'podcast-image', src: this.podcastImage });
 
-        // Mobile text group (hidden by default)
+        // Mobile text group (hidden by default) == //
         const mobileTextGroup = document.createElement('div');
         mobileTextGroup.className = 'mobile-text-group hidden';
         const mobileTitle = document.createElement('h3');
@@ -269,12 +314,15 @@ export class PodcastPlayer {
         mobileTextGroup.appendChild(mobileTitle);
         mobileTextGroup.appendChild(mobileText);
 
-        // Player controls
+        // == Player controls == //
         const playerControls = document.createElement('div');
         playerControls.className = 'player-controls';
-        playerControls.appendChild(this.backButton);
-        playerControls.appendChild(this.playButton);
-        playerControls.appendChild(this.forwardButton);
+        const audioControls = document.createElement('div');
+        audioControls.className = 'audio-controls';
+        audioControls.appendChild(this.backButton);
+        audioControls.appendChild(this.playButton);
+        audioControls.appendChild(this.forwardButton);
+        playerControls.appendChild(audioControls);
         const seekGroup = document.createElement('div'); // seek bar and time
         seekGroup.className = 'seek-group';
         seekGroup.appendChild(this.currentTime);
@@ -320,9 +368,32 @@ export class PodcastPlayer {
                 </div>
             </div>
         `;
-        // Attach event listeners to share icons
+        // Attach event listeners to share icons & copy button
         shareButton.addEventListener('click', this.attachShareEventListeners.bind(this));
 
+        // Download button
+        const downloadButton = document.createElement('i');
+        downloadButton.className = 'bi bi-download';
+        
+        downloadButton.addEventListener('click', async () => {
+            try {
+                const handle = await window.showSaveFilePicker();
+                const writable = await handle.createWritable();
+          
+                const response = await fetch(this.audioUrl);
+                const blob = await response.blob();
+          
+                const contentType = response.headers.get('Content-Type');
+                const file = new File([blob], this.podcastTitle, { type: contentType });
+          
+                await writable.write(file);
+                await writable.close();
+            } catch (error) {
+                console.error('Error while saving the file:', error);
+            }
+        });
+        
+        playerControls.appendChild(downloadButton);
 
         // Append to colOne
         colOne.appendChild(image);

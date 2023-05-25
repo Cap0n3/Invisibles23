@@ -34,6 +34,13 @@
             border-radius: 100%;
         }
 
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
         .mobile-text-group {
             display: block;
 
