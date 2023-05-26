@@ -34,17 +34,17 @@
             border-radius: 100%;
         }
 
-        .audio-controls {
+        .audio-ctrl-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
 
-            .play-btn {
-                font-size: 1.8rem;
+            .playPause-btn {
+                font-size: 3rem;
                 cursor: pointer;
             }
-            
+
         }
 
         .mobile-text-group {
@@ -56,7 +56,7 @@
 
         }
 
-        .seek-group {
+        .seek-bar-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -113,12 +113,18 @@
             background-color: blueviolet;
         }
 
-        .desktop-text-group {
+        .desktop-text-wrapper {
             p {
                 text-align: start;
                 max-height: 220px;
                 overflow: auto;
             }
+        }
+
+        .date-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     }
     

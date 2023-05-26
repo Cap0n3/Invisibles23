@@ -11,90 +11,33 @@ export class PodcastPlayer {
         this.audioUrl = podcastData.audioUrl;
         // Create the <audio> element
         this.audioElement = new Audio(podcastData.audioUrl);
-        // Play button
-        this.playButton = document.createElement('i');
-        this.playButton.className = 'play-btn bi bi-play-circle';
-        this.playButton.style.fontSize = '3em';
-        this.playButton.addEventListener('click', this.togglePlayback.bind(this));
         this.isPlaying = false;
-        // Back and forward buttons
-        this.backButton = document.createElement('i');
-        this.backButton.className = 'bck-btn bi bi-arrow-counterclockwise';
-        this.backButton.addEventListener('click', this.backTenSeconds.bind(this));
-
-        this.forwardButton = document.createElement('i');
-        this.forwardButton.className = 'fwd-btn bi bi-arrow-clockwise';
-        this.forwardButton.addEventListener('click', this.forwardTenSeconds.bind(this));
-        // Seek bar
-        this.seekBar = document.createElement('input');
-        this.seekBar.className = 'seek-bar';
-        this.seekBar.type = 'range';
-        this.seekBar.min = 0;
-        this.seekBar.max = 100;
-        this.seekBar.value = 0;
-        this.currentTime = document.createElement('span');
-        this.currentTime.className = 'current-time';
-        this.currentTime.textContent = '00:00';
-        this.totalTime = document.createElement('span');
-        this.totalTime.className = 'total-time';
-        this.totalTime.textContent = '00:00';
-        this.seekBar.addEventListener('input', this.seek.bind(this));
-        
-
-        // Initialize totalTime text content on load
-        this.audioElement.addEventListener('loadedmetadata', () => {
-            this.durationMinutes = Math.floor(this.audioElement.duration / 60);
-            this.durationSeconds = Math.floor(this.audioElement.duration - this.durationMinutes * 60);
-            this.totalTime.textContent = this.formatTime(this.durationMinutes) + ':' + this.formatTime(this.durationSeconds);
-        });
-
-        // Update the seek bar as the audio plays
-        this.audioElement.addEventListener('timeupdate', () => {
-            if (!isNaN(this.audioElement.duration) && !isNaN(this.audioElement.currentTime)) {
-                this.seekBar.value = (this.audioElement.currentTime / this.audioElement.duration) * 100;
-
-                // Calculate the minutes and seconds of time left
-                let currentMinutes = Math.floor(this.audioElement.currentTime / 60);
-                let currentSeconds = Math.floor(this.audioElement.currentTime - currentMinutes * 60);
-                let durationMinutes = Math.floor(this.audioElement.duration / 60);
-                let durationSeconds = Math.floor(this.audioElement.duration - durationMinutes * 60);
-
-                // Add a leading zero to the minutes and seconds if they are less than 10
-                this.currentTime.textContent = this.formatTime(currentMinutes) + ':' + this.formatTime(currentSeconds);
-                this.totalTime.textContent = this.formatTime(durationMinutes) + ':' + this.formatTime(durationSeconds);
-            }
-        });
-
-        // Reset the seek bar when the audio ends
-        this.audioElement.addEventListener('ended', () => {
-                this.seekBar.value = 0;
-                this.currentTime.textContent = '00:00';
-                this.totalTime.textContent = '00:00';
-                this.isPlaying = false;
-                this.playButton.className = 'bi bi-play-circle';
-            }
-        );
     }
   
-    togglePlayback() {
+    togglePlayback(targetBtn) {
         if (this.isPlaying) {
-            this.stop();
+            this.pause(targetBtn);
         } else {
-            this.play();
+            this.play(targetBtn);
         }
     }
   
-    play() {
+    play(targetBtn) {
         this.audioElement.play();
         this.isPlaying = true;
-        this.playButton.className = 'bi bi-pause-circle';
+        targetBtn.className = 'playPause-btn bi bi-pause-circle';
     }
   
+    pause(targetBtn) {
+        this.audioElement.pause();
+        this.isPlaying = false;
+        targetBtn.className = 'playPause-btn bi bi-play-circle';
+    }
+
     stop() {
         this.audioElement.pause();
         this.audioElement.currentTime = 0;
         this.isPlaying = false;
-        this.playButton.className = 'bi bi-play-circle';
     }
   
     backTenSeconds() {
@@ -105,9 +48,9 @@ export class PodcastPlayer {
         this.audioElement.currentTime += 10;
     }
 
-    seek() {
+    seek(seekBarValue) {
         // Calculate the new time when the seek bar is changed
-        let seekTo = this.audioElement.duration * (this.seekBar.value / 100); 
+        let seekTo = this.audioElement.duration * (seekBarValue / 100); 
         // Update the audio time to the new time
         this.audioElement.currentTime = seekTo;
     }
@@ -216,39 +159,50 @@ export class PodcastPlayer {
     // === Helper functions === //
     // ======================== //
 
-    /*
-    * Function to create an HTML element
-    * @param {string} tag - The HTML tag to create
-    * @param {string} content - The content of the element
-    * @param {object} attributes - The attributes of the element
-    * @returns {HTMLElement} The HTML element
-    * 
-    * Example of use :
-    * const element = createHTML('div', 'Hello world', { className: 'container', id: 'main' });
-    * document.body.appendChild(element);
-    * 
-    */
-
     /**
-     * Function to create an HTML element
-     * @param {string} tag - The HTML tag to create 
-     * @param {string} content - The content of the element 
-     * @param {object} attributes - The attributes of the element 
-     * @returns {HTMLElement} The HTML element
-     * 
-     * Example of use :
-     * const element = createHTML('div', 'Hello world', { className: 'container', id: 'main' });
-     * document.body.appendChild(element);
+     * Creates an HTML element dynamically.
+     *
+     * @param {string} tag - The HTML tag name of the element to create.
+     * @param {Object} options - Options for configuring the element.
+     * @param {string} [options.text=''] - The text content of the element.
+     * @param {string} [options.html=''] - The inner HTML of the element.
+     * @param {string} [options.className=''] - The class name to apply to the element.
+     * @param {Object} [attributes={}] - Additional attributes to set on the element.
+     * @returns {HTMLElement} The created HTML element.
+     *
+     * @example
+     * // Create a simple div with nothing inside
+     * const divElement = createHtmlTag('div');
+     *
+     * @example
+     * // Create a p with text "Hello World!"
+     * const pElement = createHtmlTag('p', { text: 'Hello World!' });
+     *
+     * @example
+     * // Create an img with className "myImage" and src "www.mysource.com"
+     * const imgElement = createHtmlTag('img', { className: 'myImage', src: 'www.mysource.com' });
+     *
+     * @example
+     * // Create a div with custom innerHTML, className, and attributes
+     * const customElement = createHtmlTag('div', {
+     *   html: '<span>Custom Content</span>',
+     *   className: 'myCustomClass',
+     *   dataAttribute: 'example',
+     * });
      */
-    createHTML(tag, content, { className = '', ...attributes } = {}) {
+    createHtmlTag(tag, {text = '', html = '', className = '', ...attributes } = {}) {
         const element = document.createElement(tag);
     
-        if (content) {
-          element.textContent = content;
+        if (text) {
+          element.textContent = text;
+        }
+
+        if (html) {
+            element.innerHTML = html;
         }
     
         if (className) {
-          element.classList.add(className);
+          element.className = className;
         }
     
         Object.entries(attributes).forEach(([key, value]) => {
@@ -291,59 +245,126 @@ export class PodcastPlayer {
     // === Attach the podcast player to an element === //
     // =============================================== //
     attachTo(element) {
-        const podcastContainer = document.createElement('div');
-        podcastContainer.className = 'podcast-player';
-        
+        // Create the podcast container
+        const podcastContainer = this.createHtmlTag('div', { className: 'podcast-player' });
+
         // ===================================== //
         // === Column 1 of podcast container === //
         // ===================================== //
-        const colOne = document.createElement('div');
-        colOne.className = 'col-one';
+        const colOne = this.createHtmlTag('div', { className: 'col-one' });
 
         // == Podcast Image == //
-        const image = this.createHTML('img', null, { className: 'podcast-image', src: this.podcastImage });
+        const image = this.createHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });
 
-        // Mobile text group (hidden by default) == //
-        const mobileTextGroup = document.createElement('div');
-        mobileTextGroup.className = 'mobile-text-group hidden';
-        const mobileTitle = document.createElement('h3');
-        mobileTitle.textContent = this.podcastTitle || 'Sans titre';
-        const mobileText = document.createElement('p');
-        mobileText.textContent = this.podcastDescription || 'Pas de description disponible ...';
-
+        // == Mobile text group (hidden by default) == //
+        const mobileTextGroup = this.createHtmlTag('div', { className: 'mobile-text-group hidden' });
+        const mobileTitle = this.createHtmlTag('h3', {text: this.podcastTitle || 'Sans titre'});
+        const mobileText = this.createHtmlTag('p', {text: this.podcastDescription || 'Pas de description disponible ...'});
+        // Add title and text to mobile text group
         mobileTextGroup.appendChild(mobileTitle);
         mobileTextGroup.appendChild(mobileText);
 
-        // == Player controls == //
-        const playerControls = document.createElement('div');
-        playerControls.className = 'player-controls';
-        const audioControls = document.createElement('div');
-        audioControls.className = 'audio-controls';
-        audioControls.appendChild(this.backButton);
-        audioControls.appendChild(this.playButton);
-        audioControls.appendChild(this.forwardButton);
-        playerControls.appendChild(audioControls);
-        const seekGroup = document.createElement('div'); // seek bar and time
-        seekGroup.className = 'seek-group';
-        seekGroup.appendChild(this.currentTime);
-        seekGroup.appendChild(this.seekBar);
-        seekGroup.appendChild(this.totalTime);
-        playerControls.appendChild(seekGroup);
+        // == Controls container (where all podcast controls are) == //
+        const controlsContainer = this.createHtmlTag('div', { className: 'player-controls' });
+        
+        // Play/Pause button
+        const playPauseButton = this.createHtmlTag('i', { className: 'playPause-btn bi bi-play-circle' });
+        playPauseButton.addEventListener('click', (e) => {
+            this.togglePlayback(e.target);
+        });
 
-        // Share button
+        // Backward and forward buttons
+        const backButton = this.createHtmlTag('i', { className: 'bck-btn bi bi-arrow-counterclockwise' });
+        backButton.addEventListener('click', () => {
+            this.backTenSeconds();
+        });
+
+        const forwardButton = this.createHtmlTag('i', { className: 'fwd-btn bi bi-arrow-clockwise' });
+        forwardButton.addEventListener('click', () => {
+            this.forwardTenSeconds();
+        });
+        
+        // Audio controls wrapper (back, play/pause, forward)
+        const audioCTRLwrapper = this.createHtmlTag('div', { className: 'audio-ctrl-wrapper bg-danger' });
+        audioCTRLwrapper.appendChild(backButton);
+        audioCTRLwrapper.appendChild(playPauseButton);
+        audioCTRLwrapper.appendChild(forwardButton);
+        
+        // Add audio controls wrapper to controls container
+        controlsContainer.appendChild(audioCTRLwrapper);
+        
+        // == Seek bar == //
+        const seekBarWrapper = this.createHtmlTag('div', { className: 'seek-bar-wrapper' });
+
+        const seekBar = this.createHtmlTag('input', { 
+            className: 'seek-bar', 
+            type: 'range', 
+            min: 0, 
+            max: 100, 
+            value: 0 
+        });
+        seekBar.addEventListener('input', (e) => {
+            this.seek(e.target.value);
+        });
+
+        const currentTime = this.createHtmlTag('span', { className: 'current-time', text: '00:00' });
+        const totalTime = this.createHtmlTag('span', { className: 'total-time', text: '00:00' });
+
+        // Initialize totalTime text content on load
+        this.audioElement.addEventListener('loadedmetadata', () => {
+            let durationMinutes = Math.floor(this.audioElement.duration / 60);
+            let durationSeconds = Math.floor(this.audioElement.duration - durationMinutes * 60);
+            totalTime.textContent = this.formatTime(durationMinutes) + ':' + this.formatTime(durationSeconds);
+        });
+
+        // Update the seek bar as the audio plays
+        this.audioElement.addEventListener('timeupdate', () => {
+            if (!isNaN(this.audioElement.duration) && !isNaN(this.audioElement.currentTime)) {
+                seekBar.value = (this.audioElement.currentTime / this.audioElement.duration) * 100;
+
+                // Calculate the minutes and seconds of time left
+                let currentMinutes = Math.floor(this.audioElement.currentTime / 60);
+                let currentSeconds = Math.floor(this.audioElement.currentTime - currentMinutes * 60);
+                let durationMinutes = Math.floor(this.audioElement.duration / 60);
+                let durationSeconds = Math.floor(this.audioElement.duration - durationMinutes * 60);
+
+                // Add a leading zero to the minutes and seconds if they are less than 10
+                currentTime.textContent = this.formatTime(currentMinutes) + ':' + this.formatTime(currentSeconds);
+                totalTime.textContent = this.formatTime(durationMinutes) + ':' + this.formatTime(durationSeconds);
+            }
+        });
+
+        // Reset the seek bar when the audio ends
+        this.audioElement.addEventListener('ended', () => {
+                seekBar.value = 0;
+                currentTime.textContent = '00:00';
+                playPauseButton.className = 'playPause-btn bi bi-play-circle';
+                this.isPlaying = false;
+        });
+
+        // Add seek bar to seek bar wrapper
+        seekBarWrapper.appendChild(currentTime);
+        seekBarWrapper.appendChild(seekBar);
+        seekBarWrapper.appendChild(totalTime);
+        
+        // Add seek bar to controls container
+        controlsContainer.appendChild(seekBarWrapper);
+
+        // == Share button == //
         const shareButton = document.createElement('i');
         shareButton.className = 'bi bi-share';
         shareButton.setAttribute('data-bs-toggle', 'modal');
         shareButton.setAttribute('data-bs-target', `#shareModal_${this.podcastID}`);
-        playerControls.appendChild(shareButton);
+        controlsContainer.appendChild(shareButton);
 
         // Share modal
-        const shareModal = document.createElement('div');
-        shareModal.className = 'modal fade';
-        shareModal.setAttribute('id', `shareModal_${this.podcastID}`);
-        shareModal.setAttribute('tabindex', '-1');
-        shareModal.setAttribute('aria-labelledby', 'shareModalLabel');
-        shareModal.setAttribute('aria-hidden', 'true');
+        const shareModal = this.createHtmlTag('div', {
+            className: 'modal fade',
+            id: `shareModal_${this.podcastID}`,
+            tabindex: '-1',
+            'aria-labelledby': 'shareModalLabel',
+            'aria-hidden': 'true'
+        });
         
         shareModal.innerHTML = `
             <div class="modal-dialog modal-dialog-centered">
@@ -372,8 +393,7 @@ export class PodcastPlayer {
         shareButton.addEventListener('click', this.attachShareEventListeners.bind(this));
 
         // Download button
-        const downloadButton = document.createElement('i');
-        downloadButton.className = 'bi bi-download';
+        const downloadButton = this.createHtmlTag('i', { className: 'bi bi-download' });
         
         downloadButton.addEventListener('click', async () => {
             try {
@@ -393,44 +413,53 @@ export class PodcastPlayer {
             }
         });
         
-        playerControls.appendChild(downloadButton);
+        // Add download button to controls container
+        controlsContainer.appendChild(downloadButton);
 
         // Append to colOne
         colOne.appendChild(image);
         colOne.appendChild(mobileTextGroup);
-        colOne.appendChild(playerControls);
+        colOne.appendChild(controlsContainer);
         colOne.appendChild(shareModal);
 
         // ===================================== //
         // === Column 2 of podcast container === //
         // ===================================== //
-        const colTwo = document.createElement('div');
-        colTwo.className = 'col-two';
+        const colTwo = this.createHtmlTag('div', { className: 'col-two' });
 
-        // Podcast Title and Text
-        const desktopTextGroup = document.createElement('div');
-        desktopTextGroup.className = 'desktop-text-group';
-        const title = document.createElement('h4');
-        title.textContent = this.podcastTitle || 'Sans titre';
-        const text = document.createElement('p');
-        text.textContent = this.podcastDescription || 'Pas de description disponible ...';
-        desktopTextGroup.appendChild(title);
-        desktopTextGroup.appendChild(text);
+        // == Podcast Title and Text == //
+        // Create a wrapper for the title and text (desktop only)
+        const desktopTextWrapper = this.createHtmlTag('div', { className: 'desktop-text-wrapper' });
+
+        // Title and text
+        const title = this.createHtmlTag('h4', { text: this.podcastTitle || 'Sans titre' });
+        const text = this.createHtmlTag('p', { text: this.podcastDescription || 'Pas de description disponible ...' });
         
-        const dateContainer = document.createElement('div');
-        dateContainer.className = 'date-container d-flex justify-content-between';
-        const timeSpan = document.createElement('span');
-        timeSpan.classList.add('time-group');
-        timeSpan.innerHTML = `<i class="podcast-time-icon bi bi-clock"></i> ${this.podcastDateCreation.time}` || "Pas d'heure disponible ...";
-        const dateSpan = document.createElement('span');
-        dateSpan.classList.add('date-group');
-        dateSpan.innerHTML = `<i class="podcast-date-icon bi bi-calendar"></i> ${this.podcastDateCreation.date}` || "Pas de date disponible ...";
-        dateContainer.appendChild(timeSpan);
-        dateContainer.appendChild(dateSpan);
+        // Add title and text to desktop text wrapper
+        desktopTextWrapper.appendChild(title);
+        desktopTextWrapper.appendChild(text);
+        
+        // == Date and time == //
+        // Create a wrapper for the date and time
+        const dateWrapper = this.createHtmlTag('div', { className: 'date-wrapper' });
+        
+        const timeGroup = this.createHtmlTag('span', { 
+            className: 'time-group', 
+            html: `<i class="podcast-time-icon bi bi-clock"></i> ${this.podcastDateCreation.time}` || "Pas d'heure disponible ..." 
+        });
+
+        const dateSpan = this.createHtmlTag('span', {
+            className: 'date-group',
+            html: `<i class="podcast-date-icon bi bi-calendar"></i> ${this.podcastDateCreation.date}` || "Pas de date disponible ..."
+        });
+
+        // Add time and date to date wrapper
+        dateWrapper.appendChild(timeGroup);
+        dateWrapper.appendChild(dateSpan);
 
         // Append to colTwo
-        colTwo.appendChild(desktopTextGroup);
-        colTwo.appendChild(dateContainer);
+        colTwo.appendChild(desktopTextWrapper);
+        colTwo.appendChild(dateWrapper);
 
         // === Append columns to podcast container === //
         podcastContainer.appendChild(colOne);

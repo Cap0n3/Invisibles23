@@ -227,14 +227,14 @@ nav.show {
   height: auto;
   border-radius: 100%;
 }
-.podcast-player .col-one .audio-controls {
+.podcast-player .col-one .audio-ctrl-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 15px;
 }
-.podcast-player .col-one .audio-controls .play-btn {
-  font-size: 1.8rem;
+.podcast-player .col-one .audio-ctrl-wrapper .playPause-btn {
+  font-size: 3rem;
   cursor: pointer;
 }
 .podcast-player .col-one .mobile-text-group {
@@ -245,14 +245,14 @@ nav.show {
     display: none;
   }
 }
-.podcast-player .col-one .seek-group {
+.podcast-player .col-one .seek-bar-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
   margin-top: 10px;
 }
-.podcast-player .col-one .seek-group .seek-bar {
+.podcast-player .col-one .seek-bar-wrapper .seek-bar {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
@@ -264,7 +264,7 @@ nav.show {
   background-color: #ccc;
   transition: background-color 0.2s;
 }
-.podcast-player .col-one .seek-group .seek-bar::-webkit-slider-thumb {
+.podcast-player .col-one .seek-bar-wrapper .seek-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 10px;
@@ -273,14 +273,14 @@ nav.show {
   background: #4CAF50;
   cursor: pointer;
 }
-.podcast-player .col-one .seek-group .seek-bar::-moz-range-thumb {
+.podcast-player .col-one .seek-bar-wrapper .seek-bar::-moz-range-thumb {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: #4CAF50;
   cursor: pointer;
 }
-.podcast-player .col-one .seek-group .current-time, .podcast-player .col-one .seek-group .total-time {
+.podcast-player .col-one .seek-bar-wrapper .current-time, .podcast-player .col-one .seek-bar-wrapper .total-time {
   font-size: 0.8rem;
 }
 .podcast-player .col-two {
@@ -296,10 +296,15 @@ nav.show {
     background-color: blueviolet;
   }
 }
-.podcast-player .col-two .desktop-text-group p {
+.podcast-player .col-two .desktop-text-wrapper p {
   text-align: start;
   max-height: 220px;
   overflow: auto;
+}
+.podcast-player .col-two .date-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* ==================== */
