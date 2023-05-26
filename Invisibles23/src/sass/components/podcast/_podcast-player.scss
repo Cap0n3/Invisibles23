@@ -16,6 +16,10 @@
 
     /* ====== COLUMN 1 ====== */
     .col-one {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
         min-width: 230px;
         height: 100%;
@@ -96,6 +100,19 @@
 
             .current-time, .total-time {
                 font-size: 0.8rem;
+            }
+        }
+
+        .share-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+
+            .share-btn {
+                font-size: 1.5rem;
+                cursor: pointer;
             }
         }
     }

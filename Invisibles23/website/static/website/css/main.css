@@ -209,6 +209,10 @@ nav.show {
   }
 }
 .podcast-player .col-one {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   min-width: 230px;
   height: 100%;
@@ -282,6 +286,17 @@ nav.show {
 }
 .podcast-player .col-one .seek-bar-wrapper .current-time, .podcast-player .col-one .seek-bar-wrapper .total-time {
   font-size: 0.8rem;
+}
+.podcast-player .col-one .share-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+.podcast-player .col-one .share-container .share-btn {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 .podcast-player .col-two {
   display: none;

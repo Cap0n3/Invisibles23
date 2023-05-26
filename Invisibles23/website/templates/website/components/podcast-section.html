@@ -2,43 +2,36 @@
     <div class="row bg-danger">
         <!-- SLIDER FOR LARGE SCREEN -->
         <div id="PodCarousel-large" class="carousel slide d-none d-lg-block bg-danger" data-bs="carousel">
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#PodCarousel-large" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#PodCarousel-large" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <!-- Slide 1 content -->
                     <div class="row">
-                        <div class="col-lg-6 d-flex justify-content-center bg-warning">
-                            <!-- Card 1 content for medium/large screens -->
-                            {% include "./podcast-card.html" with podcast_title="Podcast 1" podcast_id="pod1" %}
-                        </div>
-                        <div class="col-lg-6 d-flex justify-content-center">
-                            <!-- Card 2 content for medium/large screens -->
-                            {% include "./podcast-card.html" with podcast_title="Podcast 2" podcast_id="pod2" %}
-                        </div>
+                        <div id="lastPodcast1" class="col-lg-6 d-flex justify-content-center bg-warning"></div>
+                        <div id="lastPodcast2" class="col-lg-6 d-flex justify-content-center"></div>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <!-- Slide 2 content -->
                     <div class="row">
-                        <div class="col-lg-6 d-flex justify-content-center">
-                            <!-- Card 3 content for medium/large screens -->
-                            {% include "./podcast-card.html" with podcast_title="Podcast 3" podcast_id="pod3" %}
-                        </div>
-                        <div class="col-lg-6 d-flex justify-content-center">
-                            <!-- Card 4 content for medium/large screens -->
-                            {% include "./podcast-card.html" with podcast_title="Podcast 4" podcast_id="pod4" %}
-                        </div>
+                        <div id="lastPodcast3" class="col-lg-6 d-flex justify-content-center"></div>
+                        <div id="lastPodcast4" class="col-lg-6 d-flex justify-content-center"></div>
                     </div>
                 </div>
             </div>
             <!-- Controls -->
-            <button class="carousel-control-prev desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="prev">
+            {% comment %} <button class="carousel-control-prev desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="prev">
                 <span><i class="bi bi-chevron-left" aria-hidden="true"></i></span>
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="next">
                 <span><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
                 <span class="visually-hidden">Next</span>
-            </button>
+            </button> {% endcomment %}
         </div>
         <!-- SLIDER FOR MEDIUM/SMALL SCREEN -->
         <div id="PodCarousel-small" class="carousel slide d-lg-none py-3" data-bs="carousel">

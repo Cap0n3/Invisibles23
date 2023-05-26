@@ -12,8 +12,11 @@ export class PodcastPlayer {
         // Create the <audio> element
         this.audioElement = new Audio(podcastData.audioUrl);
         this.isPlaying = false;
+        this.playPauseButton = this.generateHtmlTag('i', { className: 'playPause-btn bi bi-play-circle' });
     }
   
+    // ========= Podcast player methods ========= //
+
     togglePlayback(targetBtn) {
         if (this.isPlaying) {
             this.pause(targetBtn);
@@ -59,8 +62,50 @@ export class PodcastPlayer {
         return time < 10 ? '0' + time : time;
     }
 
-    // Function to attach event listeners to the share icons
+    // ========= Helper methods ========= //
+
+    // Method to attach event listeners to the share icons
     attachShareEventListeners() {
+        function shareOnFacebook(linkToShare) {
+            // Open a new window with the Facebook share dialog
+            window.open(
+                `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkToShare)}`,
+                'facebook-share-dialog',
+                'width=800,height=600'
+            );
+        }
+
+        function shareOnTwitter(linkToShare) {
+            // Open a new window with the Twitter share dialog
+            window.open(
+                `https://twitter.com/intent/tweet?text=${encodeURIComponent(linkToShare)}`,
+                'twitter-share-dialog',
+                'width=800,height=600'
+            );
+        }
+
+        function shareOnLinkedIn(linkToShare) {
+            // Open a new window with the LinkedIn share dialog
+            window.open(
+                `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(linkToShare)}`,
+                'linkedin-share-dialog',
+                'width=800,height=600'
+            );
+        }
+
+        function shareViaEmail(linkToShare) {
+            const subject = 'Le Podcast "Les Invisibles" de Tamara Pellegrini';
+            const body = `Je souhaiterais partager ce podcast avec toi :\n\n ${linkToShare}`;
+            const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = url;
+            /**
+             * Reload the page after email client is opened to avoid error "Not allowed to launch mailto because a user gesture is required" (security issue)
+             * when the user tries to share different podcasts several times in a row (youtube has a better solution with a new tab opening but I can't find it).
+             * When user share several podcasts in a row, the first share works but the following ones don't and first request is sent again instead.
+             */
+            window.location.reload();
+        }
+
         const shareIcons = document.querySelectorAll(`.share-icons-${this.podcastID}`);
         const copyLinkButton = document.getElementById(`copyButton_${this.podcastID}`);
         
@@ -72,16 +117,16 @@ export class PodcastPlayer {
                 const socialMedia = icon.classList[icon.classList.length - 1];
                 switch (socialMedia) {
                     case 'bi-facebook':
-                        this.shareOnFacebook(linkToShare);
+                        shareOnFacebook(linkToShare);
                         break;
                     case 'bi-twitter':
-                        this.shareOnTwitter(linkToShare);
+                        shareOnTwitter(linkToShare);
                         break;
                     case 'bi-linkedin':
-                        this.shareOnLinkedIn(linkToShare);
+                        shareOnLinkedIn(linkToShare);
                         break;
                     case 'bi-envelope':
-                        this.shareViaEmail(linkToShare);
+                        shareViaEmail(linkToShare);
                         break;
                     default:
                         break;
@@ -111,54 +156,6 @@ export class PodcastPlayer {
         });
     }
 
-    // Function to share the podcast on Facebook
-    shareOnFacebook(linkToShare) {
-        // Open a new window with the Facebook share dialog
-        window.open(
-            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkToShare)}`,
-            'facebook-share-dialog',
-            'width=800,height=600'
-        );
-    }
-
-    // Function to share the podcast on Twitter
-    shareOnTwitter(linkToShare) {
-        // Open a new window with the Twitter share dialog
-        window.open(
-            `https://twitter.com/intent/tweet?text=${encodeURIComponent(linkToShare)}`,
-            'twitter-share-dialog',
-            'width=800,height=600'
-        );
-    }
-
-    // Function to share the podcast on LinkedIn
-    shareOnLinkedIn(linkToShare) {
-        // Open a new window with the LinkedIn share dialog
-        window.open(
-            `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(linkToShare)}`,
-            'linkedin-share-dialog',
-            'width=800,height=600'
-        );
-    } 
-
-    // Function to share the podcast via email
-    shareViaEmail(linkToShare) {
-        const subject = 'Le Podcast "Les Invisibles" de Tamara Pellegrini';
-        const body = `Je souhaiterais partager ce podcast avec toi :\n\n ${linkToShare}`;
-        const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = url;
-        /**
-         * Reload the page after email client is opened to avoid error "Not allowed to launch mailto because a user gesture is required" (security issue)
-         * when the user tries to share different podcasts several times in a row (youtube has a better solution with a new tab opening but I can't find it).
-         * When user share several podcasts in a row, the first share works but the following ones don't and first request is sent again instead.
-         */
-        window.location.reload();
-    }
-
-    // ======================== //
-    // === Helper functions === //
-    // ======================== //
-
     /**
      * Creates an HTML element dynamically.
      *
@@ -172,25 +169,25 @@ export class PodcastPlayer {
      *
      * @example
      * // Create a simple div with nothing inside
-     * const divElement = createHtmlTag('div');
+     * const divElement = generateHtmlTag('div');
      *
      * @example
      * // Create a p with text "Hello World!"
-     * const pElement = createHtmlTag('p', { text: 'Hello World!' });
+     * const pElement = generateHtmlTag('p', { text: 'Hello World!' });
      *
      * @example
      * // Create an img with className "myImage" and src "www.mysource.com"
-     * const imgElement = createHtmlTag('img', { className: 'myImage', src: 'www.mysource.com' });
+     * const imgElement = generateHtmlTag('img', { className: 'myImage', src: 'www.mysource.com' });
      *
      * @example
      * // Create a div with custom innerHTML, className, and attributes
-     * const customElement = createHtmlTag('div', {
+     * const customElement = generateHtmlTag('div', {
      *   html: '<span>Custom Content</span>',
      *   className: 'myCustomClass',
      *   dataAttribute: 'example',
      * });
      */
-    createHtmlTag(tag, {text = '', html = '', className = '', ...attributes } = {}) {
+    generateHtmlTag(tag, {text = '', html = '', className = '', ...attributes } = {}) {
         const element = document.createElement(tag);
     
         if (text) {
@@ -212,7 +209,6 @@ export class PodcastPlayer {
         return element;
     }
     
-
     convertDateFormat(dateString) {
         const date = new Date(dateString);
         
@@ -240,75 +236,102 @@ export class PodcastPlayer {
           time: readableTime
         };
     }
+
+    limitStringByWords(str, limit) {
+        // Split the string into an array of words
+        const words = str.split(' ');
+      
+        // Check if the number of words is already within the limit
+        if (words.length <= limit) {
+          return str;
+        }
+      
+        // Create a new array with the limited number of words
+        const limitedWords = words.slice(0, limit);
+      
+        // Join the limited words back into a string
+        const limitedString = limitedWords.join(' ');
+      
+        return limitedString + " ...";
+    }
   
-    // =============================================== //
-    // === Attach the podcast player to an element === //
-    // =============================================== //
-    attachTo(element) {
-        // Create the podcast container
-        const podcastContainer = this.createHtmlTag('div', { className: 'podcast-player' });
+    // ========= Element creation methods ========= //
+    
+    createPodcastImage() {
+        return this.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
+    }
 
-        // ===================================== //
-        // === Column 1 of podcast container === //
-        // ===================================== //
-        const colOne = this.createHtmlTag('div', { className: 'col-one' });
-
-        // == Podcast Image == //
-        const image = this.createHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });
-
+    createMobileText() {
         // == Mobile text group (hidden by default) == //
-        const mobileTextGroup = this.createHtmlTag('div', { className: 'mobile-text-group hidden' });
-        const mobileTitle = this.createHtmlTag('h3', {text: this.podcastTitle || 'Sans titre'});
-        const mobileText = this.createHtmlTag('p', {text: this.podcastDescription || 'Pas de description disponible ...'});
+        const mobileTextGroup = this.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
+        const mobileTitle = this.generateHtmlTag('h3', {text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre'});
+        const mobileText = this.generateHtmlTag('p', {text: this.podcastDescription || 'Pas de description disponible ...'});
         // Add title and text to mobile text group
         mobileTextGroup.appendChild(mobileTitle);
         mobileTextGroup.appendChild(mobileText);
-
-        // == Controls container (where all podcast controls are) == //
-        const controlsContainer = this.createHtmlTag('div', { className: 'player-controls' });
         
+        return mobileTextGroup;
+    }
+    
+    createDesktopText() {
+        // Create a wrapper for the title and text (desktop only)
+        const desktopTextWrapper = this.generateHtmlTag('div', { className: 'desktop-text-wrapper bg-info' });
+
+        // Title and text
+        const title = this.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre' });
+        const text = this.generateHtmlTag('p', { text: this.podcastDescription || 'Pas de description disponible ...' });
+        
+        // Add title and text to desktop text wrapper
+        desktopTextWrapper.appendChild(title);
+        desktopTextWrapper.appendChild(text);
+
+        return desktopTextWrapper;
+    }
+
+    createAudioNavCtrl() {
         // Play/Pause button
-        const playPauseButton = this.createHtmlTag('i', { className: 'playPause-btn bi bi-play-circle' });
-        playPauseButton.addEventListener('click', (e) => {
+        this.playPauseButton.addEventListener('click', (e) => {
             this.togglePlayback(e.target);
         });
 
         // Backward and forward buttons
-        const backButton = this.createHtmlTag('i', { className: 'bck-btn bi bi-arrow-counterclockwise' });
+        const backButton = this.generateHtmlTag('i', { className: 'bck-btn bi bi-arrow-counterclockwise' });
         backButton.addEventListener('click', () => {
             this.backTenSeconds();
         });
 
-        const forwardButton = this.createHtmlTag('i', { className: 'fwd-btn bi bi-arrow-clockwise' });
+        const forwardButton = this.generateHtmlTag('i', { className: 'fwd-btn bi bi-arrow-clockwise' });
         forwardButton.addEventListener('click', () => {
             this.forwardTenSeconds();
         });
         
         // Audio controls wrapper (back, play/pause, forward)
-        const audioCTRLwrapper = this.createHtmlTag('div', { className: 'audio-ctrl-wrapper bg-danger' });
-        audioCTRLwrapper.appendChild(backButton);
-        audioCTRLwrapper.appendChild(playPauseButton);
-        audioCTRLwrapper.appendChild(forwardButton);
-        
-        // Add audio controls wrapper to controls container
-        controlsContainer.appendChild(audioCTRLwrapper);
-        
-        // == Seek bar == //
-        const seekBarWrapper = this.createHtmlTag('div', { className: 'seek-bar-wrapper' });
+        const audioControls = this.generateHtmlTag('div', { className: 'audio-ctrl-wrapper' });
+        audioControls.appendChild(backButton);
+        audioControls.appendChild(this.playPauseButton);
+        audioControls.appendChild(forwardButton);
 
-        const seekBar = this.createHtmlTag('input', { 
+        return audioControls;
+    }
+
+    createSeekBar() {
+        // == Seek bar == //
+        const seekBarWrapper = this.generateHtmlTag('div', { className: 'seek-bar-wrapper' });
+
+        const seekBar = this.generateHtmlTag('input', { 
             className: 'seek-bar', 
             type: 'range', 
             min: 0, 
             max: 100, 
             value: 0 
         });
+
         seekBar.addEventListener('input', (e) => {
             this.seek(e.target.value);
         });
 
-        const currentTime = this.createHtmlTag('span', { className: 'current-time', text: '00:00' });
-        const totalTime = this.createHtmlTag('span', { className: 'total-time', text: '00:00' });
+        const currentTime = this.generateHtmlTag('span', { className: 'current-time', text: '00:00' });
+        const totalTime = this.generateHtmlTag('span', { className: 'total-time', text: '00:00' });
 
         // Initialize totalTime text content on load
         this.audioElement.addEventListener('loadedmetadata', () => {
@@ -338,7 +361,7 @@ export class PodcastPlayer {
         this.audioElement.addEventListener('ended', () => {
                 seekBar.value = 0;
                 currentTime.textContent = '00:00';
-                playPauseButton.className = 'playPause-btn bi bi-play-circle';
+                this.playPauseButton.className = 'playPause-btn bi bi-play-circle';
                 this.isPlaying = false;
         });
 
@@ -346,19 +369,21 @@ export class PodcastPlayer {
         seekBarWrapper.appendChild(currentTime);
         seekBarWrapper.appendChild(seekBar);
         seekBarWrapper.appendChild(totalTime);
-        
-        // Add seek bar to controls container
-        controlsContainer.appendChild(seekBarWrapper);
 
-        // == Share button == //
+        return seekBarWrapper;
+    }
+
+    createShareButton() {
         const shareButton = document.createElement('i');
         shareButton.className = 'bi bi-share';
         shareButton.setAttribute('data-bs-toggle', 'modal');
         shareButton.setAttribute('data-bs-target', `#shareModal_${this.podcastID}`);
-        controlsContainer.appendChild(shareButton);
 
-        // Share modal
-        const shareModal = this.createHtmlTag('div', {
+        return shareButton;
+    }
+
+    createShareModal() {
+        const shareModal = this.generateHtmlTag('div', {
             className: 'modal fade',
             id: `shareModal_${this.podcastID}`,
             tabindex: '-1',
@@ -389,11 +414,12 @@ export class PodcastPlayer {
                 </div>
             </div>
         `;
-        // Attach event listeners to share icons & copy button
-        shareButton.addEventListener('click', this.attachShareEventListeners.bind(this));
 
-        // Download button
-        const downloadButton = this.createHtmlTag('i', { className: 'bi bi-download' });
+        return shareModal;
+    }
+
+    createDownloadButton() {
+        const downloadButton = this.generateHtmlTag('i', { className: 'bi bi-download' });
         
         downloadButton.addEventListener('click', async () => {
             try {
@@ -412,43 +438,20 @@ export class PodcastPlayer {
                 console.error('Error while saving the file:', error);
             }
         });
-        
-        // Add download button to controls container
-        controlsContainer.appendChild(downloadButton);
 
-        // Append to colOne
-        colOne.appendChild(image);
-        colOne.appendChild(mobileTextGroup);
-        colOne.appendChild(controlsContainer);
-        colOne.appendChild(shareModal);
+        return downloadButton;
+    }
 
-        // ===================================== //
-        // === Column 2 of podcast container === //
-        // ===================================== //
-        const colTwo = this.createHtmlTag('div', { className: 'col-two' });
-
-        // == Podcast Title and Text == //
-        // Create a wrapper for the title and text (desktop only)
-        const desktopTextWrapper = this.createHtmlTag('div', { className: 'desktop-text-wrapper' });
-
-        // Title and text
-        const title = this.createHtmlTag('h4', { text: this.podcastTitle || 'Sans titre' });
-        const text = this.createHtmlTag('p', { text: this.podcastDescription || 'Pas de description disponible ...' });
-        
-        // Add title and text to desktop text wrapper
-        desktopTextWrapper.appendChild(title);
-        desktopTextWrapper.appendChild(text);
-        
-        // == Date and time == //
+    createDateTimeWrapper() {
         // Create a wrapper for the date and time
-        const dateWrapper = this.createHtmlTag('div', { className: 'date-wrapper' });
+        const dateWrapper = this.generateHtmlTag('div', { className: 'date-wrapper bg-warning' });
         
-        const timeGroup = this.createHtmlTag('span', { 
+        const timeGroup = this.generateHtmlTag('span', { 
             className: 'time-group', 
             html: `<i class="podcast-time-icon bi bi-clock"></i> ${this.podcastDateCreation.time}` || "Pas d'heure disponible ..." 
         });
 
-        const dateSpan = this.createHtmlTag('span', {
+        const dateSpan = this.generateHtmlTag('span', {
             className: 'date-group',
             html: `<i class="podcast-date-icon bi bi-calendar"></i> ${this.podcastDateCreation.date}` || "Pas de date disponible ..."
         });
@@ -457,14 +460,54 @@ export class PodcastPlayer {
         dateWrapper.appendChild(timeGroup);
         dateWrapper.appendChild(dateSpan);
 
-        // Append to colTwo
-        colTwo.appendChild(desktopTextWrapper);
-        colTwo.appendChild(dateWrapper);
+        return dateWrapper;
+    }
 
-        // === Append columns to podcast container === //
+    // ========= Main Method (attach podcast to DOM) ========= //
+
+    attachPodcastTo(element) {
+        // === Create main podcast containers === //
+        const podcastContainer = this.generateHtmlTag('div', { className: 'podcast-player' });
+        const colOne = this.generateHtmlTag('div', { className: 'col-one' });
+        const colTwo = this.generateHtmlTag('div', { className: 'col-two' });
+        
+        // === Create all podcast elements & attach listeners (if needed) === //
+        const image = this.createPodcastImage(); // Podcast image
+        const mobileTextWrapper = this.createMobileText();  // Podcast title and text (mobile)
+        const desktopTextWrapper = this.createDesktopText(); // Podcast title and text (desktop)
+        const audioNavControls = this.createAudioNavCtrl(); // Audio navigation controls (back, play/pause, forward)
+        const seekBar = this.createSeekBar(); // Seek bar
+        const shareButton = this.createShareButton(); // Share button
+        shareButton.addEventListener('click', this.attachShareEventListeners.bind(this)); // Attach event listeners to share button
+        const shareModal = this.createShareModal();  // Share modal
+        const downloadButton = this.createDownloadButton(); // Download button
+        const dateTimeWrapper = this.createDateTimeWrapper(); // Date and time
+        
+        // Controls container (where all audio controls are) //
+        const controlsContainer = this.generateHtmlTag('div', { className: 'player-controls bg-success' });        
+        controlsContainer.appendChild(audioNavControls);    
+        controlsContainer.appendChild(seekBar);
+        
+        // Share container
+        const shareContainer = this.generateHtmlTag('div', { className: 'share-container bg-secondary' });
+        shareContainer.appendChild(shareButton);
+        shareContainer.appendChild(shareModal);
+        shareContainer.appendChild(downloadButton);
+        
+        // === Append all elements to columns === // 
+        // Column 1
+        colOne.appendChild(image);
+        colOne.appendChild(mobileTextWrapper); // Only visible on mobile
+        colOne.appendChild(controlsContainer);
+        colOne.appendChild(shareContainer);
+
+        // Column 2
+        colTwo.appendChild(desktopTextWrapper);
+        colTwo.appendChild(dateTimeWrapper);
+
+        // === Finally append columns to podcast container === //
         podcastContainer.appendChild(colOne);
         podcastContainer.appendChild(colTwo);
-
         element.appendChild(podcastContainer);
     }
 }
