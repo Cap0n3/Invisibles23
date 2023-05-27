@@ -195,15 +195,17 @@ nav.show {
   align-items: center;
   width: 100%;
   min-width: 280px;
-  height: auto;
+  height: 800px;
   padding: 20px;
-  background-color: aqua;
+  background-color: #FFF6EE;
   border-radius: 15px;
   overflow: hidden;
+  border: 0.5px solid #000000;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
   /* ====== COLUMN 1 ====== */
   /* ====== COLUMN 2 ====== */
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 768px) {
   .podcast-player {
     height: 450px;
   }
@@ -214,12 +216,10 @@ nav.show {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-width: 230px;
   height: 100%;
   padding: 15px;
-  background-color: beige;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 768px) {
   .podcast-player .col-one {
     width: 45%;
   }
@@ -244,7 +244,16 @@ nav.show {
 .podcast-player .col-one .mobile-text-group {
   display: block;
 }
-@media screen and (min-width: 992px) {
+.podcast-player .col-one .mobile-text-group h4 {
+  margin-bottom: 20px;
+}
+.podcast-player .col-one .mobile-text-group p {
+  text-align: center;
+  max-height: 220px;
+  padding: 10px;
+  overflow: auto;
+}
+@media screen and (min-width: 768px) {
   .podcast-player .col-one .mobile-text-group {
     display: none;
   }
@@ -255,6 +264,11 @@ nav.show {
   align-items: center;
   gap: 10px;
   margin-top: 10px;
+}
+@media only screen and (min-width: 992px) and (max-width: 1190px) {
+  .podcast-player .col-one .seek-bar-wrapper {
+    flex-direction: column;
+  }
 }
 .podcast-player .col-one .seek-bar-wrapper .seek-bar {
   -webkit-appearance: none;
@@ -268,20 +282,25 @@ nav.show {
   background-color: #ccc;
   transition: background-color 0.2s;
 }
+@media only screen and (min-width: 1190px) and (max-width: 1330px) {
+  .podcast-player .col-one .seek-bar-wrapper .seek-bar {
+    width: 6rem;
+  }
+}
 .podcast-player .col-one .seek-bar-wrapper .seek-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: #002E48;
   cursor: pointer;
 }
 .podcast-player .col-one .seek-bar-wrapper .seek-bar::-moz-range-thumb {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: #002E48;
   cursor: pointer;
 }
 .podcast-player .col-one .seek-bar-wrapper .current-time, .podcast-player .col-one .seek-bar-wrapper .total-time {
@@ -301,25 +320,46 @@ nav.show {
 .podcast-player .col-two {
   display: none;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 768px) {
   .podcast-player .col-two {
     width: 55%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: blueviolet;
   }
+}
+.podcast-player .col-two .desktop-text-wrapper {
+  padding-left: 15px;
+}
+.podcast-player .col-two .desktop-text-wrapper h4 {
+  text-align: start;
+  word-wrap: break-word;
+  margin-bottom: 20px;
 }
 .podcast-player .col-two .desktop-text-wrapper p {
   text-align: start;
   max-height: 220px;
+  word-wrap: break-word;
   overflow: auto;
 }
 .podcast-player .col-two .date-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-left: 15px;
+}
+.podcast-player .col-two .date-wrapper .time-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+.podcast-player .col-two .date-wrapper .date-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
 }
 
 /* ==================== */

@@ -46,21 +46,39 @@ export function createPodcasts() {
     //     podcastPlayer.attachPodcastTo(playerContainer);
     // });
 
-    // Get the container where the podcast players will be attached
-    const playerContainer1 = document.getElementById('lastPodcast1');
-    const playerContainer2 = document.getElementById('lastPodcast2');
-    const playerContainer3 = document.getElementById('lastPodcast3');
-    const playerContainer4 = document.getElementById('lastPodcast4');
+    // Get the containers where the podcast players will be attached
+    const playerContainers1 = document.querySelectorAll('.lastPodcast1');
+    const playerContainers2 = document.querySelectorAll('.lastPodcast2');
+    const playerContainers3 = document.querySelectorAll('.lastPodcast3');
+    const playerContainers4 = document.querySelectorAll('.lastPodcast4');
 
     // add them to array
-    const playerContainers = [playerContainer1, playerContainer2, playerContainer3, playerContainer4];
+    //const playerContainers = [playerContainers1, playerContainers2, playerContainers3, playerContainers4];
 
     // add podcast to each container
-    podcastArray.forEach((podcastData, index) => {
-        let podcastPlayer = new PodcastPlayer(podcastData);
-        podcastPlayer.attachPodcastTo(playerContainers[index]);
+    // podcastArray.forEach((podcastData, index) => {
+    //     let podcastPlayer = new PodcastPlayer(podcastData);
+    //     podcastPlayer.attachPodcastTo(playerContainers[index]);
+    // });
+    playerContainers1.forEach((playerContainer) => {
+        let podcastPlayer = new PodcastPlayer(podcastArray[0]);
+        podcastPlayer.attachPodcastTo(playerContainer);
+    });
+    
+    playerContainers2.forEach((playerContainer) => {
+        let podcastPlayer = new PodcastPlayer(podcastArray[1]);
+        podcastPlayer.attachPodcastTo(playerContainer);
+    });
+    
+    playerContainers3.forEach((playerContainer) => {
+        let podcastPlayer = new PodcastPlayer(podcastArray[2]);
+        podcastPlayer.attachPodcastTo(playerContainer);
     });
 
+    playerContainers4.forEach((playerContainer) => {
+        let podcastPlayer = new PodcastPlayer(podcastArray[3]);
+        podcastPlayer.attachPodcastTo(playerContainer);
+    });
     
 }
 

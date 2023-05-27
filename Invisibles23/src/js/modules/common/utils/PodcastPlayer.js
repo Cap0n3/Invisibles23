@@ -228,7 +228,7 @@ export class PodcastPlayer {
         // const formattedSeconds = seconds.toString().padStart(2, '0');
         
         // Creating the readable date and time string
-        const readableDate = `${formattedDay}-${formattedMonth}-${year}`;
+        const readableDate = `${formattedDay}/${formattedMonth}/${year}`;
         const readableTime = `${formattedHours}:${formattedMinutes}`;
         
         return {
@@ -264,7 +264,7 @@ export class PodcastPlayer {
     createMobileText() {
         // == Mobile text group (hidden by default) == //
         const mobileTextGroup = this.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
-        const mobileTitle = this.generateHtmlTag('h3', {text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre'});
+        const mobileTitle = this.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre'});
         const mobileText = this.generateHtmlTag('p', {text: this.podcastDescription || 'Pas de description disponible ...'});
         // Add title and text to mobile text group
         mobileTextGroup.appendChild(mobileTitle);
@@ -275,7 +275,7 @@ export class PodcastPlayer {
     
     createDesktopText() {
         // Create a wrapper for the title and text (desktop only)
-        const desktopTextWrapper = this.generateHtmlTag('div', { className: 'desktop-text-wrapper bg-info' });
+        const desktopTextWrapper = this.generateHtmlTag('div', { className: 'desktop-text-wrapper' });
 
         // Title and text
         const title = this.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre' });
@@ -444,7 +444,7 @@ export class PodcastPlayer {
 
     createDateTimeWrapper() {
         // Create a wrapper for the date and time
-        const dateWrapper = this.generateHtmlTag('div', { className: 'date-wrapper bg-warning' });
+        const dateWrapper = this.generateHtmlTag('div', { className: 'date-wrapper' });
         
         const timeGroup = this.generateHtmlTag('span', { 
             className: 'time-group', 
@@ -484,12 +484,12 @@ export class PodcastPlayer {
         const dateTimeWrapper = this.createDateTimeWrapper(); // Date and time
         
         // Controls container (where all audio controls are) //
-        const controlsContainer = this.generateHtmlTag('div', { className: 'player-controls bg-success' });        
+        const controlsContainer = this.generateHtmlTag('div', { className: 'player-controls' });        
         controlsContainer.appendChild(audioNavControls);    
         controlsContainer.appendChild(seekBar);
         
         // Share container
-        const shareContainer = this.generateHtmlTag('div', { className: 'share-container bg-secondary' });
+        const shareContainer = this.generateHtmlTag('div', { className: 'share-container' });
         shareContainer.appendChild(shareButton);
         shareContainer.appendChild(shareModal);
         shareContainer.appendChild(downloadButton);

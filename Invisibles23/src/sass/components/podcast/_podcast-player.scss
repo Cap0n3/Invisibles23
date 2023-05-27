@@ -1,16 +1,22 @@
+$alt-breakpoint-min: 992px;
+$alt-breakpoint-max: 1190px;
+
+
 .podcast-player {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     min-width: 280px;
-    height: auto;
+    height: 800px;
     padding: 20px;
-    background-color: aqua;
+    background-color: $light-beige;
     border-radius: 15px;
     overflow: hidden;
+    border: 0.5px solid #000000;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
 
-    @include lg {
+    @include md {
         height: 450px;
     }
 
@@ -21,12 +27,11 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        min-width: 230px;
+        // min-width: 220px;
         height: 100%;
         padding: 15px;
-        background-color: beige;
 
-        @include lg {
+        @include md {
             width: 45%;
         }
         
@@ -54,10 +59,20 @@
         .mobile-text-group {
             display: block;
 
-            @include lg {
-                display: none;
+            h4 {
+                margin-bottom: 20px;
             }
 
+            p {
+                text-align: center;
+                max-height: 220px;
+                padding: 10px;
+                overflow: auto;
+            }
+
+            @include md {
+                display: none;
+            }
         }
 
         .seek-bar-wrapper {
@@ -66,6 +81,10 @@
             align-items: center;
             gap: 10px;
             margin-top: 10px;
+
+            @media only screen and (min-width: $alt-breakpoint-min) and (max-width: $alt-breakpoint-max) {
+                flex-direction: column;
+            }
 
             .seek-bar {
                 -webkit-appearance: none;
@@ -78,6 +97,11 @@
                 outline: none;
                 background-color: #ccc;
                 transition: background-color 0.2s;
+
+                // Shrinks slider on range to avoid overflow
+                @media only screen and (min-width: 1190px) and (max-width: 1330px) {
+                    width: 6rem;
+                }
             }
 
             .seek-bar::-webkit-slider-thumb {
@@ -86,7 +110,7 @@
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background: #4CAF50;
+                background: $font-deep-blue;
                 cursor: pointer;
             }
 
@@ -94,7 +118,7 @@
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background: #4CAF50;
+                background: $font-deep-blue;
                 cursor: pointer;
             }
 
@@ -121,19 +145,31 @@
     .col-two {
         display: none;
 
-        @include lg {
+        @include md {
             width: 55%;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            background-color: blueviolet;
         }
 
         .desktop-text-wrapper {
+            padding-left: 15px;
+
+            // @media only screen and (min-width: $alt-breakpoint-min) and (max-width: $alt-breakpoint-max) {
+            //     padding-left: 10;
+            // }
+            
+            h4 {
+                text-align: start;
+                word-wrap: break-word;
+                margin-bottom: 20px;
+            }
+
             p {
                 text-align: start;
                 max-height: 220px;
+                word-wrap: break-word;
                 overflow: auto;
             }
         }
@@ -142,6 +178,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-left: 15px;
+
+            .time-group {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.8rem;
+            }
+
+            .date-group {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.8rem;
+            }
         }
     }
     
