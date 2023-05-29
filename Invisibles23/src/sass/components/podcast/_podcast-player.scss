@@ -131,10 +131,16 @@ $alt-breakpoint-max: 1190px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             margin-top: 10px;
 
             .share-btn {
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .speed-btn {
+                all: unset;
                 font-size: 1.5rem;
                 cursor: pointer;
             }
@@ -176,7 +182,8 @@ $alt-breakpoint-max: 1190px;
 
         .date-wrapper {
             display: flex;
-            justify-content: space-between;
+            // justify-content: space-between;
+            gap: 10%;
             align-items: center;
             padding-left: 15px;
 

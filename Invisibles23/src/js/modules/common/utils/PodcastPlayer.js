@@ -1,5 +1,12 @@
 /**
  * PodcastPlayer class to play audio files from a URL
+ * @param {Object} podcastData - The podcast data object
+ * @param {string} podcastData.id - The podcast ID
+ * @param {string} podcastData.image_url - The podcast image URL
+ * @param {string} podcastData.title - The podcast title
+ * @param {string} podcastData.description - The podcast description
+ * @param {string} podcastData.created_at - The podcast creation date
+ * @param {string} podcastData.audioUrl - The podcast audio URL
  */
 export class PodcastPlayer {
     constructor(podcastData) {
@@ -57,14 +64,20 @@ export class PodcastPlayer {
         // Update the audio time to the new time
         this.audioElement.currentTime = seekTo;
     }
+
+    setPlaybackSpeed(speed) {
+        this.audioElement.playbackRate = speed;
+    }
   
+    // ========= Helper methods ========= //
+
     formatTime(time) {
         return time < 10 ? '0' + time : time;
     }
 
-    // ========= Helper methods ========= //
-
-    // Method to attach event listeners to the share icons
+    /**
+     * Method to attach event listeners to the share icons
+     */
     attachShareEventListeners() {
         function shareOnFacebook(linkToShare) {
             // Open a new window with the Facebook share dialog
@@ -382,6 +395,39 @@ export class PodcastPlayer {
         return shareButton;
     }
 
+    createSpeedButton() {
+        const speedButton = this.generateHtmlTag('button', { 
+            className: 'speed-btn', 
+            type: 'button',
+            'data-bs-toggle': 'dropdown',
+            'aria-expanded': 'false'
+        });
+        const speedIcon = this.generateHtmlTag('i', { className: 'bi bi-speedometer2' });
+        const speedOptions = [0.5, 1, 1.5, 2];
+        
+        const speedMenu = this.generateHtmlTag('ul', { className: 'speed-menu dropdown-menu' });
+        
+        speedOptions.forEach((speed) => {
+            const speedItem = this.generateHtmlTag('li');
+            const speedLink = this.generateHtmlTag('a', { 
+                text: speed + 'x', 
+                className: 'dropdown-item'
+            });
+        
+            speedLink.addEventListener('click', () => {
+                this.setPlaybackSpeed(speed);
+            });
+        
+            speedItem.appendChild(speedLink);
+            speedMenu.appendChild(speedItem);
+        });
+        
+        speedButton.appendChild(speedIcon);
+        speedButton.appendChild(speedMenu);
+        
+        return speedButton;
+    }
+
     createShareModal() {
         const shareModal = this.generateHtmlTag('div', {
             className: 'modal fade',
@@ -481,6 +527,7 @@ export class PodcastPlayer {
         shareButton.addEventListener('click', this.attachShareEventListeners.bind(this)); // Attach event listeners to share button
         const shareModal = this.createShareModal();  // Share modal
         const downloadButton = this.createDownloadButton(); // Download button
+        const speedButton = this.createSpeedButton(); // Speed button
         const dateTimeWrapper = this.createDateTimeWrapper(); // Date and time
         
         // Controls container (where all audio controls are) //
@@ -490,10 +537,11 @@ export class PodcastPlayer {
         
         // Share container
         const shareContainer = this.generateHtmlTag('div', { className: 'share-container' });
+        shareContainer.appendChild(speedButton);
         shareContainer.appendChild(shareButton);
         shareContainer.appendChild(shareModal);
         shareContainer.appendChild(downloadButton);
-        
+            
         // === Append all elements to columns === // 
         // Column 1
         colOne.appendChild(image);

@@ -6,7 +6,7 @@
     {% include "website/components/hero-header.html" %}
     <!--PODCAST CARDS-->
     {% comment %} {% include "website/components/podcast-section.html" %} {% endcomment %}
-    {% include "website/components/podcast-section.html" %}
+    {% include "website/components/podcast-section.html" with bg="bg-light-green" %}
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name == "About" %}

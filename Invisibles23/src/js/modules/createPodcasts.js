@@ -38,14 +38,6 @@ export function createPodcasts() {
         },
     ];
 
-    // Get the container where the podcast players will be attached
-    // const playerContainer = document.getElementById('podcast-container');
-
-    // podcastArray.forEach((podcastData) => {
-    //     let podcastPlayer = new PodcastPlayer(podcastData);
-    //     podcastPlayer.attachPodcastTo(playerContainer);
-    // });
-
     // Get the containers where the podcast players will be attached
     const playerContainers1 = document.querySelectorAll('.lastPodcast1');
     const playerContainers2 = document.querySelectorAll('.lastPodcast2');

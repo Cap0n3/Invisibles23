@@ -310,10 +310,15 @@ nav.show {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   margin-top: 10px;
 }
 .podcast-player .col-one .share-container .share-btn {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.podcast-player .col-one .share-container .speed-btn {
+  all: unset;
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -345,7 +350,7 @@ nav.show {
 }
 .podcast-player .col-two .date-wrapper {
   display: flex;
-  justify-content: space-between;
+  gap: 10%;
   align-items: center;
   padding-left: 15px;
 }
