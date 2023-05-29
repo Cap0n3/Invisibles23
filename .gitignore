@@ -45,7 +45,9 @@ htmlcov/
 nosetests.xml 
 coverage.xml 
 *.cover 
-.hypothesis/ 
+.hypothesis/
+MockAPI/
+testDataSet.json
 
 # pyenv 
 .python-version 

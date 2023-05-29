@@ -40,7 +40,7 @@ $alt-breakpoint-max: 1190px;
             min-width: 120px;
             max-width: 200px;
             height: auto;
-            border-radius: 100%;
+            border-radius: 15px;
         }
 
         .audio-ctrl-wrapper {
@@ -63,10 +63,11 @@ $alt-breakpoint-max: 1190px;
                 margin-bottom: 20px;
             }
 
-            p {
+            .mobile-podcast-description {
+                font-size: 0.9rem;
                 text-align: center;
                 max-height: 220px;
-                padding: 10px;
+                padding: 10px; // To avoid overflow on scroll bar
                 overflow: auto;
             }
 
@@ -160,11 +161,7 @@ $alt-breakpoint-max: 1190px;
         }
 
         .desktop-text-wrapper {
-            padding-left: 15px;
-
-            // @media only screen and (min-width: $alt-breakpoint-min) and (max-width: $alt-breakpoint-max) {
-            //     padding-left: 10;
-            // }
+            padding-left: 10px;
             
             h4 {
                 text-align: start;
@@ -172,7 +169,8 @@ $alt-breakpoint-max: 1190px;
                 margin-bottom: 20px;
             }
 
-            p {
+            .podcast-description {
+                font-size: 0.9rem;
                 text-align: start;
                 max-height: 220px;
                 word-wrap: break-word;

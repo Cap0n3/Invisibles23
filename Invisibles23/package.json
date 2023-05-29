@@ -14,11 +14,13 @@
     "gulp": "^4.0.2",
     "gulp-sass": "^5.1.0",
     "sass": "^1.60.0",
+    "source-map-loader": "^4.0.1",
     "webpack": "^5.82.1",
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
+    "axios": "^1.4.0",
     "just-validate": "^4.2.0",
     "node-polyfill-webpack-plugin": "^2.0.1"
   }

@@ -3,21 +3,21 @@
  * @param {Object} podcastData - The podcast data object
  * @param {string} podcastData.id - The podcast ID
  * @param {string} podcastData.image_url - The podcast image URL
- * @param {string} podcastData.title - The podcast title
- * @param {string} podcastData.description - The podcast description
+ * @param {string} podcastData.name - The podcast title
+ * @param {string} podcastData.html_description - The HTML podcast description
  * @param {string} podcastData.created_at - The podcast creation date
- * @param {string} podcastData.audioUrl - The podcast audio URL
+ * @param {string} podcastData.audio_url - The podcast audio URL
  */
 export class PodcastPlayer {
     constructor(podcastData) {
         this.podcastID = podcastData.id;
         this.podcastImage = podcastData.image_url;
-        this.podcastTitle = podcastData.title;
-        this.podcastDescription = podcastData.description;
+        this.podcastTitle = podcastData.name;
+        this.podcastDescription = podcastData.html_description;
         this.podcastDateCreation = this.convertDateFormat(podcastData.created_at);
-        this.audioUrl = podcastData.audioUrl;
+        this.audioUrl = podcastData.audio_url;
         // Create the <audio> element
-        this.audioElement = new Audio(podcastData.audioUrl);
+        this.audioElement = new Audio(podcastData.audio_url);
         this.isPlaying = false;
         this.playPauseButton = this.generateHtmlTag('i', { className: 'playPause-btn bi bi-play-circle' });
     }
@@ -268,6 +268,10 @@ export class PodcastPlayer {
         return limitedString + " ...";
     }
   
+    decodeHtmlEntities(str) {
+        let txt = new DOMParser().parseFromString(str, "text/html");    
+        return txt.documentElement.textContent;
+    }    
     // ========= Element creation methods ========= //
     
     createPodcastImage() {
@@ -277,8 +281,11 @@ export class PodcastPlayer {
     createMobileText() {
         // == Mobile text group (hidden by default) == //
         const mobileTextGroup = this.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
-        const mobileTitle = this.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre'});
-        const mobileText = this.generateHtmlTag('p', {text: this.podcastDescription || 'Pas de description disponible ...'});
+        const mobileTitle = this.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
+        const mobileText = this.generateHtmlTag('div', {
+            className: 'mobile-podcast-description',
+            html: this.decodeHtmlEntities(this.podcastDescription ) || 'Pas de description disponible ...'
+        });
         // Add title and text to mobile text group
         mobileTextGroup.appendChild(mobileTitle);
         mobileTextGroup.appendChild(mobileText);
@@ -291,8 +298,11 @@ export class PodcastPlayer {
         const desktopTextWrapper = this.generateHtmlTag('div', { className: 'desktop-text-wrapper' });
 
         // Title and text
-        const title = this.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 8) || 'Sans titre' });
-        const text = this.generateHtmlTag('p', { text: this.podcastDescription || 'Pas de description disponible ...' });
+        const title = this.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' });
+        const text = this.generateHtmlTag('div', {
+            className: 'podcast-description',
+            html: this.decodeHtmlEntities(this.podcastDescription) || 'Pas de description disponible ...' 
+        });
         
         // Add title and text to desktop text wrapper
         desktopTextWrapper.appendChild(title);
