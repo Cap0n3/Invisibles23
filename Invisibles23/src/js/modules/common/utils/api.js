@@ -2,13 +2,14 @@
 const axios = require('axios');
 
 export function getLastNPodcasts(n) {
-    const url = 'https://642eb6132b883abc6414f220.mockapi.io/episodes';
+    const url = 'http://localhost:3001/podcasts';
 
     return axios.get(url)
         .then(response => {
+            
             // Sort episodes in descending order by ID (assuming higher ID means more recent episode)
             const sortedEpisodes = response.data.sort((a, b) => b.id - a.id);
-            
+        
             // Slice the array to get the last 'n' episodes
             const lastNPodcasts = sortedEpisodes.slice(0, n);
             

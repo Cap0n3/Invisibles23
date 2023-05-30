@@ -217,7 +217,7 @@ nav.show {
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 15px;
+  padding: 10px;
 }
 @media screen and (min-width: 768px) {
   .podcast-player .col-one {
@@ -324,6 +324,7 @@ nav.show {
   cursor: pointer;
 }
 .podcast-player .col-two {
+  padding: 10px;
   display: none;
 }
 @media screen and (min-width: 768px) {
@@ -335,15 +336,13 @@ nav.show {
     justify-content: space-between;
   }
 }
-.podcast-player .col-two .desktop-text-wrapper {
-  padding-left: 10px;
-}
 .podcast-player .col-two .desktop-text-wrapper h4 {
   text-align: start;
   word-wrap: break-word;
   margin-bottom: 20px;
 }
 .podcast-player .col-two .desktop-text-wrapper .podcast-description {
+  padding-right: 10px;
   font-size: 0.9rem;
   text-align: start;
   max-height: 225px;

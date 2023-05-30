@@ -1,3 +1,4 @@
+$podcast-col-padding: 10px;
 $alt-breakpoint-min: 992px;
 $alt-breakpoint-max: 1190px;
 
@@ -29,7 +30,7 @@ $alt-breakpoint-max: 1190px;
         width: 100%;
         // min-width: 220px;
         height: 100%;
-        padding: 15px;
+        padding: $podcast-col-padding;
 
         @include md {
             width: 45%;
@@ -150,6 +151,7 @@ $alt-breakpoint-max: 1190px;
 
     /* ====== COLUMN 2 ====== */
     .col-two {
+        padding: $podcast-col-padding;
         display: none;
 
         @include md {
@@ -161,7 +163,6 @@ $alt-breakpoint-max: 1190px;
         }
 
         .desktop-text-wrapper {
-            padding-left: 10px;
             
             h4 {
                 text-align: start;
@@ -170,6 +171,7 @@ $alt-breakpoint-max: 1190px;
             }
 
             .podcast-description {
+                padding-right: 10px;
                 font-size: 0.9rem;
                 text-align: start;
                 max-height: 225px;
