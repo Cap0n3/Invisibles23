@@ -346,7 +346,7 @@ nav.show {
 .podcast-player .col-two .desktop-text-wrapper .podcast-description {
   font-size: 0.9rem;
   text-align: start;
-  max-height: 220px;
+  max-height: 225px;
   word-wrap: break-word;
   overflow: auto;
 }
