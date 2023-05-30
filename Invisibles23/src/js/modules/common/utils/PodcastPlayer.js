@@ -10,7 +10,7 @@
  */
 export class PodcastPlayer {
     constructor(podcastData) {
-        this.podcastID = podcastData.id;
+        this.podcastID = podcastData.id + "_" + Math.floor(Math.random() * (1000 - 1 + 1) + 1);
         this.podcastImage = podcastData.image_url;
         this.podcastTitle = podcastData.name;
         this.podcastDescription = podcastData.html_description;

@@ -1,6 +1,6 @@
-<section class="container-fluid text-center pt-5 px-5 {{ bg }}">
+<!--PODCAST SECTION FOR LARGE SCREENS-->
+<section class="d-none d-lg-block container-fluid text-center pt-5 px-5 {{ bg }}">
     <div class="row">
-        <!-- SLIDER FOR LARGE SCREEN -->
         <div id="PodCarousel-large" class="carousel slide d-none d-lg-block pt-2 px-lg-4" data-bs="carousel">
             <!-- Indicators -->
             <div class="carousel-indicators">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Controls -->
+            <!-- Controls (To erase if no arrows are needed) -->
             {% comment %} <button class="carousel-control-prev desktop-arrow" type="button" data-bs-target="#PodCarousel-large" data-bs-slide="prev">
                 <span><i class="bi bi-chevron-left" aria-hidden="true"></i></span>
                 <span class="visually-hidden">Previous</span>
@@ -33,6 +33,12 @@
                 <span class="visually-hidden">Next</span>
             </button> {% endcomment %}
         </div>
+    </div>
+</section>
+
+<!-- PODCAST SECTION FOR MEDIUM/SMALL SCREEN -->
+<section id="mobile-section" class="d-lg-none container-fluid text-center pt-5 px-5 {{ bg }}">
+    <div class="row">
         <!-- SLIDER FOR MEDIUM/SMALL SCREEN -->
         <div id="PodCarousel-small" class="carousel slide d-lg-none pb-4" data-bs="carousel">
             <!-- Indicators -->
@@ -48,7 +54,7 @@
                     <div class="row mb-5">
                         <div class="col-12 d-flex justify-content-center">
                             <!-- Card 1 content for medium/large screens -->
-                            <div class="lastPodcast1 col-lg-6 d-flex justify-content-center"></div>
+                            <div class="lastPodcast1 d-flex justify-content-center"></div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +63,7 @@
                     <div class="row mb-5">
                         <div class="col-12 d-flex justify-content-center">
                             <!-- Card 2 content for medium/large screens -->
-                            <div class="lastPodcast2 col-lg-6 d-flex justify-content-center"></div>
+                            <div class="lastPodcast2 d-flex justify-content-center"></div>
                         </div>
                     </div>
                 </div>
@@ -66,7 +72,7 @@
                     <div class="row mb-5">
                         <div class="col-12 d-flex justify-content-center">
                             <!-- Card 3 content for medium/large screens -->
-                            <div class="lastPodcast3 col-lg-6 d-flex justify-content-center"></div>
+                            <div class="lastPodcast3 d-flex justify-content-center"></div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +81,7 @@
                     <div class="row mb-5">
                         <div class="col-12 d-flex justify-content-center">
                             <!-- Card 4 content for medium/large screens -->
-                            <div class="lastPodcast4 col-lg-6 d-flex justify-content-center"></div>
+                            <div class="lastPodcast4 d-flex justify-content-center"></div>
                         </div>
                     </div>
                 </div>
