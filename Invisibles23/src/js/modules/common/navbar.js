@@ -2,7 +2,6 @@ export function navbar() {
     /**
      * Make navbar appear/disappear when scrolling.
      */
-    console.log("HELLO !!!")
     window.addEventListener("scroll", event => {
         const scrollPos = document.documentElement.scrollTop
         const nav = document.getElementsByClassName("navbar")

@@ -552,18 +552,49 @@ export class PodcastPlayer {
         const downloadButton = this.generateHtmlTag('i', { className: 'bi bi-download' });
         
         downloadButton.addEventListener('click', async () => {
-            try {
-                const handle = await window.showSaveFilePicker();
-                const writable = await handle.createWritable();
+            // Cool experimental feature, but not supported by all browsers yet, keep an eye on it
+            // https://web.dev/file-system-access/
+            
+            // try {
+            //     const options = {
+            //         suggestedName: this.podcastTitle, // Set the initial file name
+            //         types: [{
+            //                 description: 'Audio Files',
+            //                 accept: {
+            //                     'audio/*': ['.mp3', '.wav'] // Set the accepted file types
+            //                 }
+            //         }]
+            //     };
+            //     const handle = await window.showSaveFilePicker(options);
+            //     const writable = await handle.createWritable();
           
+            //     const response = await fetch(this.audioUrl);
+            //     const blob = await response.blob();
+                
+            //     const contentType = response.headers.get('Content-Type');
+            //     const file = new File([blob], this.podcastTitle, { type: contentType });
+          
+            //     await writable.write(file);
+            //     await writable.close();
+            // } catch (error) {
+            //     console.error('Error while saving the file:', error);
+            // }
+
+            // Best solution for now
+            try {
                 const response = await fetch(this.audioUrl);
                 const blob = await response.blob();
-          
+            
                 const contentType = response.headers.get('Content-Type');
                 const file = new File([blob], this.podcastTitle, { type: contentType });
-          
-                await writable.write(file);
-                await writable.close();
+            
+                const downloadUrl = URL.createObjectURL(file);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = this.podcastTitle; // Set the desired file name
+                link.click();
+            
+                URL.revokeObjectURL(downloadUrl);
             } catch (error) {
                 console.error('Error while saving the file:', error);
             }
