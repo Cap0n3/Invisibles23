@@ -19,7 +19,9 @@ export class PodcastPlayer {
         // Create the <audio> element
         this.audioElement = new Audio(podcastData.audio_url);
         this.isPlaying = false;
-        this.playPauseButton = this.generateHtmlTag('i', { className: 'playPause-btn bi bi-play-circle' });
+        this.playPauseButton = this.generateHtmlTag('i', { 
+            className: 'playPause-btn bi bi-play-circle' 
+        });
     }
   
     // ========= Podcast player methods ========= //
@@ -33,9 +35,37 @@ export class PodcastPlayer {
     }
   
     play(targetBtn) {
-        this.audioElement.play();
-        this.isPlaying = true;
-        targetBtn.className = 'playPause-btn bi bi-pause-circle';
+        // this.audioElement.play();
+        // this.isPlaying = true;
+        // targetBtn.className = 'playPause-btn bi bi-pause-circle';
+        // Display loading wheel on play button
+        
+        // Display loading wheel on play button
+        targetBtn.className = 'load-icon';
+
+        if (this.audioElement.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+            // Audio already loaded, remove the loading wheel and play the audio
+            console.log('Audio already loaded.');
+            targetBtn.className = 'playPause-btn bi bi-pause-circle';
+            this.audioElement.play();
+            this.isPlaying = true;
+        } else {
+            // Load the audio
+            this.audioElement.addEventListener('canplaythrough', () => {
+                // Remove the loading wheel and play the audio
+                targetBtn.className = 'playPause-btn bi bi-pause-circle';
+                this.audioElement.play();
+                this.isPlaying = true;
+            });
+
+            // If the audio fails to load, handle the error
+            this.audioElement.addEventListener('error', () => {
+                // Remove the loading wheel and reset the play button
+                targetBtn.className = 'playPause-btn bi bi-play-circle';
+                this.isPlaying = false;
+                console.log('Error loading audio.');
+            });
+        }
     }
   
     pause(targetBtn) {

@@ -189,6 +189,14 @@ nav.show {
   width: 0.4rem;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .podcast-player {
   display: flex;
   justify-content: center;
@@ -240,6 +248,15 @@ nav.show {
 .podcast-player .col-one .audio-ctrl-wrapper .playPause-btn {
   font-size: 3rem;
   cursor: pointer;
+}
+.podcast-player .col-one .audio-ctrl-wrapper .load-icon {
+  margin: 13px 2px 13px 2px;
+  width: 45px;
+  height: 45px;
+  border: 3px solid #ccc;
+  border-top-color: #002E48;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 .podcast-player .col-one .mobile-text-group {
   display: block;

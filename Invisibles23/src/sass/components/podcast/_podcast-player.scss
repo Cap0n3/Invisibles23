@@ -2,6 +2,15 @@ $podcast-col-padding: 10px;
 $alt-breakpoint-min: 992px;
 $alt-breakpoint-max: 1190px;
 
+@keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+}
+
 
 .podcast-player {
     display: flex;
@@ -53,6 +62,16 @@ $alt-breakpoint-max: 1190px;
             .playPause-btn {
                 font-size: 3rem;
                 cursor: pointer;
+            }
+
+            .load-icon {
+                margin: 13px 2px 13px 2px; // Imitates playPause-btn margin
+                width: 45px;
+                height: 45px;
+                border: 3px solid #ccc;
+                border-top-color: $font-deep-blue;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
             }
 
         }
