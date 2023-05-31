@@ -1,14 +1,19 @@
 /**
- * PodcastPlayer class to play audio files from a URL
- * @param {Object} podcastData - The podcast data object
- * @param {string} podcastData.id - The podcast ID
- * @param {string} podcastData.image_url - The podcast image URL
- * @param {string} podcastData.name - The podcast title
- * @param {string} podcastData.html_description - The HTML podcast description
- * @param {string} podcastData.created_at - The podcast creation date
- * @param {string} podcastData.audio_url - The podcast audio URL
+ * PodcastPlayer class to play audio files from a URL.
+ * @class
  */
 export class PodcastPlayer {
+    /**
+     * Creates an instance of PodcastPlayer.
+     * @constructor
+     * @param {Object} podcastData - The podcast data object
+     * @param {string} podcastData.id - The podcast ID
+     * @param {string} podcastData.image_url - The podcast image URL
+     * @param {string} podcastData.name - The podcast title
+     * @param {string} podcastData.html_description - The HTML podcast description
+     * @param {string} podcastData.created_at - The podcast creation date
+     * @param {string} podcastData.audio_url - The podcast audio URL
+     */
     constructor(podcastData) {
         this.podcastID = podcastData.id + "_" + Math.floor(Math.random() * (1000 - 1 + 1) + 1);
         this.podcastImage = podcastData.image_url;
@@ -26,34 +31,39 @@ export class PodcastPlayer {
   
     // ========= Podcast player methods ========= //
 
-    togglePlayback(targetBtn) {
+    /**
+     * Toggles the playback state of the audio.
+     * If currently playing, it pauses; if paused, it plays.
+     */
+    togglePlayback() {
         if (this.isPlaying) {
-            this.pause(targetBtn);
+            this.pause();
         } else {
-            this.play(targetBtn);
+            this.play();
         }
     }
-  
-    play(targetBtn) {
-        // this.audioElement.play();
-        // this.isPlaying = true;
-        // targetBtn.className = 'playPause-btn bi bi-pause-circle';
-        // Display loading wheel on play button
-        
-        // Display loading wheel on play button
-        targetBtn.className = 'load-icon';
 
+    /**
+     * Plays the audio.
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState|HTMLMediaElement.readyState}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/HAVE_ENOUGH_DATA|HTMLMediaElement.HAVE_ENOUGH_DATA}
+     */
+    play() {
+        // Display loading wheel on play button
+        this.playPauseButton.className = 'load-icon';
+        
         if (this.audioElement.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
             // Audio already loaded, remove the loading wheel and play the audio
-            console.log('Audio already loaded.');
-            targetBtn.className = 'playPause-btn bi bi-pause-circle';
+            this.playPauseButton.className = 'playPause-btn bi bi-pause-circle';
             this.audioElement.play();
             this.isPlaying = true;
-        } else {
+        } 
+        else 
+        {
             // Load the audio
             this.audioElement.addEventListener('canplaythrough', () => {
                 // Remove the loading wheel and play the audio
-                targetBtn.className = 'playPause-btn bi bi-pause-circle';
+                this.playPauseButton.className = 'playPause-btn bi bi-pause-circle';
                 this.audioElement.play();
                 this.isPlaying = true;
             });
@@ -61,19 +71,20 @@ export class PodcastPlayer {
             // If the audio fails to load, handle the error
             this.audioElement.addEventListener('error', () => {
                 // Remove the loading wheel and reset the play button
-                targetBtn.className = 'playPause-btn bi bi-play-circle';
+                this.playPauseButton.className = 'playPause-btn bi bi-play-circle';
                 this.isPlaying = false;
                 console.log('Error loading audio.');
             });
         }
     }
   
-    pause(targetBtn) {
+    pause() {
         this.audioElement.pause();
         this.isPlaying = false;
-        targetBtn.className = 'playPause-btn bi bi-play-circle';
+        this.playPauseButton.className = 'playPause-btn bi bi-play-circle';
     }
 
+    // Not used (kept for reference)
     stop() {
         this.audioElement.pause();
         this.audioElement.currentTime = 0;
@@ -88,13 +99,34 @@ export class PodcastPlayer {
         this.audioElement.currentTime += 10;
     }
 
+    /**
+     * Seeks the audio to the specified value.
+     * @param {number} seekBarValue - The seek bar value (0-100)
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/seeked_event|HTMLMediaElement.seeked}
+     */
     seek(seekBarValue) {
+        // Show the loading indicator (spinner)
+        this.playPauseButton.className = 'load-icon';
         // Calculate the new time when the seek bar is changed
         let seekTo = this.audioElement.duration * (seekBarValue / 100); 
         // Update the audio time to the new time
         this.audioElement.currentTime = seekTo;
+
+        this.audioElement.addEventListener('seeked', () => {
+            // Resume audio playback if it was playing before seeking
+            if (this.isPlaying) {
+                // show the play button
+                this.playPauseButton.className = 'playPause-btn bi bi-pause-circle';
+                this.audioElement.play();
+            }
+        });
     }
 
+    /**
+     * Sets the playback speed of the audio.
+     * @param {number} speed - The playback speed
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playbackRate|HTMLMediaElement.playbackRate}
+     */
     setPlaybackSpeed(speed) {
         this.audioElement.playbackRate = speed;
     }
@@ -107,6 +139,9 @@ export class PodcastPlayer {
 
     /**
      * Method to attach event listeners to the share icons
+     * @param {string} linkToShare - The link to share
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Window/open|Window.open()}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Window/open#Window_features|Window features}
      */
     attachShareEventListeners() {
         function shareOnFacebook(linkToShare) {
@@ -252,6 +287,12 @@ export class PodcastPlayer {
         return element;
     }
     
+    /**
+     * Converts a date string to a readable date format. It also adds leading zeros to the date and time values if needed.
+     * For example, "2021-05-01T12:00:00" becomes "01/05/2021".
+     * @param {*} dateString 
+     * @returns 
+     */
     convertDateFormat(dateString) {
         const date = new Date(dateString);
         
@@ -280,6 +321,9 @@ export class PodcastPlayer {
         };
     }
 
+    /**
+     * Limits the number of words in a string to avid overflowing.
+     */
     limitStringByWords(str, limit) {
         // Split the string into an array of words
         const words = str.split(' ');
@@ -344,7 +388,7 @@ export class PodcastPlayer {
     createAudioNavCtrl() {
         // Play/Pause button
         this.playPauseButton.addEventListener('click', (e) => {
-            this.togglePlayback(e.target);
+            this.togglePlayback();
         });
 
         // Backward and forward buttons
@@ -551,6 +595,13 @@ export class PodcastPlayer {
 
     // ========= Main Method (attach podcast to DOM) ========= //
 
+    /**
+     * Attach the podcast to the DOM.
+     * @example
+     * const podcast = new PodcastPlayer({ ... });
+     * podcast.attachPodcastTo(document.body);
+     * @param {*} element 
+     */
     attachPodcastTo(element) {
         // === Create main podcast containers === //
         const podcastContainer = this.generateHtmlTag('div', { className: 'podcast-player' });
