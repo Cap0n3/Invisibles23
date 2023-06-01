@@ -52,21 +52,30 @@ export class PodcastPlayer {
         // Display loading wheel on play button
         this.playPauseButton.className = 'load-icon';
         
+        // HTMLMediaElement.HAVE_ENOUGH_DATA is always equal to 4 (see readyState link above)
         if (this.audioElement.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
-            // Audio already loaded, remove the loading wheel and play the audio
+            // If audio is already loaded, remove the loading wheel and play the audio
             this.playPauseButton.className = 'playPause-btn bi bi-pause-circle';
             this.audioElement.play();
             this.isPlaying = true;
         } 
         else 
         {
-            // Load the audio
-            this.audioElement.addEventListener('canplaythrough', () => {
+            // Load the audio (Safari requires this otherwise it won't play)
+            this.loadAudio();
+
+            const playAfterLoad = () => {
+                // Remove the event listener to avoid looping forever (ended calls loadAudio() again and triggers this event)
+                this.audioElement.removeEventListener('canplaythrough', playAfterLoad);
+
                 // Remove the loading wheel and play the audio
+                console.log('Audio loaded.');
                 this.playPauseButton.className = 'playPause-btn bi bi-pause-circle';
                 this.audioElement.play();
                 this.isPlaying = true;
-            });
+            };
+
+            this.audioElement.addEventListener('canplaythrough', playAfterLoad);
 
             // If the audio fails to load, handle the error
             this.audioElement.addEventListener('error', () => {
@@ -109,6 +118,13 @@ export class PodcastPlayer {
         this.playPauseButton.className = 'load-icon';
         // Calculate the new time when the seek bar is changed
         let seekTo = this.audioElement.duration * (seekBarValue / 100); 
+
+        // Check if seekTo is a valid value (can happen if user slides real hard to the right with cursor)
+        if (!isFinite(seekTo)) {
+            console.log('Invalid seek time:', seekTo);
+            seekTo = 0; // Set it to 0 as a default value
+        }
+
         // Update the audio time to the new time
         this.audioElement.currentTime = seekTo;
 
@@ -131,6 +147,10 @@ export class PodcastPlayer {
         this.audioElement.playbackRate = speed;
     }
   
+    loadAudio() {
+        this.audioElement.load();
+    }
+
     // ========= Helper methods ========= //
 
     formatTime(time) {
@@ -423,13 +443,14 @@ export class PodcastPlayer {
             value: 0 
         });
 
+        // Update the seek bar when it is seeked
         seekBar.addEventListener('input', (e) => {
             this.seek(e.target.value);
         });
 
         const currentTime = this.generateHtmlTag('span', { className: 'current-time', text: '00:00' });
         const totalTime = this.generateHtmlTag('span', { className: 'total-time', text: '00:00' });
-
+        
         // Initialize totalTime text content on load
         this.audioElement.addEventListener('loadedmetadata', () => {
             let durationMinutes = Math.floor(this.audioElement.duration / 60);
@@ -456,10 +477,12 @@ export class PodcastPlayer {
 
         // Reset the seek bar when the audio ends
         this.audioElement.addEventListener('ended', () => {
+                console.log('Audio ended');
                 seekBar.value = 0;
                 currentTime.textContent = '00:00';
                 this.playPauseButton.className = 'playPause-btn bi bi-play-circle';
                 this.isPlaying = false;
+                this.loadAudio(); // Reset the audio element (for Firefox)
         });
 
         // Add seek bar to seek bar wrapper
