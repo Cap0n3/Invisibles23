@@ -12,7 +12,7 @@ export function podcastsPage() {
 
             console.log('All podcasts:', podcasts);
             
-            const playersPerPage = 2;
+            const playersPerPage = 4;
             let currentPage = 1;
             const container = document.getElementById('podcasts-section-container');
             
@@ -52,7 +52,7 @@ export function podcastsPage() {
                     className: 'col-12',
                 });
 
-                let podcastPlayer = new PodcastPlayer(podcastData);
+                let podcastPlayer = new PodcastPlayer(podcastData, 'big');
                 podcastPlayer.attachPodcastTo(colDiv);
 
                 rowDiv.appendChild(colDiv);
