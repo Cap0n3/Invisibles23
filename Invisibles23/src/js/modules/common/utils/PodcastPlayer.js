@@ -13,15 +13,16 @@ export class PodcastPlayer {
      * @param {string} podcastData.html_description - The HTML podcast description
      * @param {string} podcastData.created_at - The podcast creation date
      * @param {string} podcastData.audio_url - The podcast audio URL
+     * @param {string} [classPrefix=''] - The prefix for CSS classes to offer possibility of styling multiple players
      */
-    constructor(podcastData) {
+    constructor(podcastData, classPrefix = '') {
+        this.classPrefix = classPrefix; // Prefix for CSS classes
         this.podcastID = podcastData.id + "_" + Math.floor(Math.random() * (1000 - 1 + 1) + 1);
         this.podcastImage = podcastData.image_url;
         this.podcastTitle = podcastData.name;
         this.podcastDescription = podcastData.html_description;
         this.podcastDateCreation = this.convertDateFormat(podcastData.created_at);
         this.audioUrl = podcastData.audio_url;
-        // Create the <audio> element
         this.audioElement = new Audio(podcastData.audio_url);
         this.isPlaying = false;
         this.playPauseButton = this.generateHtmlTag('i', { 
@@ -658,7 +659,9 @@ export class PodcastPlayer {
      */
     attachPodcastTo(element) {
         // === Create main podcast containers === //
-        const podcastContainer = this.generateHtmlTag('div', { className: 'podcast-player' });
+        const podcastContainer = this.generateHtmlTag('div', { 
+            className: `${this.classPrefix ? this.classPrefix + '-' : ''}podcast-player` 
+        });
         const colOne = this.generateHtmlTag('div', { className: 'col-one' });
         const colTwo = this.generateHtmlTag('div', { className: 'col-two' });
         

@@ -5,10 +5,6 @@ from .models import WebpageSection
 # Create your views here.
 from django.http import HttpResponse
 
-
-def home(request):
-    return render(request, "website/home.html")
-
 class HomeView(View):
     template_name = "website/home.html"
     queryset = WebpageSection.objects.all()
@@ -18,3 +14,9 @@ class HomeView(View):
             'sections_content' : self.queryset,
         }
         return render(request, self.template_name, context)
+    
+class PodcastsView(View):
+    template_name = "website/podcasts.html"
+
+    def get(self, request):    
+        return render(request, self.template_name, {})

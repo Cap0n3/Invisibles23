@@ -2,6 +2,7 @@ $podcast-col-padding: 10px;
 $alt-breakpoint-min: 992px;
 $alt-breakpoint-max: 1190px;
 
+// Custom spinner animation
 @keyframes spin {
     from {
       transform: rotate(0deg);
@@ -10,7 +11,6 @@ $alt-breakpoint-max: 1190px;
       transform: rotate(360deg);
     }
 }
-
 
 .podcast-player {
     display: flex;
@@ -220,6 +220,5 @@ $alt-breakpoint-max: 1190px;
                 font-size: 0.8rem;
             }
         }
-    }
-    
+    }   
 }
