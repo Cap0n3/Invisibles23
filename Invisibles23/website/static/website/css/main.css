@@ -84,6 +84,16 @@ nav.show {
   border-radius: 15px;
 }
 
+.page-header {
+  height: 550px;
+}
+
+#podcasts-header {
+  background-image: url("../medias/headers/Header_Micro.jpg");
+  background-position: 0% 30%;
+  background-size: cover;
+}
+
 #footer {
   background-image: url("../medias/footer/footerbackground.jpg");
   background-size: cover;

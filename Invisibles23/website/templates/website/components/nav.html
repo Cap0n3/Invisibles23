@@ -1,5 +1,6 @@
 <!--NAV-->
 {% load static %}
+{% with request.resolver_match.url_name as url_name %}
 <nav class="navbar navbar-expand-lg py-sm-3 py-lg-1 fixed-top">
     <div class="container-fluid">
         <!-- MOBILE HAMBURGER MENU -->
@@ -33,14 +34,14 @@
                 <!-- NAVBAR MENU -->
                 <ul class="navbar-nav justify-content-center align-items-lg-center flex-grow-1 pe-3">
                     <li class="nav-item px-4">
-                        <a class="nav-link active" aria-current="page" href={% url 'home' %}>Home</a>
+                        <a class="nav-link {% if url_name == 'home' %}active{% endif %}" aria-current="page" href={% url 'home' %}>Home</a>
                     </li>
                     <li class="nav-item px-4">
-                        <a class="nav-link" href="#">À propos</a>
+                        <a class="nav-link {% if url_name == 'a-propos' %}active{% endif %}" href="#">À propos</a>
                     </li>
                     <!-- THEMATIQUES DROPDOWN -->
                     <li class="nav-item dropdown px-4">
-                        <a class="nav-link dropdown-toggle"
+                        <a class="nav-link {% if url_name == 'thematiques' %}active{% endif %} dropdown-toggle"
                            href="#"
                            role="button"
                            data-bs-toggle="dropdown"
@@ -67,11 +68,11 @@
                         </a>
                     </li>
                     <li class="nav-item px-4">
-                        <a class="nav-link" href={% url 'podcasts' %}>Podcasts</a>
+                        <a class="nav-link {% if url_name == 'podcasts' %}active{% endif %}" href={% url 'podcasts' %}>Podcasts</a>
                     </li>
                     <!-- RESSOURCES DROPDOWN -->
                     <li class="nav-item dropdown px-4">
-                        <a class="nav-link dropdown-toggle"
+                        <a class="nav-link {% if url_name == 'ressources' %}active{% endif %} dropdown-toggle"
                            href="#"
                            role="button"
                            data-bs-toggle="dropdown"
@@ -89,10 +90,11 @@
                         </ul>
                     </li>
                     <li class="nav-item px-4">
-                        <a class="nav-link" href="#">Association</a>
+                        <a class="nav-link {% if url_name == 'association' %}active{% endif %}" href="#">Association</a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </nav>
+{% endwith %}

@@ -1,6 +1,12 @@
 /**
  * PodcastPlayer class to play audio files from a URL.
  * @class
+ * @example
+ * // Create a new PodcastPlayer instance
+ * let podcastPlayer = new PodcastPlayer(podcastData);
+ * 
+ * // Attach the podcast player to a container
+ * podcastPlayer.attachPodcastTo(container);
  */
 export class PodcastPlayer {
     /**
@@ -25,7 +31,7 @@ export class PodcastPlayer {
         this.audioUrl = podcastData.audio_url;
         this.audioElement = new Audio(podcastData.audio_url);
         this.isPlaying = false;
-        this.playPauseButton = this.generateHtmlTag('i', { 
+        this.playPauseButton = PodcastPlayer.generateHtmlTag('i', { 
             className: 'playPause-btn bi bi-play-circle' 
         });
     }
@@ -256,7 +262,7 @@ export class PodcastPlayer {
     }
 
     /**
-     * Creates an HTML element dynamically.
+     * Static method to generate an HTML element dynamically.
      *
      * @param {string} tag - The HTML tag name of the element to create.
      * @param {Object} options - Options for configuring the element.
@@ -268,25 +274,32 @@ export class PodcastPlayer {
      *
      * @example
      * // Create a simple div with nothing inside
-     * const divElement = generateHtmlTag('div');
+     * const divElement = PodcastPlayer.generateHtmlTag('div');
      *
      * @example
      * // Create a p with text "Hello World!"
-     * const pElement = generateHtmlTag('p', { text: 'Hello World!' });
+     * const pElement = PodcastPlayer.generateHtmlTag('p', { text: 'Hello World!' });
      *
      * @example
      * // Create an img with className "myImage" and src "www.mysource.com"
-     * const imgElement = generateHtmlTag('img', { className: 'myImage', src: 'www.mysource.com' });
+     * const imgElement = PodcastPlayer.generateHtmlTag('img', { className: 'myImage', src: 'www.mysource.com' });
      *
      * @example
      * // Create a div with custom innerHTML, className, and attributes
-     * const customElement = generateHtmlTag('div', {
+     * const customElement = PodcastPlayer.generateHtmlTag('div', {
      *   html: '<span>Custom Content</span>',
      *   className: 'myCustomClass',
      *   dataAttribute: 'example',
      * });
+     * 
+     * @example
+     * // Since this is a static method, you can use it outside of an instance of PodcastPlayer class.
+     * // Create a div outside of an instance of PodcastPlayer class :
+     * 
+     * const divElement = PodcastPlayer.generateHtmlTag('div', { className: 'myDiv' });
+     * document.body.appendChild(divElement);
      */
-    generateHtmlTag(tag, {text = '', html = '', className = '', ...attributes } = {}) {
+    static generateHtmlTag(tag, {text = '', html = '', className = '', ...attributes } = {}) {
         const element = document.createElement(tag);
     
         if (text) {
@@ -370,14 +383,14 @@ export class PodcastPlayer {
     // ========= Element creation methods ========= //
     
     createPodcastImage() {
-        return this.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
+        return PodcastPlayer.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
     }
 
     createMobileText() {
         // == Mobile text group (hidden by default) == //
-        const mobileTextGroup = this.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
-        const mobileTitle = this.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
-        const mobileText = this.generateHtmlTag('div', {
+        const mobileTextGroup = PodcastPlayer.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
+        const mobileTitle = PodcastPlayer.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
+        const mobileText = PodcastPlayer.generateHtmlTag('div', {
             className: 'mobile-podcast-description',
             html: this.decodeHtmlEntities(this.podcastDescription ) || 'Pas de description disponible ...'
         });
@@ -390,11 +403,11 @@ export class PodcastPlayer {
     
     createDesktopText() {
         // Create a wrapper for the title and text (desktop only)
-        const desktopTextWrapper = this.generateHtmlTag('div', { className: 'desktop-text-wrapper' });
+        const desktopTextWrapper = PodcastPlayer.generateHtmlTag('div', { className: 'desktop-text-wrapper' });
 
         // Title and text
-        const title = this.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' });
-        const text = this.generateHtmlTag('div', {
+        const title = PodcastPlayer.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' });
+        const text = PodcastPlayer.generateHtmlTag('div', {
             className: 'podcast-description',
             html: this.decodeHtmlEntities(this.podcastDescription) || 'Pas de description disponible ...' 
         });
@@ -413,18 +426,18 @@ export class PodcastPlayer {
         });
 
         // Backward and forward buttons
-        const backButton = this.generateHtmlTag('i', { className: 'bck-btn bi bi-arrow-counterclockwise' });
+        const backButton = PodcastPlayer.generateHtmlTag('i', { className: 'bck-btn bi bi-arrow-counterclockwise' });
         backButton.addEventListener('click', () => {
             this.backTenSeconds();
         });
 
-        const forwardButton = this.generateHtmlTag('i', { className: 'fwd-btn bi bi-arrow-clockwise' });
+        const forwardButton = PodcastPlayer.generateHtmlTag('i', { className: 'fwd-btn bi bi-arrow-clockwise' });
         forwardButton.addEventListener('click', () => {
             this.forwardTenSeconds();
         });
         
         // Audio controls wrapper (back, play/pause, forward)
-        const audioControls = this.generateHtmlTag('div', { className: 'audio-ctrl-wrapper' });
+        const audioControls = PodcastPlayer.generateHtmlTag('div', { className: 'audio-ctrl-wrapper' });
         audioControls.appendChild(backButton);
         audioControls.appendChild(this.playPauseButton);
         audioControls.appendChild(forwardButton);
@@ -434,9 +447,9 @@ export class PodcastPlayer {
 
     createSeekBar() {
         // == Seek bar == //
-        const seekBarWrapper = this.generateHtmlTag('div', { className: 'seek-bar-wrapper' });
+        const seekBarWrapper = PodcastPlayer.generateHtmlTag('div', { className: 'seek-bar-wrapper' });
 
-        const seekBar = this.generateHtmlTag('input', { 
+        const seekBar = PodcastPlayer.generateHtmlTag('input', { 
             className: 'seek-bar', 
             type: 'range', 
             min: 0, 
@@ -449,8 +462,8 @@ export class PodcastPlayer {
             this.seek(e.target.value);
         });
 
-        const currentTime = this.generateHtmlTag('span', { className: 'current-time', text: '00:00' });
-        const totalTime = this.generateHtmlTag('span', { className: 'total-time', text: '00:00' });
+        const currentTime = PodcastPlayer.generateHtmlTag('span', { className: 'current-time', text: '00:00' });
+        const totalTime = PodcastPlayer.generateHtmlTag('span', { className: 'total-time', text: '00:00' });
         
         // Initialize totalTime text content on load
         this.audioElement.addEventListener('loadedmetadata', () => {
@@ -504,20 +517,20 @@ export class PodcastPlayer {
     }
 
     createSpeedButton() {
-        const speedButton = this.generateHtmlTag('button', { 
+        const speedButton = PodcastPlayer.generateHtmlTag('button', { 
             className: 'speed-btn', 
             type: 'button',
             'data-bs-toggle': 'dropdown',
             'aria-expanded': 'false'
         });
-        const speedIcon = this.generateHtmlTag('i', { className: 'bi bi-speedometer2' });
+        const speedIcon = PodcastPlayer.generateHtmlTag('i', { className: 'bi bi-speedometer2' });
         const speedOptions = [0.5, 1, 1.5, 2];
         
-        const speedMenu = this.generateHtmlTag('ul', { className: 'speed-menu dropdown-menu' });
+        const speedMenu = PodcastPlayer.generateHtmlTag('ul', { className: 'speed-menu dropdown-menu' });
         
         speedOptions.forEach((speed) => {
-            const speedItem = this.generateHtmlTag('li');
-            const speedLink = this.generateHtmlTag('a', { 
+            const speedItem = PodcastPlayer.generateHtmlTag('li');
+            const speedLink = PodcastPlayer.generateHtmlTag('a', { 
                 text: speed + 'x', 
                 className: 'dropdown-item'
             });
@@ -537,7 +550,7 @@ export class PodcastPlayer {
     }
 
     createShareModal() {
-        const shareModal = this.generateHtmlTag('div', {
+        const shareModal = PodcastPlayer.generateHtmlTag('div', {
             className: 'modal fade',
             id: `shareModal_${this.podcastID}`,
             tabindex: '-1',
@@ -573,7 +586,7 @@ export class PodcastPlayer {
     }
 
     createDownloadButton() {
-        const downloadButton = this.generateHtmlTag('i', { className: 'bi bi-download' });
+        const downloadButton = PodcastPlayer.generateHtmlTag('i', { className: 'bi bi-download' });
         
         downloadButton.addEventListener('click', async () => {
             // Cool experimental feature, but not supported by all browsers yet, keep an eye on it
@@ -629,14 +642,14 @@ export class PodcastPlayer {
 
     createDateTimeWrapper() {
         // Create a wrapper for the date and time
-        const dateWrapper = this.generateHtmlTag('div', { className: 'date-wrapper' });
+        const dateWrapper = PodcastPlayer.generateHtmlTag('div', { className: 'date-wrapper' });
         
-        const timeGroup = this.generateHtmlTag('span', { 
+        const timeGroup = PodcastPlayer.generateHtmlTag('span', { 
             className: 'time-group', 
             html: `<i class="podcast-time-icon bi bi-clock"></i> ${this.podcastDateCreation.time}` || "Pas d'heure disponible ..." 
         });
 
-        const dateSpan = this.generateHtmlTag('span', {
+        const dateSpan = PodcastPlayer.generateHtmlTag('span', {
             className: 'date-group',
             html: `<i class="podcast-date-icon bi bi-calendar"></i> ${this.podcastDateCreation.date}` || "Pas de date disponible ..."
         });
@@ -659,11 +672,11 @@ export class PodcastPlayer {
      */
     attachPodcastTo(element) {
         // === Create main podcast containers === //
-        const podcastContainer = this.generateHtmlTag('div', { 
+        const podcastContainer = PodcastPlayer.generateHtmlTag('div', { 
             className: `${this.classPrefix ? this.classPrefix + '-' : ''}podcast-player` 
         });
-        const colOne = this.generateHtmlTag('div', { className: 'col-one' });
-        const colTwo = this.generateHtmlTag('div', { className: 'col-two' });
+        const colOne = PodcastPlayer.generateHtmlTag('div', { className: 'col-one' });
+        const colTwo = PodcastPlayer.generateHtmlTag('div', { className: 'col-two' });
         
         // === Create all podcast elements & attach listeners (if needed) === //
         const image = this.createPodcastImage(); // Podcast image
@@ -679,12 +692,12 @@ export class PodcastPlayer {
         const dateTimeWrapper = this.createDateTimeWrapper(); // Date and time
         
         // Controls container (where all audio controls are) //
-        const controlsContainer = this.generateHtmlTag('div', { className: 'player-controls' });        
+        const controlsContainer = PodcastPlayer.generateHtmlTag('div', { className: 'player-controls' });        
         controlsContainer.appendChild(audioNavControls);    
         controlsContainer.appendChild(seekBar);
         
         // Share container
-        const shareContainer = this.generateHtmlTag('div', { className: 'share-container' });
+        const shareContainer = PodcastPlayer.generateHtmlTag('div', { className: 'share-container' });
         shareContainer.appendChild(speedButton);
         shareContainer.appendChild(shareButton);
         shareContainer.appendChild(shareModal);

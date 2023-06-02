@@ -2,12 +2,10 @@
 {% extends "base.html" %}
 <!--Unique code from the page-->
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Podcasts page</h1>
-                <p>This is the podcast page !</p>
-            </div>
-        </div>
-    </div>
+    <!--Header-->
+    {% include "website/components/page-header.html" with headerImgID="podcasts-header" %}
+    <!--Podcast section-->
+    <section class="container-fluid text-center p-5 bg-light-green">
+        <div id="podcasts-section-container" class="container-fluid"></div>
+    </section>
 {% endblock content %}
