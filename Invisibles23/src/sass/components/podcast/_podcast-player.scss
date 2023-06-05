@@ -227,29 +227,38 @@ $alt-breakpoint-max: 1190px;
                 }
             }
         }
+    }
+    
+    .date-wrapper {
+        display: flex;
+        // justify-content: space-between;
+        gap: 15%;
+        align-items: center;
+        padding-left: 15px;
 
-        .date-wrapper {
+        .time-group {
             display: flex;
-            // justify-content: space-between;
-            gap: 10%;
             align-items: center;
-            padding-left: 15px;
-
-            .time-group {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 0.8rem;
-            }
-
-            .date-group {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 0.8rem;
-            }
+            gap: 8px;
+            font-size: 0.8rem;
         }
-    }   
+
+        .date-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+    }
+
+    // Show the hidden date and time on mobile
+    .hidden {
+        display: flex;
+
+        @include md {
+            display: none;
+        }
+    }
 }
 
 
@@ -257,6 +266,7 @@ $alt-breakpoint-max: 1190px;
     @extend .podcast-player; // Reuse styles from .podcast-player
     padding: 40px;
     width: 80%;
+    height: auto;
 
     @include md {
         // max-height: 950px;
@@ -264,18 +274,14 @@ $alt-breakpoint-max: 1190px;
     }
 
     .col-one {
-        justify-content: flex-start;
+        justify-content: space-between;
         gap: 30px;
         
 
         @include md {
+            justify-content: flex-start;
             width: 35%;
         }
-
-        // .podcast-image {
-        //     min-width: 100px;
-        //     max-width: 20px;
-        // }
 
         .player-controls {
             width: 95%;
@@ -295,7 +301,19 @@ $alt-breakpoint-max: 1190px;
 
             .mobile-podcast-description {
                 font-size: 1rem;
-                max-height: 300px;
+                max-height: none;
+                height: auto;
+            }
+        }
+
+        .seek-bar-wrapper {
+            // @media only screen and (min-width: $alt-breakpoint-min) and (max-width: $alt-breakpoint-max) {
+            //     flex-direction: column;
+            // }
+            flex-direction: column;
+
+            @include lg {
+                flex-direction: row;
             }
         }
     }

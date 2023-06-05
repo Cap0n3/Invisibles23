@@ -52,7 +52,7 @@ export function podcastsPage() {
                     className: 'col-12 d-flex justify-content-center',
                 });
 
-                let podcastPlayer = new PodcastPlayer(podcastData, 'big');
+                let podcastPlayer = new PodcastPlayer(podcastData, 'big', 60);
                 podcastPlayer.attachPodcastTo(colDiv);
 
                 rowDiv.appendChild(colDiv);

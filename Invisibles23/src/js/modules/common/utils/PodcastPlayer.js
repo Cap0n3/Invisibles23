@@ -21,8 +21,9 @@ export class PodcastPlayer {
      * @param {string} podcastData.audio_url - The podcast audio URL
      * @param {string} [classPrefix=''] - The prefix for CSS classes to offer possibility of styling multiple players
      */
-    constructor(podcastData, classPrefix = '') {
+    constructor(podcastData, classPrefix = '', descriptionWordLimit = 30) {
         this.classPrefix = classPrefix; // Prefix for CSS classes
+        this.descriptionWordLimit  = descriptionWordLimit; // Limit of words for the description
         this.podcastID = podcastData.id + "_" + Math.floor(Math.random() * (1000 - 1 + 1) + 1);
         this.podcastImage = podcastData.image_url;
         this.podcastTitle = podcastData.name;
@@ -386,21 +387,12 @@ export class PodcastPlayer {
         return PodcastPlayer.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
     }
 
-    // createMobileText() {
-    //     // == Mobile text group (hidden by default) == //
-    //     const mobileTextGroup = PodcastPlayer.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
-    //     const mobileTitle = PodcastPlayer.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
-    //     const mobileText = PodcastPlayer.generateHtmlTag('div', {
-    //         className: 'mobile-podcast-description',
-    //         html: this.decodeHtmlEntities(this.podcastDescription ) || 'Pas de description disponible ...'
-    //     });
-    //     // Add title and text to mobile text group
-    //     mobileTextGroup.appendChild(mobileTitle);
-    //     mobileTextGroup.appendChild(mobileText);
-        
-    //     return mobileTextGroup;
-    // }
-    
+    /**
+     * This method creates the text content of the podcast player.
+     * 
+     * @param {*} isMobile - If true, the text content will be created for mobile devices.
+     * @returns 
+     */
     createText(isMobile = false) {
         // Create a wrapper for the title and text (desktop only)
         const textDivWrapper = PodcastPlayer.generateHtmlTag('div', { 
@@ -412,7 +404,7 @@ export class PodcastPlayer {
             text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' 
         });
         const fullText = this.decodeHtmlEntities(this.podcastDescription) || 'Pas de description disponible ...';
-        const limitedText = this.limitStringByWords(fullText, isMobile ? 25 : 30);
+        const limitedText = this.limitStringByWords(fullText, isMobile ? 25 : this.descriptionWordLimit);
     
         // Create text container
         const textContainer = PodcastPlayer.generateHtmlTag('div', {
@@ -717,6 +709,8 @@ export class PodcastPlayer {
         const downloadButton = this.createDownloadButton(); // Download button
         const speedButton = this.createSpeedButton(); // Speed button
         const dateTimeWrapper = this.createDateTimeWrapper(); // Date and time
+        const mobileDateTimeWrapper = dateTimeWrapper.cloneNode(true);
+        mobileDateTimeWrapper.classList.add('hidden'); // Hide date and time on mobile
         
         // Controls container (where all audio controls are) //
         const controlsContainer = PodcastPlayer.generateHtmlTag('div', { className: 'player-controls' });        
@@ -736,6 +730,7 @@ export class PodcastPlayer {
         colOne.appendChild(mobileTextWrapper); // Only visible on mobile
         colOne.appendChild(controlsContainer);
         colOne.appendChild(shareContainer);
+        colOne.appendChild(mobileDateTimeWrapper); // Only visible on mobile
 
         // Column 2
         colTwo.appendChild(desktopTextWrapper);
