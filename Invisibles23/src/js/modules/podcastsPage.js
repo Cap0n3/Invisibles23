@@ -45,11 +45,11 @@ export function podcastsPage() {
              */
             function createPlayerRows(podcastData) {
                 let rowDiv = PodcastPlayer.generateHtmlTag('div', {
-                    className: 'row justify-content-center mb-5',
+                    className: 'row mb-5',
                 });
 
                 let colDiv = PodcastPlayer.generateHtmlTag('div', {
-                    className: 'col-12',
+                    className: 'col-12 d-flex justify-content-center',
                 });
 
                 let podcastPlayer = new PodcastPlayer(podcastData, 'big');

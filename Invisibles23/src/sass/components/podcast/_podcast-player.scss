@@ -1,5 +1,5 @@
 $podcast-col-padding: 10px;
-$big-podcast-col-padding: 20px;
+$big-podcast-col-padding: 5%;
 $alt-breakpoint-min: 992px;
 $alt-breakpoint-max: 1190px;
 
@@ -16,7 +16,7 @@ $alt-breakpoint-max: 1190px;
 .podcast-player {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     min-width: 280px;
     height: 800px;
@@ -49,7 +49,7 @@ $alt-breakpoint-max: 1190px;
         .podcast-image {
             width: 100%;
             min-width: 120px;
-            max-width: 200px;
+            max-width: 235px;
             height: auto;
             border-radius: 15px;
         }
@@ -253,11 +253,10 @@ $alt-breakpoint-max: 1190px;
 }
 
 
-// Make inherit new class big-podcast-player from podcast-player
 .big-podcast-player {
-    @extend .podcast-player;
+    @extend .podcast-player; // Reuse styles from .podcast-player
     padding: 40px;
-    max-width: 1200px;
+    width: 80%;
 
     @include md {
         // max-height: 950px;
@@ -265,9 +264,7 @@ $alt-breakpoint-max: 1190px;
     }
 
     .col-one {
-        padding: $big-podcast-col-padding;
-        justify-content: start;
-        align-items: self-start;
+        justify-content: flex-start;
         gap: 30px;
         
 
@@ -275,10 +272,10 @@ $alt-breakpoint-max: 1190px;
             width: 35%;
         }
 
-        .podcast-image {
-            min-width: 100px;
-            max-width: 280px;
-        }
+        // .podcast-image {
+        //     min-width: 100px;
+        //     max-width: 20px;
+        // }
 
         .player-controls {
             width: 95%;
@@ -304,19 +301,21 @@ $alt-breakpoint-max: 1190px;
     }
 
     .col-two {
-        background-color: aqua;
-        padding: $big-podcast-col-padding;
         @include md {
             width: 65%;
+            flex-direction: column-reverse;
+            justify-content: flex-end;
         }
         .desktop-text-wrapper {
             h4 {
+                margin-top: 30px;
                 margin-bottom: 30px;
             }
 
             .podcast-description {
                 font-size: 1rem;
-                max-height: 720px;
+                height: auto;
+                max-height: none;
             }
         }
     }
