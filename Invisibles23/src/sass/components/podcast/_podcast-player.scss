@@ -28,7 +28,7 @@ $alt-breakpoint-max: 1190px;
     box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
 
     @include md {
-        height: 450px;
+        height: 490px;
     }
 
     /* ====== COLUMN 1 ====== */
@@ -90,6 +90,20 @@ $alt-breakpoint-max: 1190px;
                 max-height: 220px;
                 padding: 10px; // To avoid overflow on scroll bar
                 overflow: auto;
+
+                p {
+                    &:last-of-type {
+                        display: inline;
+                        // margin-bottom: 0;
+                    }
+                }
+
+                a {
+                    cursor: pointer;
+                    margin-left: 10px;
+                    color: rgb(146, 147, 153);
+                    text-decoration: underline;
+                }
             }
 
             @include md {
@@ -194,9 +208,23 @@ $alt-breakpoint-max: 1190px;
                 padding-right: 10px;
                 font-size: 0.9rem;
                 text-align: start;
-                max-height: 225px;
+                max-height: 275px;
                 word-wrap: break-word;
                 overflow: auto;
+
+                p {
+                    &:last-of-type {
+                        display: inline;
+                        // margin-bottom: 0;
+                    }
+                }
+
+                a {
+                    cursor: pointer;
+                    margin-left: 10px;
+                    color: rgb(146, 147, 153);
+                    text-decoration: underline;
+                }
             }
         }
 
@@ -229,9 +257,11 @@ $alt-breakpoint-max: 1190px;
 .big-podcast-player {
     @extend .podcast-player;
     padding: 40px;
+    max-width: 1200px;
 
     @include md {
-        height: 950px;
+        // max-height: 950px;
+        height: auto;
     }
 
     .col-one {
@@ -246,8 +276,8 @@ $alt-breakpoint-max: 1190px;
         }
 
         .podcast-image {
-            min-width: 200px;
-            max-width: 380px;
+            min-width: 100px;
+            max-width: 280px;
         }
 
         .player-controls {
@@ -274,6 +304,7 @@ $alt-breakpoint-max: 1190px;
     }
 
     .col-two {
+        background-color: aqua;
         padding: $big-podcast-col-padding;
         @include md {
             width: 65%;

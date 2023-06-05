@@ -225,7 +225,7 @@ nav.show {
 }
 @media screen and (min-width: 768px) {
   .podcast-player, .big-podcast-player {
-    height: 450px;
+    height: 490px;
   }
 }
 .podcast-player .col-one, .big-podcast-player .col-one {
@@ -280,6 +280,15 @@ nav.show {
   max-height: 220px;
   padding: 10px;
   overflow: auto;
+}
+.podcast-player .col-one .mobile-text-group .mobile-podcast-description p:last-of-type, .big-podcast-player .col-one .mobile-text-group .mobile-podcast-description p:last-of-type {
+  display: inline;
+}
+.podcast-player .col-one .mobile-text-group .mobile-podcast-description a, .big-podcast-player .col-one .mobile-text-group .mobile-podcast-description a {
+  cursor: pointer;
+  margin-left: 10px;
+  color: rgb(146, 147, 153);
+  text-decoration: underline;
 }
 @media screen and (min-width: 768px) {
   .podcast-player .col-one .mobile-text-group, .big-podcast-player .col-one .mobile-text-group {
@@ -372,9 +381,18 @@ nav.show {
   padding-right: 10px;
   font-size: 0.9rem;
   text-align: start;
-  max-height: 225px;
+  max-height: 275px;
   word-wrap: break-word;
   overflow: auto;
+}
+.podcast-player .col-two .desktop-text-wrapper .podcast-description p:last-of-type, .big-podcast-player .col-two .desktop-text-wrapper .podcast-description p:last-of-type {
+  display: inline;
+}
+.podcast-player .col-two .desktop-text-wrapper .podcast-description a, .big-podcast-player .col-two .desktop-text-wrapper .podcast-description a {
+  cursor: pointer;
+  margin-left: 10px;
+  color: rgb(146, 147, 153);
+  text-decoration: underline;
 }
 .podcast-player .col-two .date-wrapper, .big-podcast-player .col-two .date-wrapper {
   display: flex;
@@ -397,10 +415,11 @@ nav.show {
 
 .big-podcast-player {
   padding: 40px;
+  max-width: 1200px;
 }
 @media screen and (min-width: 768px) {
   .big-podcast-player {
-    height: 950px;
+    height: auto;
   }
 }
 .big-podcast-player .col-one {
@@ -415,8 +434,8 @@ nav.show {
   }
 }
 .big-podcast-player .col-one .podcast-image {
-  min-width: 200px;
-  max-width: 380px;
+  min-width: 100px;
+  max-width: 280px;
 }
 .big-podcast-player .col-one .player-controls {
   width: 95%;
@@ -432,6 +451,7 @@ nav.show {
   max-height: 300px;
 }
 .big-podcast-player .col-two {
+  background-color: aqua;
   padding: 20px;
 }
 @media screen and (min-width: 768px) {

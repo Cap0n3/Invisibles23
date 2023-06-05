@@ -356,7 +356,7 @@ export class PodcastPlayer {
     }
 
     /**
-     * Limits the number of words in a string to avid overflowing.
+     * Limits the number of words in a string to avoid overflowing. It adds "..." at the end of the string if it is longer than the limit.
      */
     limitStringByWords(str, limit) {
         // Split the string into an array of words
@@ -386,38 +386,65 @@ export class PodcastPlayer {
         return PodcastPlayer.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
     }
 
-    createMobileText() {
-        // == Mobile text group (hidden by default) == //
-        const mobileTextGroup = PodcastPlayer.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
-        const mobileTitle = PodcastPlayer.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
-        const mobileText = PodcastPlayer.generateHtmlTag('div', {
-            className: 'mobile-podcast-description',
-            html: this.decodeHtmlEntities(this.podcastDescription ) || 'Pas de description disponible ...'
-        });
-        // Add title and text to mobile text group
-        mobileTextGroup.appendChild(mobileTitle);
-        mobileTextGroup.appendChild(mobileText);
+    // createMobileText() {
+    //     // == Mobile text group (hidden by default) == //
+    //     const mobileTextGroup = PodcastPlayer.generateHtmlTag('div', { className: 'mobile-text-group hidden' });
+    //     const mobileTitle = PodcastPlayer.generateHtmlTag('h4', {text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre'});
+    //     const mobileText = PodcastPlayer.generateHtmlTag('div', {
+    //         className: 'mobile-podcast-description',
+    //         html: this.decodeHtmlEntities(this.podcastDescription ) || 'Pas de description disponible ...'
+    //     });
+    //     // Add title and text to mobile text group
+    //     mobileTextGroup.appendChild(mobileTitle);
+    //     mobileTextGroup.appendChild(mobileText);
         
-        return mobileTextGroup;
-    }
+    //     return mobileTextGroup;
+    // }
     
-    createDesktopText() {
+    createText(isMobile = false) {
         // Create a wrapper for the title and text (desktop only)
-        const desktopTextWrapper = PodcastPlayer.generateHtmlTag('div', { className: 'desktop-text-wrapper' });
-
-        // Title and text
-        const title = PodcastPlayer.generateHtmlTag('h4', { text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' });
-        const text = PodcastPlayer.generateHtmlTag('div', {
-            className: 'podcast-description',
-            html: this.decodeHtmlEntities(this.podcastDescription) || 'Pas de description disponible ...' 
+        const textDivWrapper = PodcastPlayer.generateHtmlTag('div', { 
+            className: isMobile? 'mobile-text-group hidden' : 'desktop-text-wrapper'
         });
-        
-        // Add title and text to desktop text wrapper
-        desktopTextWrapper.appendChild(title);
-        desktopTextWrapper.appendChild(text);
-
-        return desktopTextWrapper;
-    }
+    
+        // Title and text
+        const title = PodcastPlayer.generateHtmlTag('h4', { 
+            text: this.limitStringByWords(this.podcastTitle, 10) || 'Sans titre' 
+        });
+        const fullText = this.decodeHtmlEntities(this.podcastDescription) || 'Pas de description disponible ...';
+        const limitedText = this.limitStringByWords(fullText, isMobile ? 25 : 30);
+    
+        // Create text container
+        const textContainer = PodcastPlayer.generateHtmlTag('div', {
+            className: isMobile ? 'mobile-podcast-description' : 'podcast-description',
+            html: limitedText
+        });
+    
+        // Create show more/show less link
+        const showMoreLink = PodcastPlayer.generateHtmlTag('a', { text: 'Voir plus' });
+    
+        let isFullText = false;
+    
+        const toggleText = () => {
+            textContainer.innerHTML = isFullText ? limitedText : fullText;
+            showMoreLink.textContent = isFullText ? 'Voir plus' : 'Voir moins';
+            textContainer.appendChild(showMoreLink);
+            isFullText = !isFullText;
+        };
+    
+        showMoreLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            toggleText();
+        });
+    
+        // Add title, text container, and show more/show less link to desktop text wrapper
+        textDivWrapper.appendChild(title);
+        textDivWrapper.appendChild(textContainer);
+        textContainer.appendChild(showMoreLink);
+        //textDivWrapper.appendChild(showMoreLink);
+    
+        return textDivWrapper;
+    }    
 
     createAudioNavCtrl() {
         // Play/Pause button
@@ -680,8 +707,8 @@ export class PodcastPlayer {
         
         // === Create all podcast elements & attach listeners (if needed) === //
         const image = this.createPodcastImage(); // Podcast image
-        const mobileTextWrapper = this.createMobileText();  // Podcast title and text (mobile)
-        const desktopTextWrapper = this.createDesktopText(); // Podcast title and text (desktop)
+        const mobileTextWrapper = this.createText(true);  // Podcast title and text (mobile)
+        const desktopTextWrapper = this.createText(); // Podcast title and text (desktop)
         const audioNavControls = this.createAudioNavCtrl(); // Audio navigation controls (back, play/pause, forward)
         const seekBar = this.createSeekBar(); // Seek bar
         const shareButton = this.createShareButton(); // Share button
