@@ -396,9 +396,16 @@ nav.show {
 }
 .podcast-player .date-wrapper, .big-podcast-player .date-wrapper {
   display: flex;
+  width: 100%;
+  justify-content: center;
   gap: 15%;
   align-items: center;
-  padding-left: 15px;
+}
+@media screen and (min-width: 768px) {
+  .podcast-player .date-wrapper, .big-podcast-player .date-wrapper {
+    gap: 0;
+    justify-content: space-between;
+  }
 }
 .podcast-player .date-wrapper .time-group, .big-podcast-player .date-wrapper .time-group {
   display: flex;
@@ -478,6 +485,12 @@ nav.show {
   font-size: 1rem;
   height: auto;
   max-height: none;
+}
+@media screen and (min-width: 768px) {
+  .big-podcast-player .date-wrapper {
+    gap: 15%;
+    justify-content: flex-start;
+  }
 }
 
 /* ==================== */

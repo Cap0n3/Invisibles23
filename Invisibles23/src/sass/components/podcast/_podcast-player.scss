@@ -231,10 +231,17 @@ $alt-breakpoint-max: 1190px;
     
     .date-wrapper {
         display: flex;
-        // justify-content: space-between;
+        width: 100%;
+        justify-content: center;
         gap: 15%;
         align-items: center;
-        padding-left: 15px;
+        // padding-left: 15px;
+
+
+        @include md {
+            gap: 0;
+            justify-content: space-between;
+        }
 
         .time-group {
             display: flex;
@@ -335,6 +342,13 @@ $alt-breakpoint-max: 1190px;
                 height: auto;
                 max-height: none;
             }
+        }
+    }
+
+    .date-wrapper {
+        @include md {
+            gap: 15%;
+            justify-content: flex-start;
         }
     }
 }
