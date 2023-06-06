@@ -88,6 +88,12 @@ nav.show {
   height: 550px;
 }
 
+#about-header {
+  background-image: url("../medias/headers/Header_Mountains3.jpg");
+  background-position: 0% 50%;
+  background-size: cover;
+}
+
 #podcasts-header {
   background-image: url("../medias/headers/Header_Micro.jpg");
   background-position: 0% 30%;
@@ -592,6 +598,10 @@ body .normal-input {
 body .normal-input:focus {
   border-color: #002E48;
   box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.3);
+}
+body .videos {
+  aspect-ratio: 16/9;
+  width: 80%;
 }
 
 /* ================ */
