@@ -1,6 +1,8 @@
 from django.db import models
+import re
+from django.core.exceptions import ValidationError
 
-# Create your models here.
+# Models for the website
 class HomePageSections (models.Model):
     name = models.CharField(max_length=50) # To reference the section in the template
     title = models.CharField(max_length=50) # Actual title of the section
@@ -15,3 +17,30 @@ class HomePageSections (models.Model):
     
 class AboutPageSections(HomePageSections):
     pass
+
+
+class YoutubeVideos(models.Model):
+    title = models.CharField(max_length=50)
+    video_url = models.URLField()
+
+    def clean(self):
+        '''
+        Clean the video_url field to get the embed link
+        '''
+        super().clean()
+        try:
+            if "youtu.be" in self.video_url:
+                vidID = self.video_url.split("/")[-1]  # Get last bit where ID is
+                self.video_url = f"https://www.youtube.com/embed/{vidID}"
+            elif "youtube.com" in self.video_url:
+                vidID = self.video_url.split("=")[-1]
+                self.video_url = f"https://www.youtube.com/embed/{vidID}"
+                print(self.video_url)
+            else:
+                raise ValidationError("Le lien de la vidéo youtube est invalide !")
+        except Exception as e:
+            self.video_url = ""
+            raise ValidationError(f"Error: {str(e)}")
+
+    def __str__(self):
+        return self.title

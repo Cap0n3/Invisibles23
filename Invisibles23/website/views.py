@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from .models import HomePageSections, AboutPageSections
+from .models import HomePageSections, AboutPageSections, YoutubeVideos
 
 # Create your views here.
 from django.http import HttpResponse
@@ -18,10 +18,12 @@ class HomeView(View):
 class AboutView(View):
     template_name = "website/about.html"
     queryset = AboutPageSections.objects.all()
+    allVideos = YoutubeVideos.objects.all()
 
     def get(self, request):
         context = {
             'sections_content' : self.queryset,
+            'videos' : self.allVideos,
         }    
         return render(request, self.template_name, context)
 
