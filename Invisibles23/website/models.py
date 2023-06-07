@@ -19,6 +19,9 @@ class AboutPageSections(HomePageSections):
     pass
 
 
+class AssociationSections(HomePageSections):
+    pass
+
 class YoutubeVideos(models.Model):
     title = models.CharField(max_length=50)
     video_url = models.URLField()
@@ -35,12 +38,16 @@ class YoutubeVideos(models.Model):
             elif "youtube.com" in self.video_url:
                 vidID = self.video_url.split("=")[-1]
                 self.video_url = f"https://www.youtube.com/embed/{vidID}"
-                print(self.video_url)
             else:
                 raise ValidationError("Le lien de la vidéo youtube est invalide !")
         except Exception as e:
             self.video_url = ""
             raise ValidationError(f"Error: {str(e)}")
-
+        
+        total_videos = YoutubeVideos.objects.count()
+        
+        if total_videos >= 5:
+            raise ValidationError("Vous ne pouvez pas ajouter plus de 6 vidéos !")
+    
     def __str__(self):
         return self.title

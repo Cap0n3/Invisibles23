@@ -79,7 +79,11 @@ body {
 
     .videos {
         aspect-ratio: 16 / 9;
-        width: 80%;
+        width: 100%;
+        
+        @include lg {
+            width: 80%;
+        }
     }
 }
 

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Association Les Invisibles" %}
+    <!--ENGAGEMENTS-->
+    {% for section in sections_content %}
+        {% if section.name == "Engagements" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% endif %}
+    {% endfor %}
+    <!--INSTAGRAM-->
+    {% for section in sections_content %}
+        {% if section.name == "Instagram" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% endif %}
+    {% endfor %}
+    <!--VISIBILISER-->
+    {% for section in sections_content %}
+        {% if section.name == "Visibiliser" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% endif %}
+    {% endfor %}
+    
+{% endblock content %}

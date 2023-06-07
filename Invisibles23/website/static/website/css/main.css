@@ -100,6 +100,12 @@ nav.show {
   background-size: cover;
 }
 
+#association-header {
+  background-image: url("../medias/headers/Header_Woman2.jpg");
+  background-position: 0% 50%;
+  background-size: cover;
+}
+
 #footer {
   background-image: url("../medias/footer/footerbackground.jpg");
   background-size: cover;
@@ -601,7 +607,12 @@ body .normal-input:focus {
 }
 body .videos {
   aspect-ratio: 16/9;
-  width: 80%;
+  width: 100%;
+}
+@media screen and (min-width: 992px) {
+  body .videos {
+    width: 80%;
+  }
 }
 
 /* ================ */
