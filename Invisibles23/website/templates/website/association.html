@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
@@ -21,5 +22,30 @@
             {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
         {% endif %}
     {% endfor %}
-    
+    <!--PODCAST-->
+    {% for section in sections_content %}
+        {% if section.name == "Podcast" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% endif %}
+    {% endfor %}
+    <!--20'000 ECOUTES-->
+    {% for section in sections_content %}
+        {% if section.name == "Ecoutes" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% endif %}
+    {% endfor %}
+    <!--TEMOIGNAGES-->
+    {% for section in sections_content %}
+        {% if section.name == "Temoignages" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% endif %}
+    {% endfor %}
+    <!--COMPRENDRE-->
+    {% for section in sections_content %}
+        {% if section.name == "Comprendre" %}
+            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% endif %}
+    {% endfor %}
+    <!--CALL TO ACTION - JOIN ASSOCIATION -->
+    {% include "website/components/c2a-section.html" with c2aType="join" bg="bg-c2a-men1" %} 
 {% endblock content %}

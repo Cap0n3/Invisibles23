@@ -547,13 +547,68 @@ nav.show {
   background-image: url("../medias/c2a/c2a_hands.jpg");
   background-size: cover;
   background-position: 0% 70%;
+  background-position: 40% 70%;
+}
+@media screen and (min-width: 576px) {
+  .bg-c2a-hands {
+    background-position: 0% 70%;
+  }
+}
+
+.bg-c2a-men1 {
+  background-image: url("../medias/c2a/c2a_men1.jpg");
+  background-size: cover;
+  background-position: 40% 15%;
+}
+@media screen and (min-width: 576px) {
+  .bg-c2a-men1 {
+    background-position: 0% 15%;
+  }
+}
+
+.followers-quote-small {
+  position: relative;
+  padding: 20px 40px 20px 40px;
+  background-color: rgb(249, 236, 255);
+}
+.followers-quote-small .quote-image {
+  margin: 20px 0 20px 0;
+  background-image: url("../medias/quote/Quote.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 35px;
+}
+.followers-quote-small > blockquote {
+  font-weight: 300;
+  font-style: italic;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  border: 0;
+  text-align: center;
+}
+.followers-quote-small > figcaption {
+  font-weight: 500;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  border: 0;
+  text-align: right;
+}
+.followers-quote-small:before {
+  content: "";
+  position: absolute;
+  background-color: rgb(80, 0, 120);
+  width: 15px;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
 }
-body h2, body h5 {
+body h1, body h2, body h5 {
   font-family: "Cormorant Garamond", serif;
 }
 body h2 {

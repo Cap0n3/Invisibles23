@@ -1,0 +1,44 @@
+$leftBar-color: rgba(80, 0, 120, 1);
+$blockquote-color: rgba(249, 236, 255, 1);
+
+.followers-quote-small {
+    position: relative;
+    padding: 20px 40px 20px 40px;
+    background-color: $blockquote-color;
+
+    .quote-image {
+        margin: 20px 0 20px 0;
+        background-image: url("../medias/quote/Quote.png");
+        background-size: auto;
+        background-repeat: no-repeat;
+        width: 60px;
+        height: 35px;
+    }
+
+    & > blockquote {
+        font-weight: 300;
+        font-style: italic;
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+        border: 0;
+        text-align: center;
+    }
+
+    & > figcaption {
+        font-weight: 500;
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+        border: 0;
+        text-align: right;
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        background-color: $leftBar-color;
+        width: 15px;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+}

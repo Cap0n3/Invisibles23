@@ -43,4 +43,19 @@
     background-image: url("../medias/c2a/c2a_hands.jpg");
     background-size: cover;
     background-position: 0% 70%;
+    background-position: 40% 70%;
+
+    @include sm {
+        background-position: 0% 70%;
+    }
+}
+
+.bg-c2a-men1 {
+    background-image: url("../medias/c2a/c2a_men1.jpg");
+    background-size: cover;
+    background-position: 40% 15%;
+
+    @include sm {
+        background-position: 0% 15%;
+    }
 }

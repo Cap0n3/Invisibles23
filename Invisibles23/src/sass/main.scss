@@ -9,12 +9,13 @@
 @import "components/podcast/mini-podcast";
 @import "components/podcast/podcast-player";
 @import "components/callToAction/c2a";
+@import "components/blockquote";
 
 body {
     color: $font-deep-blue;
     font-family: 'Nunito', sans-serif;
 
-    h2, h5 {
+    h1, h2, h5 {
         font-family: 'Cormorant Garamond', serif;
     }
 
