@@ -1,17 +1,67 @@
+/**
+ * Instantiate the PodcastPlayer class and attach it to the container
+ */
 import {PodcastPlayer} from './common/utils/PodcastPlayer.js';
-import {getAllPodcasts} from './common/utils/api.js';
+import {getAushaPodcasts} from './common/utils/api.js';
 
+/**
+ * Create the last podcasts for the homepage section
+ * @returns {HTMLDivElement}
+ */
+export function homepagePodcasts() {
+    // Get the last 4 podcasts from the API
+    const n = 4; // Get the last 4 podcasts
+    getAushaPodcasts(4)
+        .then(podcasts => {
+            console.log('Last', n, 'podcasts:', podcasts);
+            
+            // Assign the podcasts to the podcastArray
+            const podcastArray = podcasts;
 
+            // Get the containers where the podcast players will be attached
+            const playerContainers1 = document.querySelectorAll('.lastPodcast1');
+            const playerContainers2 = document.querySelectorAll('.lastPodcast2');
+            const playerContainers3 = document.querySelectorAll('.lastPodcast3');
+            const playerContainers4 = document.querySelectorAll('.lastPodcast4');
+
+            playerContainers1.forEach((playerContainer) => {
+                let podcastPlayer = new PodcastPlayer(podcastArray[0]);
+                podcastPlayer.attachPodcastTo(playerContainer);
+            });
+            
+            playerContainers2.forEach((playerContainer) => {
+                let podcastPlayer = new PodcastPlayer(podcastArray[1]);
+                podcastPlayer.attachPodcastTo(playerContainer);
+            });
+            
+            playerContainers3.forEach((playerContainer) => {
+                let podcastPlayer = new PodcastPlayer(podcastArray[2]);
+                podcastPlayer.attachPodcastTo(playerContainer);
+            });
+
+            playerContainers4.forEach((playerContainer) => {
+                let podcastPlayer = new PodcastPlayer(podcastArray[3]);
+                podcastPlayer.attachPodcastTo(playerContainer);
+            });
+        })
+        .catch(error => {
+            // Handle the error
+            console.error('Error retrieving podcasts:', error);
+        });
+}
+
+/**
+ * Create the podcasts for the podcasts page
+ * @returns {HTMLDivElement}
+ */
 export function podcastsPage() {
     // Get all the podcasts from the API
-    getAllPodcasts()
+    getAushaPodcasts()
         .then(podcasts => {
             
-            const podcastArray = podcasts; // Assign the podcasts to the podcastArray
-            podcastArray.reverse(); // Reverse the array so the most recent podcasts are displayed first
+            const podcastArray = podcasts.data; // Assign the podcasts to the podcastArray
+            //podcastArray.reverse(); // Reverse the array so the most recent podcasts are displayed first
 
-            console.log('All podcasts:', podcasts);
-            
             const playersPerPage = 4;
             let currentPage = 1;
             const container = document.getElementById('podcasts-section-container');
@@ -82,9 +132,6 @@ export function podcastsPage() {
                         href: '#',
                         text: i,
                     });
-                    // const link = document.createElement('a');
-                    // link.href = '#';
-                    // link.textContent = i;
                     if (i === currentPage) {
                         link.classList.add('active');
                     }

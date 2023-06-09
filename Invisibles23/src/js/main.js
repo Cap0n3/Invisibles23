@@ -1,7 +1,6 @@
 import { navbar } from "./modules/common/navbar.js";
 import { contactForm } from "./modules/common/contactForm.js";
-import { homepagePodcasts } from "./modules/homepagePodcasts.js";
-import { podcastsPage } from "./modules/podcastsPage.js";
+import { homepagePodcasts, podcastsPage } from "./modules/insertPodcasts.js";
 
 /**
  * Initialize the webpage
