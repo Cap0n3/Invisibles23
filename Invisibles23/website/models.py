@@ -1,6 +1,6 @@
 from django.db import models
-import re
 from django.core.exceptions import ValidationError
+from ckeditor.fields import RichTextField
 
 # Models for the website
 class HomePageSections (models.Model):
@@ -18,9 +18,19 @@ class HomePageSections (models.Model):
 class AboutPageSections(HomePageSections):
     pass
 
-
 class AssociationSections(HomePageSections):
     pass
+
+class ThematicSections(models.Model):
+    ASSOCIATED_TAB = [('chronique', 'Chronique'), ('invisible', 'Invisible'), ('fausseCouche', 'Fausse-couche')]
+    title = models.CharField(max_length=100)
+    bodyText = RichTextField()
+    tab = models.CharField(max_length=20, choices=ASSOCIATED_TAB, default='chronique')
+
+    def __str__(self):
+        return self.title
+
+
 
 class YoutubeVideos(models.Model):
     title = models.CharField(max_length=50)

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Maladies Chroniques" %}
+    <!--CONTENT-->
+    {% for article in sections_content %}
+        <h2>{{ article.title }}</h2>
+        <div>{{ article.bodyText|safe }}</div>
+    {% endfor %}
+{% endblock content %}

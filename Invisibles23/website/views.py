@@ -3,6 +3,7 @@ from django.views import View
 from .models import (
     HomePageSections, 
     AboutPageSections, 
+    ThematicSections,
     AssociationSections,
     YoutubeVideos
 )
@@ -29,6 +30,16 @@ class AboutView(View):
         context = {
             'sections_content' : self.queryset,
             'videos' : self.allVideos,
+        }    
+        return render(request, self.template_name, context)
+
+class ChronicTabView(View):
+    template_name = "website/chronic.html"
+    queryset = ThematicSections.objects.filter(tab='chronique')
+
+    def get(self, request):
+        context = {
+            'sections_content' : self.queryset,
         }    
         return render(request, self.template_name, context)
 
