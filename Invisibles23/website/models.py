@@ -22,10 +22,15 @@ class AssociationSections(HomePageSections):
     pass
 
 class ThematicSections(models.Model):
-    ASSOCIATED_TAB = [('chronique', 'Chronique'), ('invisible', 'Invisible'), ('fausseCouche', 'Fausse-couche')]
-    title = models.CharField(max_length=100)
-    bodyText = RichTextField()
-    tab = models.CharField(max_length=20, choices=ASSOCIATED_TAB, default='chronique')
+    ASSOCIATED_TAB = [('chronic', 'Maladies chroniques'), ('invisible', 'Maladies invisibles'), ('miscarriage', 'Fausses couches')]
+    tab = models.CharField(max_length=20, choices=ASSOCIATED_TAB, default='chronic', verbose_name="Onglet associé")
+    title = models.CharField(max_length=100, verbose_name="Titre de la section")
+    richText = RichTextField(verbose_name="Contenu de la section")
+    custom_html = models.TextField(blank=True)
+    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
+    image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
+    image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
+    reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
 
     def __str__(self):
         return self.title

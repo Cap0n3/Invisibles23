@@ -1,0 +1,22 @@
+<!--TEST section of website -->
+<section class="normal-section container-fluid text-center p-5 {{ bg }}">
+    <h2 class="d-lg-none mb-5 text-uppercase">{{ data.title }}</h2>
+    <div class="row p-lg-3">
+        {% if data.image %}
+        <div class="col-12 col-lg-6 px-lg-5 d-md-flex align-items-md-center {{ data.reverse|yesno:"order-lg-1, order-lg-2 , order-lg-2" }}">
+            <img src="{{ data.image.url }}" class="img-fluid rounded-4" alt="{{ data.image_alt }}" title="{{ data.image_title }}" width="" height="" />
+        </div>
+        {% endif %}
+        <div class="col-12 {{ data.image|yesno:"col-lg-6, col-lg-12" }} px-lg-5 {{ data.reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
+            <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ data.title }}</h2>
+            <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
+                {{ data.richText|safe }}
+            </div>
+            {% if data.custom_html %}
+            <div class="d-flex flex-column gap-5">
+                {{ data.custom_html|safe }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

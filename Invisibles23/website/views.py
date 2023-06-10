@@ -35,7 +35,7 @@ class AboutView(View):
 
 class ChronicTabView(View):
     template_name = "website/chronic.html"
-    queryset = ThematicSections.objects.filter(tab='chronique')
+    queryset = ThematicSections.objects.filter(tab='chronic')
 
     def get(self, request):
         context = {

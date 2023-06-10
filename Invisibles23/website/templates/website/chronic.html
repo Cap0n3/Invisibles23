@@ -3,9 +3,12 @@
 {% block content %}
     <!--HEADER-->
     {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Maladies Chroniques" %}
-    <!--CONTENT-->
-    {% for article in sections_content %}
-        <h2>{{ article.title }}</h2>
-        <div>{{ article.bodyText|safe }}</div>
+    <!--CHRONIC CONTENT (Filtered in the View)-->
+    {% for section in sections_content %}
+        {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+        {% else %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+        {% endif %}
     {% endfor %}
 {% endblock content %}
