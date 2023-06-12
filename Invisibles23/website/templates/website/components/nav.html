@@ -48,13 +48,13 @@
                            aria-expanded="false">Thématiques</a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item py-2" href="#">Maladies invisibles</a>
+                                <a class="dropdown-item py-2" href={% url 'invisible' %}>Maladies invisibles</a>
                             </li>
                             <li>
                                 <a class="dropdown-item py-2" href={% url 'chronic' %}>Maladies chroniques</a>
                             </li>
                             <li>
-                                <a class="dropdown-item py-2" href="#">Autres invisibles</a>
+                                <a class="dropdown-item py-2" href={% url 'miscarriage' %}>Fausses couches</a>
                             </li>
                         </ul>
                     </li>

@@ -3,7 +3,9 @@ from django.views import View
 from .models import (
     HomePageSections, 
     AboutPageSections, 
-    ThematicSections,
+    ChronicTabSections,
+    InvsibleTabSections,
+    MiscarriageTabSections,
     AssociationSections,
     YoutubeVideos
 )
@@ -33,9 +35,30 @@ class AboutView(View):
         }    
         return render(request, self.template_name, context)
 
+# Create base class for thematic tabs (stay DRY)
 class ChronicTabView(View):
     template_name = "website/chronic.html"
-    queryset = ThematicSections.objects.filter(tab='chronic')
+    queryset = ChronicTabSections.objects.exclude(order=0)
+
+    def get(self, request):
+        context = {
+            'sections_content' : self.queryset,
+        }    
+        return render(request, self.template_name, context)
+
+class InvisibleTabView(View):
+    template_name = "website/invisible.html"
+    queryset = InvsibleTabSections.objects.exclude(order=0)
+
+    def get(self, request):
+        context = {
+            'sections_content' : self.queryset,
+        }    
+        return render(request, self.template_name, context)
+    
+class MiscarriageTabView(View):
+    template_name = "website/miscarriage.html"
+    queryset = MiscarriageTabSections.objects.exclude(order=0)
 
     def get(self, request):
         context = {

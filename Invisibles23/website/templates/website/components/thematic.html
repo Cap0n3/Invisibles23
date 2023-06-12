@@ -1,0 +1,10 @@
+{% block content %}
+    <!--CONTENT-->
+    {% for section in sections_content %}
+        {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+        {% else %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

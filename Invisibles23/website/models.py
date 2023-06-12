@@ -1,6 +1,58 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
+from django.utils.safestring import mark_safe
+
+# Base models for the website (DRY)
+class BaseThematic(models.Model):
+    order = models.PositiveIntegerField(
+        default=None,
+        verbose_name=f"Ordre de la section",
+        blank=True,
+        null=True,
+        help_text="Laisser vide pour ajouter la section à la fin ou mettre 0 pour ne pas afficher la section"
+    )
+    title = models.CharField(max_length=100, verbose_name="Titre de la section")
+    richText = RichTextField(verbose_name="Contenu de la section")
+    custom_html = models.TextField(blank=True)
+    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
+    image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
+    image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
+    reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return mark_safe(f"<span style='color: #BC52BE'>[ORDRE SECTION : {self.order}] {'<i>(section non visible)</i>' if self.order == 0 else ''}</span> - {self.title} ")
+
+    def clean(self):
+        super().clean()
+        # Check if another section with the same tab and order already exists
+        if self.__class__.objects.filter(order=self.order).exists() and self.order != 0:
+            raise ValidationError(mark_safe(f"""
+                <p>Une section avec le le même ordre existe déjà dans cet onglet !
+                Veuillez changer l'ordre de la section ou l'onglet associé.
+                                            
+                <p>Si vous souhaitez échanger l'ordre de deux sections :</p>
+                <ol>
+                    <li>1. Mettez l'ordre de la section que vous souhaitez échanger à 0</li>
+                    <li>2. Enregistrez</li>
+                    <li>3. Mettez l'ordre de l'autre section avec laquelle vous souhaitez échanger à l'ordre de la première section</li>
+                    <li>4. Enregistrez</li>
+                    <li>5. Mettez l'ordre de la première section à l'ordre de la deuxième section</li>
+                </ol>
+            """))
+
+    def save(self, *args, **kwargs):
+        # If the order is None, set the order to the total number of sections + 1
+        if self.order is None:
+            self.order = self.get_total_sections() + 1
+
+        super().save(*args, **kwargs)
+
+    def get_total_sections(self):
+        return self.__class__.objects.count()
 
 # Models for the website
 class HomePageSections (models.Model):
@@ -21,20 +73,29 @@ class AboutPageSections(HomePageSections):
 class AssociationSections(HomePageSections):
     pass
 
-class ThematicSections(models.Model):
-    ASSOCIATED_TAB = [('chronic', 'Maladies chroniques'), ('invisible', 'Maladies invisibles'), ('miscarriage', 'Fausses couches')]
-    tab = models.CharField(max_length=20, choices=ASSOCIATED_TAB, default='chronic', verbose_name="Onglet associé")
-    title = models.CharField(max_length=100, verbose_name="Titre de la section")
-    richText = RichTextField(verbose_name="Contenu de la section")
-    custom_html = models.TextField(blank=True)
-    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
-    image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
-    image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
-    reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
+class ChronicTabSections(BaseThematic):
+    class Meta:
+        # Order the sections by the order field in the admin
+        ordering = ['order']
+        # Change visible name of the model in the admin
+        verbose_name = 'Maladies chroniques'
+        verbose_name_plural = 'Maladies chroniques'
 
-    def __str__(self):
-        return self.title
+class InvsibleTabSections(BaseThematic):
+    class Meta:
+        # Order the sections by the order field in the admin
+        ordering = ['order']
+        # Change visible name of the model in the admin
+        verbose_name = 'Maladies invisibles'
+        verbose_name_plural = 'Maladies invisibles'
 
+class MiscarriageTabSections(BaseThematic):
+    class Meta:
+        # Order the sections by the order field in the admin
+        ordering = ['order']
+        # Change visible name of the model in the admin
+        verbose_name = 'Fausses couches'
+        verbose_name_plural = 'Fausses couches'
 
 
 class YoutubeVideos(models.Model):

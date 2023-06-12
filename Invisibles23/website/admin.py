@@ -4,7 +4,9 @@ from .models import (
     AboutPageSections, 
     YoutubeVideos, 
     AssociationSections,
-    ThematicSections
+    ChronicTabSections,
+    InvsibleTabSections,
+    MiscarriageTabSections
 )
 
 # Register your models here.
@@ -12,4 +14,6 @@ admin.site.register(HomePageSections)
 admin.site.register(AboutPageSections)
 admin.site.register(YoutubeVideos)
 admin.site.register(AssociationSections)
-admin.site.register(ThematicSections)
+admin.site.register(ChronicTabSections)
+admin.site.register(InvsibleTabSections)
+admin.site.register(MiscarriageTabSections)
