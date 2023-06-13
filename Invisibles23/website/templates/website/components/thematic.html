@@ -1,10 +1,14 @@
 {% block content %}
     <!--CONTENT-->
-    {% for section in sections_content %}
-        {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
-            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
-        {% else %}
-            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
-        {% endif %}
-    {% endfor %}
+    {% if sections_content|length == 0 %}
+        {% include "website/components/landing-section.html" with data=emptySectionData bg="bg-light-beige" %}
+    {% else %}
+        {% for section in sections_content %}
+            {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
+                {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+            {% else %}
+                {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endblock content %}

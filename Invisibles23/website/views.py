@@ -5,14 +5,44 @@ from .models import (
     AboutPageSections, 
     ChronicTabSections,
     InvsibleTabSections,
+    AdminRessources,
+    TherapeuticRessources,
+    FinancialRessources,
     MiscarriageTabSections,
     AssociationSections,
     YoutubeVideos
 )
 
-# Create your views here.
-from django.http import HttpResponse
+# == Base view classes to stay DRY == #
+class BaseThematicView(View):
+    """
+    Base class for the thematic views
+    """
+    template_name = None
+    queryset = None
 
+    def get_context_data(self):
+        return {'sections_content': self.queryset}
+
+    def get(self, request):
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
+
+class BaseRessourcesView(View):
+    """
+    Base class for the ressources views
+    """
+    template_name = None
+    queryset = None
+
+    def get_context_data(self):
+        return {'ressources': self.queryset}
+
+    def get(self, request):
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
+
+# == Views == #
 class HomeView(View):
     template_name = "website/home.html"
     queryset = HomePageSections.objects.all()
@@ -35,42 +65,38 @@ class AboutView(View):
         }    
         return render(request, self.template_name, context)
 
-# Create base class for thematic tabs (stay DRY)
-class ChronicTabView(View):
+class ChronicTabView(BaseThematicView):
     template_name = "website/chronic.html"
     queryset = ChronicTabSections.objects.exclude(order=0)
 
-    def get(self, request):
-        context = {
-            'sections_content' : self.queryset,
-        }    
-        return render(request, self.template_name, context)
-
-class InvisibleTabView(View):
+class InvisibleTabView(BaseThematicView):
     template_name = "website/invisible.html"
     queryset = InvsibleTabSections.objects.exclude(order=0)
-
-    def get(self, request):
-        context = {
-            'sections_content' : self.queryset,
-        }    
-        return render(request, self.template_name, context)
     
-class MiscarriageTabView(View):
+class MiscarriageTabView(BaseThematicView):
     template_name = "website/miscarriage.html"
     queryset = MiscarriageTabSections.objects.exclude(order=0)
-
-    def get(self, request):
-        context = {
-            'sections_content' : self.queryset,
-        }    
-        return render(request, self.template_name, context)
 
 class PodcastsView(View):
     template_name = "website/podcasts.html"
 
     def get(self, request):    
         return render(request, self.template_name, {})
+
+class AdminRessourcesView(BaseRessourcesView):
+    #template_name = "website/admin-ressources.html"
+    #queryset =  AdminRessources.objects.all()
+    pass
+
+class TherapeuticRessourcesView(BaseRessourcesView):
+    #template_name = "website/therapeutic-ressources.html"
+    #queryset =  TherapeuticRessources.objects.all()
+    pass
+
+class FinancialRessourcesView(BaseRessourcesView):
+    #template_name = "website/financial-ressources.html"
+    #queryset =  FinancialRessources.objects.all()
+    pass
 
 class AssociationView(View):
     template_name = "website/association.html"

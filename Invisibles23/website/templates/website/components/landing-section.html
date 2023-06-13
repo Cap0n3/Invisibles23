@@ -1,0 +1,20 @@
+<!-- If there's no content to show, display this section-->
+{% load static %}
+
+<section class="normal-section container-fluid text-center p-5 {{ bg }}">
+    <h2 class="d-lg-none mb-5 text-uppercase">Oups ...</h2>
+    <div class="row p-lg-3">
+        <div class="col-12 col-lg-6 px-lg-5 d-md-flex align-items-md-center order-lg-2">
+            <img src={% static "website/medias/images/noContent.png" %} class="img-fluid rounded-4" alt="{{ data.image_alt }}" title="{{ data.image_title }}" width="" height="" />
+        </div>
+        <div class="col-12 col-lg-6 px-lg-5 order-lg-1">
+            <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">Oups ...</h2>
+            <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
+                <p>Hum hum, il n'y a pas de contenu à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !</p>
+                <p>En attendant, vous pouvez toujours retourner à l'accueil en cliquant sur le bouton ci-dessous.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary mt-5">Vers l'accueil</a>
+            </div>
+        </div>
+    </div>
+</section>
+

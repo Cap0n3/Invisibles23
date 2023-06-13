@@ -3,8 +3,11 @@ from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from django.utils.safestring import mark_safe
 
-# Base models for the website (DRY)
+# == Base models to stay DRY == #
 class BaseThematic(models.Model):
+    """
+    Base class for the thematic models
+    """
     order = models.PositiveIntegerField(
         default=None,
         verbose_name=f"Ordre de la section",
@@ -29,11 +32,11 @@ class BaseThematic(models.Model):
     def clean(self):
         super().clean()
         # Check if another section with the same tab and order already exists
-        if self.__class__.objects.filter(order=self.order).exists() and self.order != 0:
+        existing_sections = self.__class__.objects.filter(order=self.order).exclude(pk=self.pk)
+        if existing_sections.exists() and self.order != 0:
             raise ValidationError(mark_safe(f"""
-                <p>Une section avec le le même ordre existe déjà dans cet onglet !
-                Veuillez changer l'ordre de la section ou l'onglet associé.
-                                            
+                <p>Une section avec le même ordre existe déjà dans cet onglet !
+                Veuillez changer l'ordre de la section ou l'onglet associé.</p>
                 <p>Si vous souhaitez échanger l'ordre de deux sections :</p>
                 <ol>
                     <li>1. Mettez l'ordre de la section que vous souhaitez échanger à 0</li>
@@ -44,6 +47,7 @@ class BaseThematic(models.Model):
                 </ol>
             """))
 
+
     def save(self, *args, **kwargs):
         # If the order is None, set the order to the total number of sections + 1
         if self.order is None:
@@ -53,6 +57,41 @@ class BaseThematic(models.Model):
 
     def get_total_sections(self):
         return self.__class__.objects.count()
+
+class BaseRessources(models.Model):
+    """
+    Base class for the ressources models
+    """
+    title = models.CharField(max_length=100, verbose_name="Titre de la section")
+    description = RichTextField(verbose_name="Contenu de la section")
+    url = models.URLField(verbose_name="Lien vers la ressource")
+    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
+    image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
+    image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
+
+class AdminRessources(BaseRessources):
+    class Meta:
+        verbose_name = "Ressources administratives"
+        verbose_name_plural = "Ressources administratives"
+
+    def __str__(self):
+        return self.title
+    
+class TherapeuticRessources(BaseRessources):
+    class Meta:
+        verbose_name = "Ressources thérapeutiques"
+        verbose_name_plural = "Ressources thérapeutiques"
+
+    def __str__(self):
+        return self.title
+
+class FinancialRessources(BaseRessources):
+    class Meta:
+        verbose_name = "Ressources financières"
+        verbose_name_plural = "Ressources financières"
+
+    def __str__(self):
+        return self.title
 
 # Models for the website
 class HomePageSections (models.Model):

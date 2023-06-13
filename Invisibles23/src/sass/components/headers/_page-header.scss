@@ -19,3 +19,29 @@
     background-position: 0% 50%;
     background-size: cover;
 }
+
+#cell-header {
+    background-image: url("../medias/headers/Header_Cell.jpg");
+    background-position: 50% 0%; // Position for mobile
+    background-size: cover;
+
+    @include sm {
+        background-position: 0% 80%;
+    }
+}
+
+#virus-header {
+    background-image: url("../medias/headers/Header_Virus.jpg");
+    background-position: 0% 50%;
+    background-size: cover;
+}
+
+#miscarriage-header {
+    background-image: url("../medias/headers/Header_Woman3.jpg");
+    background-position: 50% 50%; // Position for mobile
+    background-size: cover;
+    
+    @include sm {
+        background-position: 0% 50%;
+    }
+}
