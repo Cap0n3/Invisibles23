@@ -9,4 +9,5 @@ urlpatterns = [
     path('fausses-couches/', views.MiscarriageTabView.as_view(), name='miscarriage'),
     path('podcasts/', views.PodcastsView.as_view(), name='podcasts'),
     path('association/', views.AssociationView.as_view(), name='association'),
+    path('ressources-administratives/', views.AdminRessourcesView.as_view(), name='admin-ressources'),
 ]

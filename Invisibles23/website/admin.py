@@ -6,7 +6,10 @@ from .models import (
     AssociationSections,
     ChronicTabSections,
     InvsibleTabSections,
-    MiscarriageTabSections
+    MiscarriageTabSections,
+    AdminRessources,
+    TherapeuticRessources,
+    FinancialRessources,
 )
 
 # Register your models here.
@@ -17,3 +20,6 @@ admin.site.register(AssociationSections)
 admin.site.register(ChronicTabSections)
 admin.site.register(InvsibleTabSections)
 admin.site.register(MiscarriageTabSections)
+admin.site.register(AdminRessources)
+admin.site.register(TherapeuticRessources)
+admin.site.register(FinancialRessources)

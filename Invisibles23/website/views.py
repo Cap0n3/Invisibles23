@@ -12,6 +12,9 @@ from .models import (
     AssociationSections,
     YoutubeVideos
 )
+from .filters import (
+    AdminRessourcesFilter,
+)
 
 # == Base view classes to stay DRY == #
 class BaseThematicView(View):
@@ -34,9 +37,12 @@ class BaseRessourcesView(View):
     """
     template_name = None
     queryset = None
+    filter_class = None
 
     def get_context_data(self):
-        return {'ressources': self.queryset}
+        filter_form = self.filter_class(self.request.GET, queryset=self.queryset)
+        ressources = filter_form.qs
+        return {'ressources': ressources, 'filter_form': filter_form}
 
     def get(self, request):
         context = self.get_context_data()
@@ -84,9 +90,9 @@ class PodcastsView(View):
         return render(request, self.template_name, {})
 
 class AdminRessourcesView(BaseRessourcesView):
-    #template_name = "website/admin-ressources.html"
-    #queryset =  AdminRessources.objects.all()
-    pass
+    template_name = "website/admin-ressources.html"
+    queryset =  AdminRessources.objects.all()
+    filter_class = AdminRessourcesFilter
 
 class TherapeuticRessourcesView(BaseRessourcesView):
     #template_name = "website/therapeutic-ressources.html"

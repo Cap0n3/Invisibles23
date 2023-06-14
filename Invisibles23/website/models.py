@@ -63,11 +63,14 @@ class BaseRessources(models.Model):
     Base class for the ressources models
     """
     title = models.CharField(max_length=100, verbose_name="Titre de la section")
-    description = RichTextField(verbose_name="Contenu de la section")
-    url = models.URLField(verbose_name="Lien vers la ressource")
-    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
-    image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
-    image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
+    description = models.TextField(max_length=500, verbose_name="Description de la ressource (max 500 caractères)")
+    address = models.CharField(max_length=100, blank=True, verbose_name="Adresse de la ressource")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Numéro de téléphone de la ressource")
+    link = models.URLField(verbose_name="Lien vers la ressource", blank=True)
+    image = models.ImageField(upload_to='', default="DefaultRessources.jpg" ,blank=True, verbose_name="Image de la section")
+    image_title = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Titre de l'image")
+    image_alt = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Texte alternatif de l'image")
+    keywords = models.CharField(max_length=100, blank=True, verbose_name="Mots-clés (séparés par des virgules)")
 
 class AdminRessources(BaseRessources):
     class Meta:
@@ -135,7 +138,6 @@ class MiscarriageTabSections(BaseThematic):
         # Change visible name of the model in the admin
         verbose_name = 'Fausses couches'
         verbose_name_plural = 'Fausses couches'
-
 
 class YoutubeVideos(models.Model):
     title = models.CharField(max_length=50)

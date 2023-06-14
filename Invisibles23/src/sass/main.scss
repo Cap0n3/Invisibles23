@@ -10,6 +10,7 @@
 @import "components/podcast/podcast-player";
 @import "components/callToAction/c2a";
 @import "components/blockquote";
+@import "components/search-input";
 
 body {
     color: $font-deep-blue;
@@ -85,6 +86,26 @@ body {
         @include lg {
             width: 80%;
         }
+    }
+
+    .ressources-cards {
+        max-width: 1200px;
+        
+        .img-col {
+            background-color: #FFC4C4;
+
+            img {
+                object-fit: cover;
+                width: 200px;
+                height: 200px;
+
+                @include lg {
+                    width: 230px;
+                    height: 230px;
+                }
+            }
+        }
+
     }
 }
 
