@@ -14,6 +14,8 @@ from .models import (
 )
 from .filters import (
     AdminRessourcesFilter,
+    TherapeuticRessourcesFilter,
+    FinancialRessourcesFilter
 )
 
 # == Base view classes to stay DRY == #
@@ -35,7 +37,7 @@ class BaseRessourcesView(View):
     """
     Base class for the ressources views
     """
-    template_name = None
+    template_name = "website/ressources.html"
     queryset = None
     filter_class = None
 
@@ -90,19 +92,16 @@ class PodcastsView(View):
         return render(request, self.template_name, {})
 
 class AdminRessourcesView(BaseRessourcesView):
-    template_name = "website/admin-ressources.html"
     queryset =  AdminRessources.objects.all()
     filter_class = AdminRessourcesFilter
 
 class TherapeuticRessourcesView(BaseRessourcesView):
-    #template_name = "website/therapeutic-ressources.html"
-    #queryset =  TherapeuticRessources.objects.all()
-    pass
+    queryset =  TherapeuticRessources.objects.all()
+    filter_class = TherapeuticRessourcesFilter
 
 class FinancialRessourcesView(BaseRessourcesView):
-    #template_name = "website/financial-ressources.html"
-    #queryset =  FinancialRessources.objects.all()
-    pass
+    queryset =  FinancialRessources.objects.all()
+    filter_class = FinancialRessourcesFilter
 
 class AssociationView(View):
     template_name = "website/association.html"

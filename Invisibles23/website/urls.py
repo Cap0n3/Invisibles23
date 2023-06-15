@@ -10,4 +10,6 @@ urlpatterns = [
     path('podcasts/', views.PodcastsView.as_view(), name='podcasts'),
     path('association/', views.AssociationView.as_view(), name='association'),
     path('ressources-administratives/', views.AdminRessourcesView.as_view(), name='admin-ressources'),
+    path('ressources-therapeutiques/', views.TherapeuticRessourcesView.as_view(), name='therapeutic-ressources'),
+    path('ressources-financieres/', views.FinancialRessourcesView.as_view(), name='financial-ressources'),
 ]

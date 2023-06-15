@@ -35,3 +35,11 @@ class BaseRessourcesFilter(django_filters.FilterSet):
 class AdminRessourcesFilter(BaseRessourcesFilter):
     class Meta(BaseRessourcesFilter.Meta):
         model = AdminRessources
+
+class TherapeuticRessourcesFilter(BaseRessourcesFilter):
+    class Meta(BaseRessourcesFilter.Meta):
+        model = TherapeuticRessources
+
+class FinancialRessourcesFilter(BaseRessourcesFilter):
+    class Meta(BaseRessourcesFilter.Meta):
+        model = FinancialRessources

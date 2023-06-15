@@ -2,16 +2,23 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Association Les Invisibles" %}
+    {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Ressources administratives" %}
     <!--CONTENT-->
     <section class="normal-section container-fluid d-flex align-items-center flex-column p-5">
-        <form methode="get" class="search-form">
+        <!--Form-->
+        <form methode="get" class="search-form mb-5">
             {% csrf_token %}
             <div id="search-input">
                 {{ filter_form.form.keywords }}
             </div>
             <input type="submit" class="btn btn-primary" value="chercher" />
         </form>
+        <!--Ressources list-->
+        {% if ressources|length == 0 %}
+            <div class="alert alert-warning" role="alert">
+                Aucune ressource ne correspond à votre recherche.
+            </div>
+        {% endif %}
         {% for ressource in ressources %}
             <div class="ressources-cards card mb-3">
                 <div class="row g-0">

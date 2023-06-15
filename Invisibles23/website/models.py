@@ -70,7 +70,7 @@ class BaseRessources(models.Model):
     image = models.ImageField(upload_to='', default="DefaultRessources.jpg" ,blank=True, verbose_name="Image de la section")
     image_title = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Titre de l'image")
     image_alt = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Texte alternatif de l'image")
-    keywords = models.CharField(max_length=100, blank=True, verbose_name="Mots-clés (séparés par des virgules)")
+    keywords = models.CharField(max_length=100, verbose_name="Mots-clés (séparés par des virgules)")
 
 class AdminRessources(BaseRessources):
     class Meta:
