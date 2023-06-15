@@ -738,6 +738,7 @@ body .videos {
 }
 body .ressources-cards {
   max-width: 1200px;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
 }
 body .ressources-cards .img-col {
   background-color: #FFC4C4;
