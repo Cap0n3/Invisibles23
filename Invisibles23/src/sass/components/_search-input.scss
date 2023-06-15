@@ -1,5 +1,6 @@
 .search-form {
     display: flex;
+    flex-direction: column;
     width: 100%;
     gap: 10px;
     max-width: 1200px;
@@ -7,11 +8,21 @@
     align-items: center;
     margin-bottom: 20px;
 
+    @include lg {
+        flex-direction: row;
+    }
+
     #search-input {
         position: relative;
-        input {
-            
+        width: 100%;
+        background-color: lightblue;
+
+        @include lg {
             width: 300px;
+        }
+
+        input {    
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;

@@ -134,6 +134,12 @@ nav.show {
   }
 }
 
+#ressources-header {
+  background-image: url("../medias/headers/Header_Book.jpg");
+  background-position: 0% 50%;
+  background-size: cover;
+}
+
 #footer {
   background-image: url("../medias/footer/footerbackground.jpg");
   background-size: cover;
@@ -635,6 +641,7 @@ nav.show {
 
 .search-form {
   display: flex;
+  flex-direction: column;
   width: 100%;
   gap: 10px;
   max-width: 1200px;
@@ -642,11 +649,23 @@ nav.show {
   align-items: center;
   margin-bottom: 20px;
 }
+@media screen and (min-width: 992px) {
+  .search-form {
+    flex-direction: row;
+  }
+}
 .search-form #search-input {
   position: relative;
+  width: 100%;
+  background-color: lightblue;
+}
+@media screen and (min-width: 992px) {
+  .search-form #search-input {
+    width: 300px;
+  }
 }
 .search-form #search-input input {
-  width: 300px;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
