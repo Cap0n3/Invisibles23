@@ -2,16 +2,32 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="ressources-header" headerTitle="Ressources administratives" %}
+    {% if request.resolver_match.url_name == "admin-ressources" %}
+        {% include "website/components/page-header.html" with headerImgID="ressources-header" headerTitle="Ressources administratives" %}
+    {% elif request.resolver_match.url_name == "therapeutic-ressources" %}
+        {% include "website/components/page-header.html" with headerImgID="ressources-header" headerTitle="Ressources thérapeutiques" %}
+    {% elif request.resolver_match.url_name == "financial-ressources" %}
+        {% include "website/components/page-header.html" with headerImgID="ressources-header" headerTitle="Ressources financières" %}
+    {% endif %}
     <!--CONTENT-->
-    <section class="container-fluid d-flex align-items-center flex-column p-5 bg-light-beige">
+    <section class="container-fluid text-center p-5 bg-light-beige">
+        <div class="row p-lg-3">
+            <div class="col-12 px-lg-5">
+                <div class="section-text text-lg-start">
+                    <p>L’Association Les invisibles souhaite pouvoir répondre aux questions administratives et juridiques auxquelles les personnes malades sont confrontées. La fatigabilité de ces dernières, le peu de ressources financières et l’accessibilité parfois douteuse aux institutions les détournent fréquemment d’un accès juste aux droits et prestations auxquels elles sont éligibles.</p>
+                    <p>Certaines questions sont carrément éludées et aucune réponse concrète n'existe. Par exemple, à quelle prestation une femme malade et monoparentale a le droit pour alléger son quotidien ? Une garde à domicile ? De l’aide aux devoirs pour ses enfants ? La livraison des courses ? </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="container-fluid d-flex align-items-center flex-column p-5 bg-light-green">
         <!--Form-->
         <form methode="get" class="search-form mb-5">
             {% csrf_token %}
             <div id="search-input">
                 {{ filter_form.form.keywords }}
             </div>
-            <input type="submit" class="btn btn-primary" value="chercher" />
+            <input type="submit" id="search-res-btn" class="btn btn-primary" value="chercher" />
         </form>
         <!--Ressources list-->
         {% if ressources|length == 0 %}
@@ -20,30 +36,48 @@
             </div>
         {% endif %}
         {% for ressource in ressources %}
-            <div class="ressources-cards card mb-3">
-                <div class="row g-0">
-                    <div class="img-col col-md-4 p-4 d-flex justify-content-center align-items-center">
-                        <img src="{{ ressource.image.url }}" class="img-thumbnail rounded-circle" alt="{{ ressource.image_alt }}" title="{{ data.image_title }}" height="" width="" />
+            <div class="ressources-cards">
+                <div class="image-col">
+                    <img src="{{ ressource.image.url }}" class="img-thumbnail rounded-circle" alt="{{ ressource.image_alt }}" title="{{ data.image_title }}" height="" width="" />
+                </div>
+                <div class="infos-col">
+                    <h5 class="card-title text-uppercase">{{ ressource.title }}</h5>
+                    <div class="card-text">
+                        {{ ressource.description|linebreaks }}
                     </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ ressource.title }}</h5>
-                            <p class="card-text">
-                                {{ ressource.description }}
-                            </p>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><small class="text-body-secondary"><b>Tél :</b> {{ ressource.phone|default:"- aucun téléphone -" }}</small></li>
-                                <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ ressource.address|default:" - aucune adresse -" }}</small></li>
-                                {% if ressource.link %}
-                                    <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}">{{ ressource.link }}</a></small></li>
-                                {% else %}
-                                    <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> - aucun lien -</small></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Tél :</b> {{ ressource.phone|default:"- aucun téléphone -" }}</small></li>
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ ressource.address|default:" - aucune adresse -" }}</small></li>
+                        {% if ressource.link %}
+                            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}">{{ ressource.link }}</a></small></li>
+                        {% else %}
+                            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> - aucun lien -</small></li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
         {% endfor %}
     </section>
 {% endblock content %}
+
+
+{% comment %} <div class="image-col">
+    <img src="{{ ressource.image.url }}" class="img-thumbnail rounded-circle" alt="{{ ressource.image_alt }}" title="{{ data.image_title }}" height="" width="" />
+</div>
+<div class="infos-col">
+    <div class="description">
+        <h5 class="card-title">{{ ressource.title }}</h5>
+        <p class="card-text">
+            {{ ressource.description }}
+        </p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><small class="text-body-secondary"><b>Tél :</b> {{ ressource.phone|default:"- aucun téléphone -" }}</small></li>
+        <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ ressource.address|default:" - aucune adresse -" }}</small></li>
+        {% if ressource.link %}
+            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}">{{ ressource.link }}</a></small></li>
+        {% else %}
+            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> - aucun lien -</small></li>
+        {% endif %}
+    </ul>
+</div> {% endcomment %}

@@ -14,8 +14,12 @@
         justify-content: center;
         align-items: center;
         padding: 60px 20% 60px 20%;
-        gap: 40%;
+        gap: 30%;
         border-bottom: .5px solid $font-deep-blue;
+
+        @include md {
+            gap: 40%;
+        }
     }
 
     .credits {

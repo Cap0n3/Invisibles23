@@ -155,94 +155,16 @@ nav.show {
   justify-content: center;
   align-items: center;
   padding: 60px 20% 60px 20%;
-  gap: 40%;
+  gap: 30%;
   border-bottom: 0.5px solid #002E48;
+}
+@media screen and (min-width: 768px) {
+  #footer .footer-socials-block {
+    gap: 40%;
+  }
 }
 #footer .credits {
   font-size: 0.8rem;
-}
-
-.small-podcast-card {
-  width: 300px;
-  height: auto;
-}
-@media screen and (min-width: 768px) {
-  .small-podcast-card {
-    width: 400px;
-  }
-}
-@media screen and (min-width: 992px) {
-  .small-podcast-card {
-    width: 540px;
-    height: 380px;
-  }
-}
-
-#podcast-thumbnail {
-  border-radius: 100%;
-}
-
-.podControlsGroup .podPlayBtn {
-  font-size: 3rem;
-  cursor: pointer;
-}
-.podControlsGroup .backTenBtn {
-  font-size: 1.8rem;
-  cursor: pointer;
-}
-.podControlsGroup .forwardTenBtn {
-  font-size: 1.8rem;
-  cursor: pointer;
-}
-
-.podcast-date, .podcast-time {
-  font-size: 0.8rem;
-}
-
-.slider_container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.slider_container .current-time, .slider_container .total-duration {
-  font-size: 0.7rem;
-}
-
-/* ====== SLIDER ====== */
-.seek_slider {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-  width: 8rem;
-  /*** Track style ***/
-  /*** Thumb Styles ***/
-}
-.seek_slider:focus {
-  outline: none;
-}
-.seek_slider::-webkit-slider-runnable-track {
-  background: #053a5f;
-  height: 0.4rem;
-}
-.seek_slider::-moz-range-track {
-  background: #053a5f;
-  height: 0.4rem;
-}
-.seek_slider::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  margin-top: -4px; /* Centers thumb on the track */
-  background-color: #053a5f;
-  height: 1rem;
-  width: 0.4rem;
-}
-.seek_slider::-moz-range-thumb {
-  border: none; /*Removes extra border that FF applies*/
-  border-radius: 0; /*Removes default border-radius that FF applies*/
-  background-color: #053a5f;
-  height: 1rem;
-  width: 0.4rem;
 }
 
 @keyframes spin {
@@ -690,6 +612,70 @@ nav.show {
   box-shadow: 0 0 5px #5b9aff;
 }
 
+.ressources-cards {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+  max-width: 1200px;
+  min-width: 300px;
+  border: 0.5px solid #000000;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  overflow: hidden;
+}
+@media screen and (min-width: 768px) {
+  .ressources-cards {
+    flex-direction: row;
+  }
+}
+.ressources-cards .image-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 230px;
+  background-color: #FFC4C4;
+}
+@media screen and (min-width: 768px) {
+  .ressources-cards .image-col {
+    width: 30%;
+    height: auto;
+  }
+}
+.ressources-cards .image-col img {
+  object-fit: cover;
+  width: 150px;
+  height: 150px;
+}
+@media screen and (min-width: 768px) {
+  .ressources-cards .image-col img {
+    width: 190px;
+    height: 190px;
+  }
+}
+.ressources-cards .infos-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px;
+  width: 100%;
+  background-color: #fff;
+}
+@media screen and (min-width: 768px) {
+  .ressources-cards .infos-col {
+    width: 70%;
+    height: 100%;
+  }
+}
+.ressources-cards .infos-col .card-text {
+  overflow-y: auto;
+  min-height: 80px;
+}
+.ressources-cards .infos-col .card-text .ressource-toggle {
+  margin-left: 5px;
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
@@ -706,6 +692,11 @@ body h4 {
 body h5 {
   font-size: 1.1rem;
   margin-bottom: 20px;
+}
+body a {
+  cursor: pointer;
+  color: rgb(146, 147, 153);
+  text-decoration: underline;
 }
 body .btn-primary {
   border-radius: 15px;
@@ -753,24 +744,6 @@ body .videos {
 @media screen and (min-width: 992px) {
   body .videos {
     width: 80%;
-  }
-}
-body .ressources-cards {
-  max-width: 1200px;
-  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
-}
-body .ressources-cards .img-col {
-  background-color: #FFC4C4;
-}
-body .ressources-cards .img-col img {
-  object-fit: cover;
-  width: 200px;
-  height: 200px;
-}
-@media screen and (min-width: 992px) {
-  body .ressources-cards .img-col img {
-    width: 230px;
-    height: 230px;
   }
 }
 

@@ -1,102 +1,102 @@
-$playButtonSize: 3rem;
-$backForwButtonSize: 1.8rem;
-$sliderTrackColor: #053a5f;
-$sliderThumbColor: #053a5f;
-$timerFontSize: 0.7rem;
+// $playButtonSize: 3rem;
+// $backForwButtonSize: 1.8rem;
+// $sliderTrackColor: #053a5f;
+// $sliderThumbColor: #053a5f;
+// $timerFontSize: 0.7rem;
 
-.small-podcast-card {
-    width: 300px;
-    height: auto;
+// .small-podcast-card {
+//     width: 300px;
+//     height: auto;
 
-    @include md {
-        width: 400px;
-    }
+//     @include md {
+//         width: 400px;
+//     }
 
-    @include lg {
-        width: 540px;
-        height: 380px;
-    }
-}
+//     @include lg {
+//         width: 540px;
+//         height: 380px;
+//     }
+// }
 
-#podcast-thumbnail {
-    border-radius: 100%;
-}
+// #podcast-thumbnail {
+//     border-radius: 100%;
+// }
 
-.podControlsGroup {
-    .podPlayBtn {
-        font-size: $playButtonSize;
-        cursor: pointer;
-    }
+// .podControlsGroup {
+//     .podPlayBtn {
+//         font-size: $playButtonSize;
+//         cursor: pointer;
+//     }
     
-    .backTenBtn {
-        font-size: $backForwButtonSize;
-        cursor: pointer;
-    }
+//     .backTenBtn {
+//         font-size: $backForwButtonSize;
+//         cursor: pointer;
+//     }
 
-    .forwardTenBtn {
-        font-size: $backForwButtonSize;
-        cursor: pointer;
-    }
-}
+//     .forwardTenBtn {
+//         font-size: $backForwButtonSize;
+//         cursor: pointer;
+//     }
+// }
 
-.podcast-date, .podcast-time {
-    font-size: 0.8rem;
-}
+// .podcast-date, .podcast-time {
+//     font-size: 0.8rem;
+// }
 
-.slider_container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    .current-time, .total-duration {
-        font-size: $timerFontSize;
-    }
-}
+// .slider_container {
+//     display: flex;
+//     align-items: center;
+//     gap: 10px;
+//     .current-time, .total-duration {
+//         font-size: $timerFontSize;
+//     }
+// }
 
-/* ====== SLIDER ====== */
+// /* ====== SLIDER ====== */
 
-.seek_slider {
-    // Range Reset
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-    width: 8rem;
+// .seek_slider {
+//     // Range Reset
+//     -webkit-appearance: none;
+//     appearance: none;
+//     background: transparent;
+//     cursor: pointer;
+//     width: 8rem;
 
-    // Removes default focus
-    &:focus {
-        outline: none;
-    }
+//     // Removes default focus
+//     &:focus {
+//         outline: none;
+//     }
 
-    /*** Track style ***/
-    // Chrome, Safari, Opera, and Edge Chromium
-    &::-webkit-slider-runnable-track {
-        background: $sliderTrackColor;
-        height: 0.4rem;
-    }
+//     /*** Track style ***/
+//     // Chrome, Safari, Opera, and Edge Chromium
+//     &::-webkit-slider-runnable-track {
+//         background: $sliderTrackColor;
+//         height: 0.4rem;
+//     }
 
-    // Firefox
-    &::-moz-range-track {
-        background: $sliderTrackColor;
-        height: 0.4rem;
-    }
+//     // Firefox
+//     &::-moz-range-track {
+//         background: $sliderTrackColor;
+//         height: 0.4rem;
+//     }
 
-    /*** Thumb Styles ***/
-    // Chrome, Safari, Opera, and Edge Chromium
-    &::-webkit-slider-thumb {
-        -webkit-appearance: none; /* Override default look */
-        appearance: none;
-        margin-top: -4px; /* Centers thumb on the track */
-        background-color: $sliderThumbColor;
-        height: 1rem;
-        width: 0.4rem;    
-    }
+//     /*** Thumb Styles ***/
+//     // Chrome, Safari, Opera, and Edge Chromium
+//     &::-webkit-slider-thumb {
+//         -webkit-appearance: none; /* Override default look */
+//         appearance: none;
+//         margin-top: -4px; /* Centers thumb on the track */
+//         background-color: $sliderThumbColor;
+//         height: 1rem;
+//         width: 0.4rem;    
+//     }
 
-    // Firefox
-    &::-moz-range-thumb {
-        border: none; /*Removes extra border that FF applies*/
-        border-radius: 0; /*Removes default border-radius that FF applies*/
-        background-color: $sliderThumbColor;
-        height: 1rem;
-        width: 0.4rem;
-    }
-}
+//     // Firefox
+//     &::-moz-range-thumb {
+//         border: none; /*Removes extra border that FF applies*/
+//         border-radius: 0; /*Removes default border-radius that FF applies*/
+//         background-color: $sliderThumbColor;
+//         height: 1rem;
+//         width: 0.4rem;
+//     }
+// }

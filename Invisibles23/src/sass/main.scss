@@ -11,6 +11,7 @@
 @import "components/callToAction/c2a";
 @import "components/blockquote";
 @import "components/search-input";
+@import "components/ressources-card";
 
 body {
     color: $font-deep-blue;
@@ -31,6 +32,12 @@ body {
     h5 {
         font-size: 1.1rem;
         margin-bottom: 20px;
+    }
+
+    a {
+        cursor: pointer;
+        color: rgb(146, 147, 153);
+        text-decoration: underline;
     }
 
     // Fixed size button
@@ -86,27 +93,6 @@ body {
         @include lg {
             width: 80%;
         }
-    }
-
-    .ressources-cards {
-        max-width: 1200px;
-        box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
-        
-        .img-col {
-            background-color: #FFC4C4;
-
-            img {
-                object-fit: cover;
-                width: 200px;
-                height: 200px;
-
-                @include lg {
-                    width: 230px;
-                    height: 230px;
-                }
-            }
-        }
-
     }
 }
 
