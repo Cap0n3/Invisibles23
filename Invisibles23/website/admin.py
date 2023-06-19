@@ -10,6 +10,7 @@ from .models import (
     AdminRessources,
     TherapeuticRessources,
     FinancialRessources,
+    Event
 )
 
 # Register your models here.
@@ -23,3 +24,4 @@ admin.site.register(MiscarriageTabSections)
 admin.site.register(AdminRessources)
 admin.site.register(TherapeuticRessources)
 admin.site.register(FinancialRessources)
+admin.site.register(Event)

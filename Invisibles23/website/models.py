@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from django.utils.safestring import mark_safe
+from datetime import date
 
 # == Base models to stay DRY == #
 class BaseThematic(models.Model):
@@ -168,3 +169,37 @@ class YoutubeVideos(models.Model):
     
     def __str__(self):
         return self.title
+
+class Event(models.Model):
+    title = models.CharField(max_length=100, verbose_name="Titre de l'évènement")
+    short_description = models.TextField(max_length=300, verbose_name="Description courte de l'évènement (max 300 caractères)")
+    full_description = RichTextField(verbose_name="Description complète de l'évènement")
+    date = models.DateField(verbose_name="Date de l'évènement")
+    start_time = models.TimeField(verbose_name="Heure de début de l'évènement", default="00:00")
+    end_time = models.TimeField(verbose_name="Heure de fin de l'évènement", default="01:00")
+    address = models.CharField(max_length=100, blank=True, verbose_name="Adresse de l'évènement")
+    link = models.URLField(blank=True)
+
+    class Meta:
+        verbose_name = "Rendez-vous"
+        verbose_name_plural = "Rendez-vous"
+        ordering = ['-date']
+
+    def clean(self):
+        '''
+        Check if the event is not in the past
+        '''
+        super().clean()
+        if self.date < date.today():
+            raise ValidationError("La date de l'évènement ne peut pas être dans le passé !")
+        
+        # Check if start time is before end time
+        if self.start_time > self.end_time:
+            raise ValidationError("L'heure de début de l'évènement doit être avant l'heure de fin !")
+        
+        # Check if the event is not too long
+        if self.end_time.hour - self.start_time.hour > 24:
+            raise ValidationError("L'évènement ne peut pas durer plus de 24 heures !")
+    
+    def __str__(self):
+        return self.title + " - " + str(self.date)

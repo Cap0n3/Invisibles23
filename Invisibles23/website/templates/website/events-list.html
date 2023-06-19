@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "website/components/page-header.html" with headerImgID="virus-header" headerTitle="Rendez-vous" %}
+    <!--CONTENT-->
+    {% for event in events_content %}
+        <h2>{{ event.title }}</h2>
+        <p>{{ event.short_description }}</p>
+        <p>{{ event.date }}</p>
+        <a href="{% url 'event-detail' event.pk %}">Voir plus</a>
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "website/components/page-header.html" with headerImgID="virus-header" headerTitle="Rendez-vous" %}
+    <!--CONTENT-->
+    <h2>{{ event.title }}</h2>
+    {{ event.full_description|safe }}
+    <p>{{ event.date }}</p>
+    <p>{{ event.time }}</p>
+    <p>{{ event.address }}</p>
+{% endblock content %}

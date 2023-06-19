@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+import datetime
 from .models import (
     HomePageSections, 
     AboutPageSections, 
@@ -10,7 +11,8 @@ from .models import (
     FinancialRessources,
     MiscarriageTabSections,
     AssociationSections,
-    YoutubeVideos
+    YoutubeVideos,
+    Event
 )
 from .filters import (
     AdminRessourcesFilter,
@@ -110,5 +112,29 @@ class AssociationView(View):
     def get(self, request):
         context = {
             'sections_content' : self.queryset,
+        }    
+        return render(request, self.template_name, context)
+    
+class EventListView(View):
+    template_name = "website/events-list.html"
+    queryset = Event.objects.all()
+
+    def get_queryset(self):
+        # Get future events and order them by date
+        return self.queryset.filter(date__gte=datetime.now()).order_by('date')
+    
+    def get(self, request):
+        context = {
+            'events_content' : self.queryset,
+        }    
+        return render(request, self.template_name, context)
+    
+class EventDetailView(View):
+    template_name = "website/event-detail.html"
+
+    def get(self, request, pk):
+        event = Event.objects.get(pk=pk)
+        context = {
+            'event' : event,
         }    
         return render(request, self.template_name, context)
