@@ -59,25 +59,3 @@
         {% endfor %}
     </section>
 {% endblock content %}
-
-
-{% comment %} <div class="image-col">
-    <img src="{{ ressource.image.url }}" class="img-thumbnail rounded-circle" alt="{{ ressource.image_alt }}" title="{{ data.image_title }}" height="" width="" />
-</div>
-<div class="infos-col">
-    <div class="description">
-        <h5 class="card-title">{{ ressource.title }}</h5>
-        <p class="card-text">
-            {{ ressource.description }}
-        </p>
-    </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><small class="text-body-secondary"><b>Tél :</b> {{ ressource.phone|default:"- aucun téléphone -" }}</small></li>
-        <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ ressource.address|default:" - aucune adresse -" }}</small></li>
-        {% if ressource.link %}
-            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}">{{ ressource.link }}</a></small></li>
-        {% else %}
-            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> - aucun lien -</small></li>
-        {% endif %}
-    </ul>
-</div> {% endcomment %}

@@ -1,0 +1,47 @@
+@import "components/ressources-card";
+
+.event-cards {
+    @extend .ressources-cards;
+
+    .date-col {
+        @extend .image-col;
+        flex-direction: column;
+        align-items: center;
+        background-image: url("../medias/backgrounds/date_background.jpg");
+        background-size: cover;
+    
+        .date {
+            font-size: 2.5rem;
+            font-weight: 500;
+        }
+
+        .month {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        @include md {
+            width: 20%;
+        }
+    }
+
+    .infos-col {
+        .time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+
+        a {
+            font-weight: 300;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+
+        @include md {
+            width: 80%;
+        }
+    }
+}

@@ -2,12 +2,38 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="virus-header" headerTitle="Rendez-vous" %}
+    {% include "website/components/page-header.html" with headerImgID="events-header" headerTitle="Rendez-vous" %}
     <!--CONTENT-->
-    {% for event in events_content %}
-        <h2>{{ event.title }}</h2>
-        <p>{{ event.short_description }}</p>
-        <p>{{ event.date }}</p>
-        <a href="{% url 'event-detail' event.pk %}">Voir plus</a>
-    {% endfor %}
+    <section class="container-fluid text-center p-5 bg-light-beige">
+        <div class="row p-lg-3">
+            <div class="col-12 px-lg-5">
+                <div class="section-text text-lg-start">
+                    <p>Bienvenue sur la section rendez-vous de l'association les Invisibles. Nous sommes ravis de vous présenter les différents événements que nous organisons tout au long de l'année pour sensibiliser les gens aux maladies invisibles et pour collecter des fonds pour soutenir les personnes qui en souffrent. Nous organisons des vidéo-conférences et des ateliers pour discuter des défis auxquels sont confrontées les personnes atteintes de maladies invisibles, pour partager des expériences et pour offrir des conseils pratiques sur la façon de gérer ces maladies au quotidien.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="container-fluid d-flex align-items-center flex-column p-5 bg-light-green">
+        {% if events_content|length == 0 %}
+            {% include "website/components/no-event-landing.html" %}
+        {% endif %}
+        {% for event in events_content %}
+            <div class="event-cards">
+                <div class="date-col">
+                    <div class="date">{{ event.date|date:"j" }}</div>
+                    <div class="month text-uppercase">{{ event.date|date:"M" }}</div>
+                </div>
+                <div class="infos-col">
+                    <h5 class="card-title text-uppercase">{{ event.title }}</h5>
+                    <div class="card-text">
+                        {{ event.short_description }}
+                        <span><a href="{% url 'event-detail' event.pk %}">En savoir plus</a></span>
+                    </div>
+                    <div class="time">
+                        <i class="bi bi-clock"></i> <span>{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
 {% endblock content %}
