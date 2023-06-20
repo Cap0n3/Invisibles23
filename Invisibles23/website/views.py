@@ -138,3 +138,9 @@ class EventDetailView(View):
             'event' : event,
         }    
         return render(request, self.template_name, context)
+
+class ContactView(View):
+    template_name = "website/contact.html"
+
+    def get(self, request):
+        return render(request, self.template_name, {})
