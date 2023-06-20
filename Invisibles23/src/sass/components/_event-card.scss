@@ -45,3 +45,23 @@
         }
     }
 }
+
+// In event detail page
+.dateTime-detail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 0.8rem;
+    font-weight: 300;
+
+    @include lg {
+        justify-content: flex-start;
+    }
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}

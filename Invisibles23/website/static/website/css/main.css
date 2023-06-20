@@ -788,6 +788,25 @@ nav.show {
   }
 }
 
+.dateTime-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+@media screen and (min-width: 992px) {
+  .dateTime-detail {
+    justify-content: flex-start;
+  }
+}
+.dateTime-detail span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
@@ -825,6 +844,33 @@ body .btn-primary:hover {
 }
 @media screen and (max-width: 992px) {
   body .btn-primary {
+    width: 100%;
+  }
+}
+body .btn-outline-dark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 15px;
+  padding: 12px 0 12px 0;
+  width: 160px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  background-color: transparent;
+  border: 1px solid #002E48;
+  color: #002E48;
+  text-decoration: none;
+}
+body .btn-outline-dark:hover {
+  border-color: #005c8f;
+  color: #005c8f;
+}
+body .btn-outline-dark:hover i {
+  color: #005c8f;
+}
+@media screen and (max-width: 992px) {
+  body .btn-outline-dark {
     width: 100%;
   }
 }

@@ -45,11 +45,11 @@
                     <div class="card-text">
                         {{ ressource.description|linebreaks }}
                     </div>
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush text-start text-break">
                         <li class="list-group-item"><small class="text-body-secondary"><b>Tél :</b> {{ ressource.phone|default:"- aucun téléphone -" }}</small></li>
                         <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ ressource.address|default:" - aucune adresse -" }}</small></li>
                         {% if ressource.link %}
-                            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}">{{ ressource.link }}</a></small></li>
+                            <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> <a href="{{ ressource.link }}" target="_blank">{{ ressource.link }}</a></small></li>
                         {% else %}
                             <li class="list-group-item"><small class="text-body-secondary"><b>Web :</b> - aucun lien -</small></li>
                         {% endif %}

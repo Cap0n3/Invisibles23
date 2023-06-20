@@ -4,9 +4,28 @@
     <!--HEADER-->
     {% include "website/components/page-header.html" with headerImgID="events-header" headerTitle="Rendez-vous" %}
     <!--CONTENT-->
-    <h2>{{ event.title }}</h2>
-    {{ event.full_description|safe }}
-    <p>{{ event.date }}</p>
-    <p>{{ event.time }}</p>
-    <p>{{ event.address }}</p>
+    <section class="normal-section container-fluid text-center p-5 bg-light-beige">
+        <h2 class="d-lg-none mb-5 text-uppercase">{{ event.title }}</h2>
+        <div class="row p-lg-3">
+            <div class="col-12 px-lg-5">
+                <div class="dateTime-detail mb-5">
+                    <span><i class="bi bi-calendar3"></i> {{ event.date|date:"d/m/Y" }}</span>
+                    <span><i class="bi bi-clock"></i> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</span>
+                </div>
+                <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ event.title }}</h2>
+                <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
+                    {{ event.full_description|safe }}
+                </div>
+                {% if event.address or event.link %}
+                    <ul class="list-group list-group-flush text-start text-break mb-5">
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Heure :</b> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small></li>
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Date :</b> {{ event.date|date:"d/m/Y" }}</small></li>
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Adresse :</b> {{ event.address }}</small></li>
+                        <li class="list-group-item"><small class="text-body-secondary"><b>Lien :</b> <a href="{{ event.link }}" target="_blank">{{ event.link }}</a></small></li>
+                    </ul>
+                {% endif %}
+                <a href="{% url 'events' %}" class="btn-outline-dark"><i class="bi bi-arrow-left"></i>Retour</a>
+            </div>
+        </div>
+    </section>
 {% endblock content %}
