@@ -61,3 +61,13 @@
         background-position: 0% 80%;
     }
 }
+
+#contact-header {
+    background-image: url("../medias/headers/Header_Contact.jpg");
+    background-position: 60% 20%; // Position for mobile
+    background-size: cover;
+
+    @include sm {
+        background-position: 0% 20%;
+    }
+}

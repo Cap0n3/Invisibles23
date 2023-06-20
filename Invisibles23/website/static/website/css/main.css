@@ -151,6 +151,17 @@ nav.show {
   }
 }
 
+#contact-header {
+  background-image: url("../medias/headers/Header_Contact.jpg");
+  background-position: 60% 20%;
+  background-size: cover;
+}
+@media screen and (min-width: 576px) {
+  #contact-header {
+    background-position: 0% 20%;
+  }
+}
+
 #footer {
   background-image: url("../medias/footer/footerbackground.jpg");
   background-size: cover;
