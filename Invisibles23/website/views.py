@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-import datetime
+from datetime import date
 from .models import (
     HomePageSections, 
     AboutPageSections, 
@@ -121,11 +121,11 @@ class EventListView(View):
 
     def get_queryset(self):
         # Get future events and order them by date
-        return self.queryset.filter(date__gte=datetime.now()).order_by('date')
+        return self.queryset.filter(date__gte=date.today()).order_by('date')
     
     def get(self, request):
         context = {
-            'events_content' : self.queryset,
+            'events_content' : self.get_queryset(),
         }    
         return render(request, self.template_name, context)
     

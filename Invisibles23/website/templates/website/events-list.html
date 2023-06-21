@@ -15,7 +15,7 @@
     </section>
     <section class="container-fluid d-flex align-items-center flex-column p-5 bg-light-green">
         {% if events_content|length == 0 %}
-            {% include "website/components/no-event-landing.html" %}
+            {% include "website/components/no-content.html" with title="Rien de prévu" message="Il n'y a pas de rendez-vous à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-green" %}
         {% endif %}
         {% for event in events_content %}
             <div class="event-cards">

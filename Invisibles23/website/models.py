@@ -202,4 +202,4 @@ class Event(models.Model):
             raise ValidationError("L'évènement ne peut pas durer plus de 24 heures !")
     
     def __str__(self):
-        return self.title + " - " + str(self.date)
+        return mark_safe(f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>")

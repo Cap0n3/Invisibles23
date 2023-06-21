@@ -1,7 +1,7 @@
 {% block content %}
     <!--CONTENT-->
     {% if sections_content|length == 0 %}
-        {% include "website/components/landing-section.html" with data=emptySectionData bg="bg-light-beige" %}
+        {% include "website/components/no-content.html" with title="Oups ..." message="Il n'y a pas de contenu à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-beige" %}
     {% else %}
         {% for section in sections_content %}
             {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
