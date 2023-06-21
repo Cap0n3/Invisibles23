@@ -5,14 +5,14 @@
     {% include "website/components/page-header.html" with headerImgID="about-header" headerTitle="à propos" %}
     <!--SECTION BIO-->
     {% for section in sections_content %}
-        {% if section.name == "Bio" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" %}
+        {% if section.name_ID == "Bio" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--SECTION FOCUS-->
     {% for section in sections_content %}
-        {% if section.name == "Focus" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" bg="bg-light-green" reverse="true" %}
+        {% if section.name_ID == "Focus" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" bg="bg-light-green" reverse="true" %}
         {% endif %}
     {% endfor %}
     <!--VIDEOS CAROUSEL-->

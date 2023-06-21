@@ -6,44 +6,44 @@
     {% include "website/components/page-header.html" with headerImgID="association-header" headerTitle="Association Les Invisibles" %}
     <!--ENGAGEMENTS-->
     {% for section in sections_content %}
-        {% if section.name == "Engagements" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% if section.name_ID == "Commitments" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--INSTAGRAM-->
     {% for section in sections_content %}
-        {% if section.name == "Instagram" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% if section.name_ID == "Instagram" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--VISIBILISER-->
     {% for section in sections_content %}
-        {% if section.name == "Visibiliser" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% if section.name_ID == "Visibilise" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--PODCAST-->
     {% for section in sections_content %}
-        {% if section.name == "Podcast" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% if section.name_ID == "Podcast" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--20'000 ECOUTES-->
     {% for section in sections_content %}
-        {% if section.name == "Ecoutes" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% if section.name_ID == "Streams" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--TEMOIGNAGES-->
     {% for section in sections_content %}
-        {% if section.name == "Temoignages" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-green" %}
+        {% if section.name_ID == "Testimonials" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--COMPRENDRE-->
     {% for section in sections_content %}
-        {% if section.name == "Comprendre" %}
-            {% include "website/components/normal-section.html" with data=section bg="bg-light-beige" reverse="true" %}
+        {% if section.name_ID == "Understanding" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - JOIN ASSOCIATION -->

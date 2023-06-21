@@ -1,9 +1,9 @@
 from django.contrib import admin
 from .models import (
-    HomePageSections, 
-    AboutPageSections, 
+    HomeSections, 
+    AboutSections,
     YoutubeVideos, 
-    AssociationSections,
+    AssoSections,
     ChronicTabSections,
     InvsibleTabSections,
     MiscarriageTabSections,
@@ -15,10 +15,10 @@ from .models import (
 )
 
 # Register your models here.
-admin.site.register(HomePageSections)
-admin.site.register(AboutPageSections)
+admin.site.register(HomeSections)
+admin.site.register(AboutSections)
 admin.site.register(YoutubeVideos)
-admin.site.register(AssociationSections)
+admin.site.register(AssoSections)
 admin.site.register(ChronicTabSections)
 admin.site.register(InvsibleTabSections)
 admin.site.register(MiscarriageTabSections)

@@ -5,6 +5,22 @@ from django.utils.safestring import mark_safe
 from datetime import date
 
 # == Base models to stay DRY == #
+class BaseSections(models.Model):
+    """
+    Base class for the website standard sections models
+    """
+    name_ID = models.CharField(max_length=50) # To reference the section in the template
+    title = models.CharField(max_length=50) # Actual title of the section
+    richText = RichTextField(max_length=10000, default="Écrire ici", verbose_name="Contenu de la section")
+    custom_html = models.TextField(blank=True)
+    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
+    image_title = models.CharField(max_length=50, blank=True)
+    image_alt = models.CharField(max_length=50, blank=True)
+    reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
+    class Meta:
+        abstract = True
+        #ordering = ['pk'].reverse()
+
 class BaseThematic(models.Model):
     """
     Base class for the thematic models
@@ -97,24 +113,30 @@ class FinancialRessources(BaseRessources):
     def __str__(self):
         return self.title
 
-# Models for the website
-class HomePageSections (models.Model):
-    name = models.CharField(max_length=50) # To reference the section in the template
-    title = models.CharField(max_length=50) # Actual title of the section
-    text = models.TextField(max_length=10000)
-    custom_html = models.TextField(blank=True)
-    image = models.ImageField(upload_to='')
-    image_title = models.CharField(max_length=50, blank=True)
-    image_alt = models.CharField(max_length=50, blank=True)
+# == Models for the website == #
+class HomeSections(BaseSections):
+    class Meta:
+        verbose_name = "Page d'accueil"
+        verbose_name_plural = "Page d'accueil"
+    
+    def __str__(self):
+        return self.title
+
+class AboutSections(BaseSections):
+    class Meta:
+        verbose_name = "Page à propos"
+        verbose_name_plural = "Page à propos"
 
     def __str__(self):
         return self.title
-    
-class AboutPageSections(HomePageSections):
-    pass
 
-class AssociationSections(HomePageSections):
-    pass
+class AssoSections(BaseSections):
+    class Meta:
+        verbose_name = "Page association"
+        verbose_name_plural = "Page association"
+    
+    def __str__(self):
+        return self.title
 
 class ChronicTabSections(BaseThematic):
     class Meta:

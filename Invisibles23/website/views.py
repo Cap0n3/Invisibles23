@@ -2,15 +2,15 @@ from django.shortcuts import render
 from django.views import View
 from datetime import date
 from .models import (
-    HomePageSections, 
-    AboutPageSections, 
+    HomeSections,
+    AboutSections,
+    AssoSections, 
     ChronicTabSections,
     InvsibleTabSections,
     AdminRessources,
     TherapeuticRessources,
     FinancialRessources,
     MiscarriageTabSections,
-    AssociationSections,
     YoutubeVideos,
     Event,
     ContactSection
@@ -56,7 +56,7 @@ class BaseRessourcesView(View):
 # == Views == #
 class HomeView(View):
     template_name = "website/home.html"
-    queryset = HomePageSections.objects.all()
+    queryset = HomeSections.objects.all()
     contact_query = ContactSection.objects.first() # For the contact form
 
     def get(self, request):
@@ -68,7 +68,7 @@ class HomeView(View):
 
 class AboutView(View):
     template_name = "website/about.html"
-    queryset = AboutPageSections.objects.all()
+    queryset = AboutSections.objects.all()
     allVideos = YoutubeVideos.objects.all()
 
     def get(self, request):
@@ -110,7 +110,7 @@ class FinancialRessourcesView(BaseRessourcesView):
 
 class AssociationView(View):
     template_name = "website/association.html"
-    queryset = AssociationSections.objects.all()
+    queryset = AssoSections.objects.all()
 
     def get(self, request):
         context = {
