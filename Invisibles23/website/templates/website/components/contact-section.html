@@ -1,7 +1,10 @@
 <section class="normal-section container-fluid text-center p-5 p-lg-5 {{ bg }}">
-    <h2 class="d-lg-none mb-5 text-uppercase">Contact {{ message }}</h2>
+    <!--Mobile-->
+    <h2 class="d-lg-none mb-5 text-uppercase">{{ data.title }}</h2>
+    <p class="d-lg-none text-center text-lg-start mb-5">{{ data.text }}</p>
     <div class="row p-lg-3">
         <div class="col-12 col-lg-6 px-lg-5 mb-5 mb-lg-0">
+            <!--Contact form-->
             <form id="contactForm" class="form d-flex flex-column p-4 p-lg-5 rounded-4" novalidate>
                 {% csrf_token %}
                 <div class="form-group mb-4">
@@ -23,12 +26,13 @@
             </form>
         </div>
         <div class="col-12 col-lg-6 px-lg-5 text-start">
-            <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">Contact</h2>
-            <p class="text-center text-lg-start">Vous pouvez m'envoyer un message en utilisant le formulaire, ou me contacter directement par téléphone ou email. Je m'efforcerai de vous répondre dans les meilleurs délais.</p>
+            <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ data.title }}</h2>
+            <p class="d-none d-lg-block text-center text-lg-start">{{ data.text }}</p>
             <ul class="list-unstyled text-center text-lg-start">
-                <li><span class="fw-bolder">Nom :</span> Tamara Pellegrini</li>
-                <li><span class="fw-bolder">Adresse :</span> Chemin des passants 3</li>
-                <li><span class="fw-bolder">E-mail :</span> lesinvisiblesp@gmail.com</li>
+                <li><span class="fw-bolder">Nom :</span> {{ data.name }}</li>
+                <li><span class="fw-bolder">Adresse :</span> {{ data.address }}</li>
+                <li><span class="fw-bolder">Téléphone :</span> {{ data.phone }}</li>
+                <li><span class="fw-bolder">E-mail :</span> {{ data.email }}</li>
             </ul>
         </div>
     </div>

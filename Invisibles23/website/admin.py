@@ -10,7 +10,8 @@ from .models import (
     AdminRessources,
     TherapeuticRessources,
     FinancialRessources,
-    Event
+    Event,
+    ContactSection
 )
 
 # Register your models here.
@@ -25,3 +26,4 @@ admin.site.register(AdminRessources)
 admin.site.register(TherapeuticRessources)
 admin.site.register(FinancialRessources)
 admin.site.register(Event)
+admin.site.register(ContactSection)

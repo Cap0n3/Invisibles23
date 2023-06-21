@@ -203,3 +203,23 @@ class Event(models.Model):
     
     def __str__(self):
         return mark_safe(f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>")
+    
+class ContactSection(models.Model):
+    title = models.CharField(max_length=50, verbose_name="Titre de la section")
+    text = models.TextField(max_length=500, verbose_name="Texte de la section (max 500 caractères)")
+    name = models.CharField(max_length=50, verbose_name="Nom du contact")
+    email = models.EmailField(verbose_name="Email du contact")
+    phone = models.CharField(max_length=20, verbose_name="Numéro de téléphone du contact")
+    address = models.CharField(max_length=100, verbose_name="Adresse du contact")
+
+    class Meta:
+        verbose_name = "Section Contact"
+        verbose_name_plural = "Section Contact"
+
+    def clean(self):
+        print(ContactSection.objects.count())
+        if ContactSection.objects.count() > 0:
+            raise ValidationError("Seulement une section contact est autorisée !")
+
+    def __str__(self):
+        return self.title + " - " + self.name

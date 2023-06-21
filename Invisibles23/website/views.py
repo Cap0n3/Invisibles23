@@ -12,7 +12,8 @@ from .models import (
     MiscarriageTabSections,
     AssociationSections,
     YoutubeVideos,
-    Event
+    Event,
+    ContactSection
 )
 from .filters import (
     AdminRessourcesFilter,
@@ -56,10 +57,12 @@ class BaseRessourcesView(View):
 class HomeView(View):
     template_name = "website/home.html"
     queryset = HomePageSections.objects.all()
+    contact_query = ContactSection.objects.first() # For the contact form
 
     def get(self, request):
         context = { 
             'sections_content' : self.queryset,
+            'contact_content' : self.contact_query,
         }
         return render(request, self.template_name, context)
 
@@ -141,6 +144,11 @@ class EventDetailView(View):
 
 class ContactView(View):
     template_name = "website/contact.html"
+    queryset = ContactSection.objects.first()
 
     def get(self, request):
-        return render(request, self.template_name, {})
+        context = {
+            'contact_content' : self.queryset,
+        }
+
+        return render(request, self.template_name, context)
