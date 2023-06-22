@@ -9,10 +9,17 @@ import {getAushaPodcasts} from './common/utils/api.js';
  * @returns {HTMLDivElement}
  */
 export function homepagePodcasts() {
+    // Show the spinner
+    const spinner = document.getElementById('podcast-load-spin');
+    spinner.classList.remove('d-none');
+
     // Get the last 4 podcasts from the API
     const n = 4; // Get the last 4 podcasts
     getAushaPodcasts(4)
         .then(podcasts => {
+            // Hide the spinner
+            spinner.classList.add('d-none');
+
             console.log('Last', n, 'podcasts:', podcasts);
             
             // Assign the podcasts to the podcastArray
@@ -45,6 +52,8 @@ export function homepagePodcasts() {
             });
         })
         .catch(error => {
+            // Hide the spinner
+            spinner.classList.add('d-none');
             // Handle the error
             console.error('Error retrieving podcasts:', error);
         });
@@ -55,12 +64,17 @@ export function homepagePodcasts() {
  * @returns {HTMLDivElement}
  */
 export function podcastsPage() {
+    // Show the spinner
+    const spinner = document.getElementById('podcast-load-spin');
+    spinner.classList.remove('d-none');
+    
     // Get all the podcasts from the API
     getAushaPodcasts()
         .then(podcasts => {
-            
+            // Hide the spinner
+            spinner.classList.add('d-none');
+
             const podcastArray = podcasts.data; // Assign the podcasts to the podcastArray
-            //podcastArray.reverse(); // Reverse the array so the most recent podcasts are displayed first
 
             const playersPerPage = 4;
             let currentPage = 1;
@@ -149,6 +163,8 @@ export function podcastsPage() {
             instantiatePlayers();
         })
         .catch(error => {
+            // Hide the spinner
+            spinner.classList.add('d-none');
             // Handle the error
             console.error('Error retrieving podcasts:', error);
         });   

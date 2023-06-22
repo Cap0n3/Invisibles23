@@ -6,6 +6,11 @@
     {% include "website/components/page-header.html" with headerImgID="podcasts-header" headerTitle="Podcasts" %}
     <!--Podcast section-->
     <section class="container-fluid text-center p-5 bg-light-green">
+        <!--Spinner-->
+        <div id="podcast-load-spin" class="d-none spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <!--Podacast container-->
         <div id="podcasts-section-container" class="container-fluid"></div>
     </section>
 {% endblock content %}
