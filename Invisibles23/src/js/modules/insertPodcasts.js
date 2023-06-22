@@ -74,7 +74,8 @@ export function podcastsPage() {
             // Hide the spinner
             spinner.classList.add('d-none');
 
-            const podcastArray = podcasts.data; // Assign the podcasts to the podcastArray
+            // Assign the podcasts to the podcastArray
+            const podcastArray = podcasts.data; 
 
             const playersPerPage = 4;
             let currentPage = 1;

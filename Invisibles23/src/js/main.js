@@ -20,7 +20,6 @@ function initialize() {
     else if (currentPage === '/podcasts/') {
         podcastsPage(); // Get and create all the podcasts for podcasts page
     }
-    
     else if (/ressources/.test(currentPage)) {
         searchBehavior(); // Initialize search behavior
         expandText('card-text', 25); // Initialize the expand text behavior
