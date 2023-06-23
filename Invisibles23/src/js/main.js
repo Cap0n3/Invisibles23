@@ -3,7 +3,7 @@ import { contactForm } from "./modules/common/contactForm.js";
 import { homepagePodcasts, podcastsPage } from "./modules/insertPodcasts.js";
 import { searchBehavior } from "./modules/ressources.js";
 import { expandText } from "./modules/common/utils/helpers.js";
-import { queryAPIAndCalculateTime } from "./modules/common/utils/api.js";
+import { newsletterForm } from "./modules/common/newsletterForm.js";
 
 /**
  * Initialize the webpage
@@ -12,7 +12,7 @@ function initialize() {
     const currentPage = window.location.pathname;
     
     navbar(); // Initialize the navbar
-    //queryAPIAndCalculateTime(); // Query the API and calculate the time
+    newsletterForm(); // Initialize the newsletter form
 
     if (currentPage === '/') {
         console.log("home")

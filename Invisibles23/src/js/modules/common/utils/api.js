@@ -1,5 +1,11 @@
 // api.js
 const axios = require('axios');
+const mailchimp = require('@mailchimp/mailchimp_marketing');
+
+// ======================== //
+// === Aush Podcast API === //
+// ======================== //
+
 
 /**
  * Get the last 'n' podcasts from the Ausha API.
@@ -39,6 +45,9 @@ export async function getAushaPodcasts(numberOfPodcasts = 0) {
     }
 }
 
+/**
+ * Test the API query and calculate the elapsed time.
+ */
 export function queryAPIAndCalculateTime() {
     const apiEndpoint = 'https://developers.ausha.co/v1/shows/44497/podcasts';
     const startTime = new Date().getTime(); // Get the current time in milliseconds
@@ -59,4 +68,37 @@ export function queryAPIAndCalculateTime() {
         console.error('Error querying API:', error);
       });
   }
-  
+
+// ===================== //
+// === Mailchimp API === //
+// ===================== //
+
+mailchimp.setConfig({
+    apiKey: process.env.MAILCHIMP_API_KEY,
+    server: 'us21',
+});
+
+/**
+ * Test connection to Mailchimp API.
+ * @reference https://mailchimp.com/developer/marketing/guides/quick-start/
+ */
+export async function callPing() {
+    console.log('Calling ping...')
+    const response = await mailchimp.ping.get();
+    console.log(response);
+}
+
+/**
+ * Add a contact to a list.
+ * @param {string} email - Email address of the contact to add
+ * @param {string} listId - ID of the list to add the contact to
+ * @reference https://mailchimp.com/developer/marketing/guides/create-your-first-audience/
+ */
+export async function addContactToList(email) {
+    const listId = process.env.MAILCHIMP_LIST_ID;
+    const response = await mailchimp.lists.addListMember(listId, {
+        email_address: email,
+        status: 'subscribed'
+    });
+    console.log(response);
+}
