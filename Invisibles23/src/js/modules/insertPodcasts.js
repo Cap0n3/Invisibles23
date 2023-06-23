@@ -10,15 +10,19 @@ import {getAushaPodcasts} from './common/utils/api.js';
  */
 export function homepagePodcasts() {
     // Show the spinner
-    const spinner = document.getElementById('podcast-load-spin');
-    spinner.classList.remove('d-none');
+    const spinners = document.querySelectorAll('.load-spinner');
+    spinners.forEach((spinner) => {
+        spinner.classList.remove('d-none');
+    });
 
     // Get the last 4 podcasts from the API
     const n = 4; // Get the last 4 podcasts
     getAushaPodcasts(4)
         .then(podcasts => {
             // Hide the spinner
-            spinner.classList.add('d-none');
+            spinners.forEach((spinner) => {
+                spinner.classList.add('d-none');
+            });
 
             console.log('Last', n, 'podcasts:', podcasts);
             
@@ -53,7 +57,9 @@ export function homepagePodcasts() {
         })
         .catch(error => {
             // Hide the spinner
-            spinner.classList.add('d-none');
+            spinners.forEach((spinner) => {
+                spinner.classList.add('d-none');
+            });
             // Handle the error
             console.error('Error retrieving podcasts:', error);
         });

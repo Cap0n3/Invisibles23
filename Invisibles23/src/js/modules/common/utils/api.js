@@ -38,3 +38,25 @@ export async function getAushaPodcasts(numberOfPodcasts = 0) {
         throw error;
     }
 }
+
+export function queryAPIAndCalculateTime() {
+    const apiEndpoint = 'https://developers.ausha.co/v1/shows/44497/podcasts';
+    const startTime = new Date().getTime(); // Get the current time in milliseconds
+  
+    fetch(apiEndpoint, {
+      headers: {
+        'Authorization': `Bearer ${process.env.AUSHA_API_TOKEN}` // Include the API token in the Authorization header
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        const endTime = new Date().getTime(); // Get the current time after the API request completes
+        const elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
+        console.log(`API query completed in ${elapsedTime} ms`);
+        // Process the retrieved data here
+      })
+      .catch(error => {
+        console.error('Error querying API:', error);
+      });
+  }
+  

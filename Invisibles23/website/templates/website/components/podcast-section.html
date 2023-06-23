@@ -1,7 +1,7 @@
 <!--PODCAST SECTION FOR LARGE SCREENS-->
 <section class="d-none d-lg-block container-fluid text-center pt-5 px-5 {{ bg }}">
     <!--Spinner-->
-    <div id="podcast-load-spin" class="d-none spinner-border" role="status">
+    <div class="load-spinner d-none spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
     <div class="row">
@@ -42,6 +42,10 @@
 
 <!-- PODCAST SECTION FOR MEDIUM/SMALL SCREEN -->
 <section id="mobile-section" class="d-lg-none container-fluid text-center pt-5 px-5 {{ bg }}">
+    <!--Spinner-->
+    <div class="load-spinner d-none spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
     <div class="row">
         <!-- SLIDER FOR MEDIUM/SMALL SCREEN -->
         <div id="PodCarousel-small" class="carousel slide d-lg-none pb-4" data-bs="carousel">
