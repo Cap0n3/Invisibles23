@@ -3,7 +3,7 @@ import { displayMessage } from './utils/helpers';
 import { addContactToList } from "./utils/api";
 
 export function newsletterForm() {
-    const validator = new JustValidate('.newsletterForm',
+    const validator = new JustValidate('#newsletterForm',
         {
             successFieldCssClass: ['is-valid'], // CSS class to add when input is valid
             errorFieldCssClass: ['is-invalid'], // CSS class to add when input is invalid
