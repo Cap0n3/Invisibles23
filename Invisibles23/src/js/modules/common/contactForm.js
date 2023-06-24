@@ -106,7 +106,7 @@ function handleSubmit(formObject) {
         // Display success message
         displayMessage(
             formObject, 
-            "Votre message a bien été envoyé", 
+            "Votre message a bien été envoyé. Merci !", 
             {
                 success: "#successMessage", 
                 error: "#errorMessage"
@@ -119,7 +119,7 @@ function handleSubmit(formObject) {
         // Display error message
         displayMessage(
             formObject, 
-            "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site ...", 
+            "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.", 
             {
                 success: "#successMessage",
                 error: "#errorMessage"

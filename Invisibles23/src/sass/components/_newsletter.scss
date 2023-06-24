@@ -1,0 +1,9 @@
+// For invalid label in newsletter form
+.custom-invalid {
+    color: red;
+    width: 100%;
+
+    @include lg {
+        width: 300px;
+    }
+}

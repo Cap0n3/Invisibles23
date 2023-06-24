@@ -818,6 +818,16 @@ nav.show {
   gap: 8px;
 }
 
+.custom-invalid {
+  color: red;
+  width: 100%;
+}
+@media screen and (min-width: 992px) {
+  .custom-invalid {
+    width: 300px;
+  }
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;

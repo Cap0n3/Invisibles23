@@ -95,10 +95,24 @@ export async function callPing() {
  * @reference https://mailchimp.com/developer/marketing/guides/create-your-first-audience/
  */
 export async function addContactToList(email) {
-    const listId = process.env.MAILCHIMP_LIST_ID;
-    const response = await mailchimp.lists.addListMember(listId, {
-        email_address: email,
-        status: 'subscribed'
-    });
-    console.log(response);
+    if (process.env.TEST_MODE === 'true') {
+        if (process.env.TEST_ERROR === 'true') {
+            throw new Error('Testing error');
+        } else {
+            // Testing mode enabled, return a dummy response
+            const dummyResponse = {
+                status: 'success',
+                message: 'Contact added successfully (mocked)',
+            };
+            return dummyResponse;
+        }
+    }
+    else {
+        const listId = process.env.MAILCHIMP_LIST_ID;
+        const response = await mailchimp.lists.addListMember(listId, {
+            email_address: email,
+            status: 'subscribed'
+        });
+        console.log(response);
+    }
 }
