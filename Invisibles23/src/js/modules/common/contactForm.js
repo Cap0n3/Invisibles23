@@ -158,35 +158,3 @@ function sendEmail(data) {
         });
     });
 }
-
-// function displayMessage(formObject, statusMessage, type) {
-//     // Code to display the message based on the type (success or error)
-//     // Get current form
-//     let currentForm = formObject.target;
-//     // Get containers for success and error messages
-//     let successContainer = currentForm.querySelector("#successMessage");
-//     let errorContainer = currentForm.querySelector("#errorMessage");
-//     // Get all inputs and convert to array
-//     let inputs = Array.from(currentForm.querySelectorAll("input, textarea"));
-    
-//     if (type === "success") {
-//         successContainer.innerHTML = statusMessage;
-//         // Show success message
-//         successContainer.classList.replace("hideMessage", "showMessage");
-//         // Wait 2 seconds before resetting form and hiding success message
-//         setTimeout(function() {
-//             // Remove "is-valid" class from all inputs
-//             inputs.forEach(input => input.classList.remove("is-valid"));
-//             // Reset form
-//             currentForm.reset();
-//             // Hide success message
-//             successContainer.classList.replace("showMessage", "hideMessage");
-//         }, 5000);
-//     }
-//     else if (type === "error") {
-//         // Set error message
-//         errorContainer.innerHTML = statusMessage;
-//         // Show error message
-//         errorContainer.classList.replace("hideMessage", "showMessage");
-//     }
-// }
