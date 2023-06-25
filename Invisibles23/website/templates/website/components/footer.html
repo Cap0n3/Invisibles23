@@ -62,11 +62,13 @@
         <!--LINKS BLOCK - NEWSLETTER-->
         <div class="col-12 col-lg-6 text-center">
             <h5 class="text-uppercase text-lg-start my-4">Inscrivez-vous à la newsletter</h5>
-            <form novalidate>
+            <form id="newsletterFooter" novalidate>
                 <div class="d-flex flex-column flex-lg-row gap-3">
-                    <input type="email" class="form-control normal-input" placeholder="Votre e-mail" aria-describedby="emailNewsletter" />
+                    <input type="email" id="email-newsletterFooter" class="form-control normal-input" placeholder="Votre e-mail" aria-describedby="emailNewsletter" />
                     <button type="submit" class="btn btn-primary">S'inscrire</button>
                 </div>
+                <div id="newsletterFooterSuccessMessage" class="hideMessage alert alert-success mt-4" role="alert"></div>
+                <div id="newsletterFooterErrorMessage" class="hideMessage alert alert-danger mt-4" role="alert"></div>
             </form>
         </div> 
     </div>

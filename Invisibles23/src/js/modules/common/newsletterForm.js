@@ -2,8 +2,9 @@ import JustValidate from 'just-validate';
 import { displayMessage } from './utils/helpers';
 import { addContactToList } from "./utils/api";
 
-export function newsletterForm() {
-    const validator = new JustValidate('#newsletterForm',
+export function newsletterForm(formID) {
+    const inputID = `email-${formID}`;
+    const validator = new JustValidate(`#${formID}`,
         {
             successFieldCssClass: ['is-valid'], // CSS class to add when input is valid
             errorFieldCssClass: ['is-invalid'], // CSS class to add when input is invalid
@@ -14,7 +15,7 @@ export function newsletterForm() {
     );
 
     validator
-        .addField('#id_newsletterEmail', [
+        .addField(`#${inputID}`, [
             {
                 rule: "required",
                 errorMessage: "Merci d'indiquer votre adresse email",
@@ -26,13 +27,15 @@ export function newsletterForm() {
         ])
         .onSuccess((form) => {
             // If the form is valid, we add the contact to the list
-            handleNewsletterSubmit(form);
+            handleNewsletterSubmit(form, form.target.elements[inputID].value);
         }
         )
 }
 
-function handleNewsletterSubmit(formObject) {
-    const email = formObject.target.elements["id_newsletterEmail"].value;
+function handleNewsletterSubmit(formObject, email) {
+    const formID = formObject.target.id;
+
+    console.log(`#${formID}SuccessMessage`)
     
     addContactToList(email)
     .then((response) => {
@@ -41,8 +44,8 @@ function handleNewsletterSubmit(formObject) {
             formObject, 
             "Votre adresse email a bien été ajoutée à la liste de diffusion. Merci !",
             {
-                success: "#newsletterSuccessMessage",
-                error: "#newsletterErrorMessage",
+                success: `#${formID}SuccessMessage`,
+                error: `#${formID}ErrorMessage`,
             },
             "success" 
         );
@@ -53,8 +56,8 @@ function handleNewsletterSubmit(formObject) {
             formObject, 
             "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.",
             {
-                success: "#newsletterSuccessMessage",
-                error: "#newsletterErrorMessage",
+                success: `#${formID}SuccessMessage`,
+                error: `#${formID}ErrorMessage`,
             },
             "error" 
         );
