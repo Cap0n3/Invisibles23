@@ -40,51 +40,28 @@ export function newsletterForm(formID) {
         )
 }
 
-function handleNewsletterSubmit(formObject, email) {
+async function handleNewsletterSubmit(formObject, email) {
     const formID = formObject.target.id;
+    const messageSelectors = {
+        success: `#${formID}SuccessMessage`,
+        warning: `#${formID}WarningMessage`,
+        error: `#${formID}ErrorMessage`,
+    };
 
-    console.log(`#${formID}SuccessMessage`)
-    
-    addContactToList(email)
-    .then((response) => {
-        //console.log(response);
-        displayMessage(
-            formObject, 
-            "Votre adresse email a bien été ajoutée à la liste de diffusion. Merci !",
-            {
-                success: `#${formID}SuccessMessage`,
-                warning: `#${formID}WarningMessage`,
-                error: `#${formID}ErrorMessage`,
-            },
-            "success" 
-        );
-    })
-    .catch((error) => {
-        const errorStatus = error.response.status;
+    try {
+        await addContactToList(email);
+        displayMessage(formObject, "Votre adresse email a bien été ajoutée à la liste de diffusion. Merci !", messageSelectors, "success");
+    } 
+    catch (error) {
+        const errorStatus = error.response ? error.response.status : null;
+        let errorMessage = "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.";
+        let errorType = "error";
+
         if (errorStatus === 400) {
-            displayMessage(
-                formObject, 
-                "Cette adresse email est déjà inscrite à la liste de diffusion.",
-                {
-                    success: `#${formID}SuccessMessage`,
-                    warning: `#${formID}WarningMessage`,
-                    error: `#${formID}ErrorMessage`,
-                },
-                "warning" 
-            );
+            errorMessage = "Cette adresse email est déjà inscrite à la liste de diffusion.";
+            errorType = "warning";
         }
-        else {
-            displayMessage(
-                formObject, 
-                "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.",
-                {
-                    success: `#${formID}SuccessMessage`,
-                    warning: `#${formID}WarningMessage`,
-                    error: `#${formID}ErrorMessage`,
-                },
-                "error" 
-            );
-        }
+
+        displayMessage(formObject, errorMessage, messageSelectors, errorType);
     }
-    );
 }

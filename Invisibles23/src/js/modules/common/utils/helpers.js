@@ -94,7 +94,7 @@ export function expandText(textWrapperClass, limit = 20) {
  *  "success"
  * );
  */
-export function displayMessage(formObject, statusMessage, containersID, type) {    
+export function displayMessage(formObject, statusMessage, containersID, type) {
     const currentForm = formObject.target;
     // Get containers for success and error messages
     const successContainer = currentForm.querySelector(containersID.success);
@@ -106,7 +106,7 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
         container.innerHTML = message;
         container.classList.replace("hideMessage", "showMessage");
     };
-    
+
     const hideMessage = (container) => {
         container.classList.replace("showMessage", "hideMessage");
     };
@@ -119,22 +119,22 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
     if (type === "success") {
         showMessage(successContainer, statusMessage);
         setTimeout(() => {
-          hideMessage(successContainer);
-          resetForm();
+            hideMessage(successContainer);
+            resetForm();
         }, 5000);
     }
     else if (type === "warning") {
         showMessage(warningContainer, statusMessage);
         setTimeout(() => {
-          hideMessage(warningContainer);
-          resetForm();
+            hideMessage(warningContainer);
+            resetForm();
         }, 5000);
-    } 
+    }
     else if (type === "error") {
         showMessage(errorContainer, statusMessage);
         setTimeout(() => {
-          hideMessage(errorContainer);
-          resetForm();
+            hideMessage(errorContainer);
+            resetForm();
         }, 5000);
     }
 }
