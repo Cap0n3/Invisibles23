@@ -9,7 +9,7 @@
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name_ID == "About" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+            {% include "website/components/about-section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - NEWSLETTER-->
