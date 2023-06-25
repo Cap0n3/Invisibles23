@@ -66,53 +66,75 @@ export function expandText(textWrapperClass, limit = 20) {
  * 
  * @param {Object} formObject - The form object
  * @param {String} statusMessage - The message to display
- * @param {Object} containersID - The IDs of the containers for the success and error messages
+ * @param {Object} containersID - The IDs of the containers for the success, warning and error messages
  * @param {String} type - The type of message (success or error)
  * @returns {void}
  * 
  * @example
- * // Display a success message
- * displayMessage(formObject, "Votre message a bien été envoyé.", {success: "#success-message", error: "#error-message"}, "success"); 
+ * displayMessage(
+ *  formObject,
+ *  "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.",
+ *  {
+ *      success: "#successMessage",
+ *      warning: "#warningMessage",
+ *      error: "#errorMessage",
+ *  },
+ *  "error"
+ * );
  * 
- * // Display an error message
- * displayMessage(formObject, "Une erreur est survenue. Veuillez réessayer plus tard.", {success: "#success-message", error: "#error-message"}, "error");
+ * @example
+ * displayMessage(
+ *  formObject,
+ *  "Votre adresse email a bien été ajoutée à la liste de diffusion. Merci !",
+ *  {
+ *      success: "#successMessage",
+ *      warning: "#warningMessage",
+ *      error: "#errorMessage",
+ *  },
+ *  "success"
+ * );
  */
-export function displayMessage(formObject, statusMessage, containersID, type) {
-    // Code to display the message based on the type (success or error)
-    // Get current form
+export function displayMessage(formObject, statusMessage, containersID, type) {    
     const currentForm = formObject.target;
     // Get containers for success and error messages
-    let successContainer = currentForm.querySelector(containersID.success);
-    let errorContainer = currentForm.querySelector(containersID.error);
-    // Get all inputs and convert to array
-    let inputs = Array.from(currentForm.querySelectorAll("input, textarea"));
+    const successContainer = currentForm.querySelector(containersID.success);
+    const warningContainer = currentForm.querySelector(containersID.warning);
+    const errorContainer = currentForm.querySelector(containersID.error);
+    const inputs = Array.from(currentForm.querySelectorAll("input, textarea"));
+
+    const showMessage = (container, message) => {
+        container.innerHTML = message;
+        container.classList.replace("hideMessage", "showMessage");
+    };
+    
+    const hideMessage = (container) => {
+        container.classList.replace("showMessage", "hideMessage");
+    };
+
+    const resetForm = () => {
+        inputs.forEach((input) => input.classList.remove("is-valid"));
+        currentForm.reset();
+    };
 
     if (type === "success") {
-        successContainer.innerHTML = statusMessage;
-        // Show success message
-        successContainer.classList.replace("hideMessage", "showMessage");
-        // Wait 2 seconds before resetting form and hiding success message
-        setTimeout(function() {
-            // Remove "is-valid" class from all inputs
-            inputs.forEach(input => input.classList.remove("is-valid"));
-            // Reset form
-            currentForm.reset();
-            // Hide success message
-            successContainer.classList.replace("showMessage", "hideMessage");
+        showMessage(successContainer, statusMessage);
+        setTimeout(() => {
+          hideMessage(successContainer);
+          resetForm();
         }, 5000);
     }
+    else if (type === "warning") {
+        showMessage(warningContainer, statusMessage);
+        setTimeout(() => {
+          hideMessage(warningContainer);
+          resetForm();
+        }, 5000);
+    } 
     else if (type === "error") {
-        // Set error message
-        errorContainer.innerHTML = statusMessage;
-        // Show error message
-        errorContainer.classList.replace("hideMessage", "showMessage");
-        setTimeout(function() {
-            // Remove "is-valid" class from all inputs
-            inputs.forEach(input => input.classList.remove("is-valid"));
-            // Reset form
-            currentForm.reset();
-            // Hide success message
-            errorContainer.classList.replace("showMessage", "hideMessage");
+        showMessage(errorContainer, statusMessage);
+        setTimeout(() => {
+          hideMessage(errorContainer);
+          resetForm();
         }, 5000);
     }
 }

@@ -2,6 +2,14 @@ import JustValidate from 'just-validate';
 import { displayMessage } from './utils/helpers';
 import { addContactToList } from "./utils/api";
 
+/**
+ * Initialize the newsletter form.
+ * @param {string} formID - The ID of the form
+ * @returns {void}
+ * 
+ * @example
+ * newsletterForm("newsletterFooter");
+ */
 export function newsletterForm(formID) {
     const inputID = `email-${formID}`;
     const validator = new JustValidate(`#${formID}`,
@@ -45,22 +53,38 @@ function handleNewsletterSubmit(formObject, email) {
             "Votre adresse email a bien été ajoutée à la liste de diffusion. Merci !",
             {
                 success: `#${formID}SuccessMessage`,
+                warning: `#${formID}WarningMessage`,
                 error: `#${formID}ErrorMessage`,
             },
             "success" 
         );
     })
     .catch((error) => {
-        console.log(error);
-        displayMessage(
-            formObject, 
-            "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.",
-            {
-                success: `#${formID}SuccessMessage`,
-                error: `#${formID}ErrorMessage`,
-            },
-            "error" 
-        );
+        const errorStatus = error.response.status;
+        if (errorStatus === 400) {
+            displayMessage(
+                formObject, 
+                "Cette adresse email est déjà inscrite à la liste de diffusion.",
+                {
+                    success: `#${formID}SuccessMessage`,
+                    warning: `#${formID}WarningMessage`,
+                    error: `#${formID}ErrorMessage`,
+                },
+                "warning" 
+            );
+        }
+        else {
+            displayMessage(
+                formObject, 
+                "Désolé, une erreur est survenue ! Réessayez plus tard et si le problème persiste, contactez l'administrateur du site.",
+                {
+                    success: `#${formID}SuccessMessage`,
+                    warning: `#${formID}WarningMessage`,
+                    error: `#${formID}ErrorMessage`,
+                },
+                "error" 
+            );
+        }
     }
     );
 }
