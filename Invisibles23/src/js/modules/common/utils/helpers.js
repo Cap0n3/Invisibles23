@@ -86,8 +86,6 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
     let errorContainer = currentForm.querySelector(containersID.error);
     // Get all inputs and convert to array
     let inputs = Array.from(currentForm.querySelectorAll("input, textarea"));
-    
-    console.log(currentForm)
 
     if (type === "success") {
         successContainer.innerHTML = statusMessage;
@@ -108,5 +106,13 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
         errorContainer.innerHTML = statusMessage;
         // Show error message
         errorContainer.classList.replace("hideMessage", "showMessage");
+        setTimeout(function() {
+            // Remove "is-valid" class from all inputs
+            inputs.forEach(input => input.classList.remove("is-valid"));
+            // Reset form
+            currentForm.reset();
+            // Hide success message
+            errorContainer.classList.replace("showMessage", "hideMessage");
+        }, 5000);
     }
 }
