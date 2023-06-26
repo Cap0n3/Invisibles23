@@ -16,7 +16,7 @@ function initialize() {
    
     if (currentPage === '/') {
         console.log("home_")
-        contactForm(); // Initialize the contact form
+        contactForm("#contactForm"); // Initialize the contact form
         homepagePodcasts(); // Get and create the last podcasts for the homepage section
         newsletterForm("newsletterC2A"); // Initialize the newsletter form (c2a section)
     }
