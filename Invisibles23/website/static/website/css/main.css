@@ -955,7 +955,7 @@ body .videos {
 /* ============ */
 /* === FORM === */
 /* ============ */
-#contactForm {
+#contactForm, #contactFormPage {
   background-image: url("../medias/headers/Header_Woman1.jpg");
   background-size: 270%;
   background-position: 100% 95%;

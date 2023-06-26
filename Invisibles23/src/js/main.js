@@ -26,7 +26,9 @@ function initialize() {
     else if (/ressources/.test(currentPage)) {
         searchBehavior(); // Initialize search behavior
         expandText('card-text', 25); // Initialize the expand text behavior
-
+    }
+    else if (currentPage === '/contact/') {
+        contactForm("#contactFormPage"); // Initialize the contact form
     }
     
     // Initialize bootstrap popovers (to remove if not used)

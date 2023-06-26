@@ -121,7 +121,7 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
         setTimeout(() => {
             hideMessage(successContainer);
             resetForm();
-        }, 5000);
+        }, 3000);
     }
     else if (type === "warning") {
         showMessage(warningContainer, statusMessage);
