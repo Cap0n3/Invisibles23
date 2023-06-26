@@ -1,4 +1,5 @@
 import { navbar } from "./modules/common/navbar.js";
+import { scrollToTop } from "./modules/common/ScrollToTop.js";
 import { contactForm } from "./modules/common/contactForm.js";
 import { homepagePodcasts, podcastsPage } from "./modules/insertPodcasts.js";
 import { searchBehavior } from "./modules/ressources.js";
@@ -12,6 +13,7 @@ function initialize() {
     const currentPage = window.location.pathname;
     
     navbar(); // Initialize the navbar
+    scrollToTop(); // Initialize the scroll to top button
     newsletterForm("newsletterFooter"); // Initialize the newsletter form (footer)
    
     if (currentPage === '/') {

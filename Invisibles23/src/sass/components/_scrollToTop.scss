@@ -1,0 +1,21 @@
+#scrollToTopButton {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    background-color: $font-deep-blue;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    i {
+        color: #fff;
+    }
+}
+
+#scrollToTopButton:hover {
+    background-color: #555;
+}
