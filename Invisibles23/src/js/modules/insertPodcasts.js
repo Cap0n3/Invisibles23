@@ -138,6 +138,7 @@ export function podcastsPage() {
             function createPagination() {
                 const paginationNav = PodcastPlayer.generateHtmlTag('nav', {
                     'aria-label' :'Page navigation podcasts',
+                    'className' : 'site-pagination'
                 });
 
                 const paginationUl = PodcastPlayer.generateHtmlTag('ul', {

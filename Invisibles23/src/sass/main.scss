@@ -6,7 +6,6 @@
 @import "components/headers/hero-header";
 @import "components/headers/page-header";
 @import "components/footer/footer";
-@import "components/podcast/mini-podcast";
 @import "components/podcast/podcast-player";
 @import "components/callToAction/c2a";
 @import "components/blockquote";
@@ -125,6 +124,18 @@ body {
         
         @include lg {
             width: 80%;
+        }
+    }
+
+    .site-pagination {
+        ul>li>a {
+            background-color: transparent;
+            color: $font-deep-blue;
+
+            &.active {
+                background-color: $font-deep-blue;
+                border-color: $font-deep-blue;
+            }
         }
     }
 }

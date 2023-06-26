@@ -946,6 +946,14 @@ body .videos {
     width: 80%;
   }
 }
+body .site-pagination ul > li > a {
+  background-color: transparent;
+  color: #002E48;
+}
+body .site-pagination ul > li > a.active {
+  background-color: #002E48;
+  border-color: #002E48;
+}
 
 /* ================ */
 /* === SECTIONS === */
