@@ -173,17 +173,29 @@ nav.show {
   text-decoration: none;
 }
 #footer .footer-socials-block {
-  display: inline-flex; /* must be inline to be centered in bs column */
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 60px 20% 60px 20%;
-  gap: 30%;
+  padding: 60px 0 60px 0;
+  max-width: 1200px;
+  width: 100%;
+  min-width: 260px;
   border-bottom: 0.5px solid #002E48;
+  overflow: hidden;
 }
-@media screen and (min-width: 768px) {
-  #footer .footer-socials-block {
-    gap: 40%;
+#footer .footer-socials-block .social-icon {
+  margin-left: 12%; /* Adjust the margin value as needed */
+}
+#footer .footer-socials-block .social-icon i {
+  font-size: 2.2rem;
+}
+@media screen and (max-width: 280px) {
+  #footer .footer-socials-block .social-icon {
+    margin-left: 25px;
   }
+}
+#footer .footer-socials-block .social-icon:first-child {
+  margin-left: 0;
 }
 #footer .credits {
   font-size: 0.8rem;

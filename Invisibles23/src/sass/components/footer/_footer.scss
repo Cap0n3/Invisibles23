@@ -10,15 +10,32 @@
     }
 
     .footer-socials-block {
-        display: inline-flex; /* must be inline to be centered in bs column */
+        display: inline-flex;
         justify-content: center;
         align-items: center;
-        padding: 60px 20% 60px 20%;
-        gap: 30%;
-        border-bottom: .5px solid $font-deep-blue;
+        //padding: 60px 20% 60px 20%;
+        padding: 60px 0 60px 0;
+        max-width: 1200px;
+        width: 100%;
+        min-width: 260px;
+        border-bottom: 0.5px solid $font-deep-blue;
+        overflow: hidden;
+        
+        .social-icon {
+            margin-left: 12%; /* Adjust the margin value as needed */
+            
+            i {
+                font-size: 2.2rem;
+            }
 
-        @include md {
-            gap: 40%;
+            // Galaxy Fold
+            @media screen and (max-width: 280px) {
+                margin-left: 25px;
+            }
+        }
+      
+        .social-icon:first-child {
+          margin-left: 0;
         }
     }
 
