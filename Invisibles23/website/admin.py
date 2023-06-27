@@ -11,7 +11,8 @@ from .models import (
     TherapeuticRessources,
     FinancialRessources,
     Event,
-    ContactSection
+    ContactSection,
+    AssoStatus,
 )
 
 # Register your models here.
@@ -27,3 +28,4 @@ admin.site.register(TherapeuticRessources)
 admin.site.register(FinancialRessources)
 admin.site.register(Event)
 admin.site.register(ContactSection)
+admin.site.register(AssoStatus)

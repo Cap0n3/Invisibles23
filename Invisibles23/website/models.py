@@ -239,9 +239,24 @@ class ContactSection(models.Model):
         verbose_name_plural = "Section Contact"
 
     def clean(self):
-        print(ContactSection.objects.count())
-        if ContactSection.objects.count() > 0:
+        if ContactSection.objects.count() >= 1:
             raise ValidationError("Seulement une section contact est autorisée !")
 
     def __str__(self):
         return self.title + " - " + self.name
+    
+class AssoStatus(models.Model):
+    title = models.CharField(max_length=50, verbose_name="Titre du statut")
+    richText = RichTextField(verbose_name="Texte du statut")
+
+    class Meta:
+        verbose_name = "Statut de l'association"
+        verbose_name_plural = "Statuts de l'association"
+
+    def clean(self):
+        print(AssoStatus.objects.count())
+        if AssoStatus.objects.count() >= 1:
+            raise ValidationError("Seulement un statut est autorisé !")
+
+    def __str__(self):
+        return self.title

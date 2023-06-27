@@ -13,7 +13,8 @@ from .models import (
     MiscarriageTabSections,
     YoutubeVideos,
     Event,
-    ContactSection
+    ContactSection,
+    AssoStatus,
 )
 from .filters import (
     AdminRessourcesFilter,
@@ -151,4 +152,20 @@ class ContactView(View):
             'contact_content' : self.queryset,
         }
 
+        return render(request, self.template_name, context)
+    
+class MembershipView(View):
+    template_name = "website/membership.html"
+
+    def get(self, request):
+        return render(request, self.template_name, {})
+    
+class StatusView(View):
+    template_name = "website/status.html"
+    queryset = AssoStatus.objects.first()
+
+    def get(self, request):
+        context = {
+            'status_content' : self.queryset,
+        }    
         return render(request, self.template_name, context)

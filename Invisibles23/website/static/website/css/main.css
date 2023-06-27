@@ -151,6 +151,17 @@ nav.show {
   }
 }
 
+#membership-header {
+  background-image: url("../medias/headers/Header_Woman4.jpg");
+  background-position: 50% 0%;
+  background-size: cover;
+}
+@media screen and (min-width: 576px) {
+  #membership-header {
+    background-position: 0% 20%;
+  }
+}
+
 #contact-header {
   background-image: url("../medias/headers/Header_Contact.jpg");
   background-position: 60% 20%;
