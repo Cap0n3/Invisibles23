@@ -9,8 +9,20 @@ __pycache__
 db.sqlite3
 media
 
-# Node JS
+# Database dump
+whole.json
+whole_alt.json
+
+# Node JS (only for dev)
 node_modules/
+package-lock.json
+package.json
+
+# Webpack (only for dev)
+webpack.config.js
+
+# Gulp (only for dev)
+gulpfile.js
 
 # Backup files # 
 *.bak
