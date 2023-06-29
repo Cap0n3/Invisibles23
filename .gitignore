@@ -55,7 +55,11 @@ testDataSet.json
 # pyenv 
 .python-version 
 
-# Environments 
+# Env vars
+.env 
+.py_env
+
+# Virtual Environments 
 .env 
 .venv 
 env/ 
