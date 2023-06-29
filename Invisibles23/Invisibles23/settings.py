@@ -14,10 +14,6 @@ from pathlib import Path
 import os
 import environ
 
-import mimetypes
-mimetypes.add_type("text/javascript", ".js", True)
-mimetypes.add_type("text/css", ".css", True)
-
 # Initialise environment variables
 env = environ.Env()
 env.read_env()
@@ -137,7 +133,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'website/static/website'),
