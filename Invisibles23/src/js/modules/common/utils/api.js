@@ -135,6 +135,7 @@ export async function addContactToList(email) {
             email_address: email,
             status: 'subscribed'
         });
-        //console.log(response);
+        console.log(response);
+        console.log(mailchimp)
     }
 }
