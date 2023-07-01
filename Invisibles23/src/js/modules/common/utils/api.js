@@ -2,10 +2,23 @@
 const axios = require('axios');
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
+
+/*
+    * Fetch sensitive data from the server.
+    * @returns {Promise} - Promise object representing the sensitive data
+    * @throws {Error} - Error object
+*/
+function fetchSensitiveData() {
+    return axios.get('/get_sensitive_info/')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching sensitive information:', error);
+        });
+}
+
 // ======================== //
 // === Aush Podcast API === //
 // ======================== //
-
 
 /**
  * Get the last 'n' podcasts from the Ausha API.
@@ -27,10 +40,12 @@ const mailchimp = require('@mailchimp/mailchimp_marketing');
  */
 export async function getAushaPodcasts(numberOfPodcasts = 0) {
     const url = "https://developers.ausha.co/v1/shows/44497/podcasts";
+    const tokens = await fetchSensitiveData();
 
+    // Set the headers
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.AUSHA_API_TOKEN}`
+        'Authorization': `Bearer ${tokens.ausha_api_token}`
     };
 
     try {
@@ -48,13 +63,14 @@ export async function getAushaPodcasts(numberOfPodcasts = 0) {
 /**
  * Test the API query and calculate the elapsed time.
  */
-export function queryAPIAndCalculateTime() {
+export async function queryAPIAndCalculateTime() {
     const apiEndpoint = 'https://developers.ausha.co/v1/shows/44497/podcasts';
     const startTime = new Date().getTime(); // Get the current time in milliseconds
+    const tokens = await fetchSensitiveData();
   
     fetch(apiEndpoint, {
       headers: {
-        'Authorization': `Bearer ${process.env.AUSHA_API_TOKEN}` // Include the API token in the Authorization header
+        'Authorization': `Bearer ${tokens.ausha_api_token}`
       }
     })
       .then(response => response.json())
@@ -73,19 +89,19 @@ export function queryAPIAndCalculateTime() {
 // === Mailchimp API === //
 // ===================== //
 
-mailchimp.setConfig({
-    apiKey: process.env.MAILCHIMP_API_KEY,
-    server: 'us21',
-});
-
-/**
- * Test connection to Mailchimp API.
- * @reference https://mailchimp.com/developer/marketing/guides/quick-start/
- */
 export async function callPing() {
-    console.log('Calling ping...')
-    const response = await mailchimp.ping.get();
-    console.log(response);
+    try {
+        const tokens = await fetchSensitiveData();
+        mailchimp.setConfig({
+            apiKey: tokens.mailchimp_api_key,
+            server: 'us21',
+        });
+        console.log('Calling ping...');
+        const response = await mailchimp.ping.get();
+        console.log(response);
+    } catch (error) {
+        console.error('An error occurred while calling ping:', error);
+    }
 }
 
 /**
@@ -108,11 +124,17 @@ export async function addContactToList(email) {
         }
     }
     else {
-        const listId = process.env.MAILCHIMP_LIST_ID;
+        // Get the tokens from the server and set the config
+        const tokens = await fetchSensitiveData();
+        mailchimp.setConfig({
+            apiKey: tokens.mailchimp_api_key,
+            server: 'us21',
+        });
+        const listId = tokens.mailchimp_list_id;
         const response = await mailchimp.lists.addListMember(listId, {
             email_address: email,
             status: 'subscribed'
         });
-        console.log(response);
+        //console.log(response);
     }
 }

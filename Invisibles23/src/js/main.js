@@ -9,15 +9,14 @@ import { newsletterForm } from "./modules/common/newsletterForm.js";
 /**
  * Initialize the webpage
  */
-function initialize() {    
+async function initialize() {    
     const currentPage = window.location.pathname;
-    
+
     navbar(); // Initialize the navbar
     scrollToTop(); // Initialize the scroll to top button
     newsletterForm("newsletterFooter"); // Initialize the newsletter form (footer)
    
     if (currentPage === '/') {
-        console.log("home_")
         contactForm("#contactForm"); // Initialize the contact form
         homepagePodcasts(); // Get and create the last podcasts for the homepage section
         newsletterForm("newsletterC2A"); // Initialize the newsletter form (c2a section)

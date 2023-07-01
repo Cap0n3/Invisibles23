@@ -21,6 +21,12 @@ from .filters import (
     TherapeuticRessourcesFilter,
     FinancialRessourcesFilter
 )
+from django.http import JsonResponse
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+env.read_env('../.env')
 
 # == Base view classes to stay DRY == #
 class BaseThematicView(View):
@@ -169,3 +175,15 @@ class StatusView(View):
             'status_content' : self.queryset,
         }    
         return render(request, self.template_name, context)
+    
+def get_sensitive_info(request):
+    data = {
+        'ausha_api_token': env('AUSHA_API_TOKEN'),
+        'mailchimp_api_key': env('MAILCHIMP_API_KEY'),
+        'mailchimp_list_id': env('MAILCHIMP_LIST_ID'),
+        'emailjs_service_id': env('EMAILJS_SERVICE_ID'),
+        'emailjs_template_id': env('EMAILJS_TEMPLATE_ID'),
+        'emailjs_user_id': env('EMAILJS_USER_ID'),
+    }
+
+    return JsonResponse(data)
