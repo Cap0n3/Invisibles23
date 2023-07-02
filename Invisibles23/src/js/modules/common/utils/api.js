@@ -138,6 +138,8 @@ export async function addContactToList(email, test_status = null) {
     // Get the CSRF token with getCookie()
     const csrftoken = getCookie('csrftoken');
 
+    console.log('csrftoken:', csrftoken);
+
     // Send the request to the server      
     const formData = new FormData();
     formData.append('email', email);
