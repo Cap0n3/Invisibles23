@@ -199,5 +199,11 @@ export async function addContactToList(email, test_status = null) {
         test_status: test_status
     }
 
-    sendRequest('api/proxy/mailchimp/', data)
+    try {
+        await sendRequest('api/proxy/mailchimp/', data)
+    }
+    catch (error) {
+        console.error('Error adding contact to list:', error);
+        throw error;
+    }
 }

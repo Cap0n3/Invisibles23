@@ -12,6 +12,12 @@ from django.views.decorators.csrf import csrf_exempt
 env = environ.Env()
 env.read_env('../.env')
 
+
+'''
+@method_decorator(csrf_exempt, name='dispatch') is used to disable CSRF protection for this view.
+This is because we are not using Django forms or templates to submit post requests to this view.
+Requests will be rejected if CSRF protection is enabled.
+'''
 @method_decorator(csrf_exempt, name='dispatch')
 class MailchimpProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
