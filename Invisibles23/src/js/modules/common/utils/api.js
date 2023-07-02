@@ -3,6 +3,47 @@ const axios = require('axios');
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
 
+async function sendRequest(path, data) {
+    // Get the CSRF token
+    const csrfToken = getCookie('csrftoken');
+
+    // Get root domain
+    const domain = window.location.href;
+
+    // combine root domain with path
+    const url = domain + path;
+
+    console.log('path:', path);
+    console.log('data:', data);
+    console.log('domain:', url);
+
+    const params = new URLSearchParams();
+    // Convert the data object to a URLSearchParams object
+    for (const key in data) {
+        params.append(key, data[key]);
+    }
+
+    console.log('params:', params.toString());
+    console.log('csrfToken:', csrfToken);
+
+    const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrfToken
+    };
+
+    const cookies = {
+        'csrftoken': csrfToken
+    };
+
+    try {
+        const response = await axios.post(url, params.toString(), { headers, withCredentials: true, cookies });
+        console.log(response.data); // The response data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 /*
     * Fetch sensitive data from the server.
     * @returns {Promise} - Promise object representing the sensitive data
@@ -135,26 +176,33 @@ export async function callPing() {
  * }
  */
 export async function addContactToList(email, test_status = null) {
-    // Get the CSRF token with getCookie()
-    const csrftoken = getCookie('csrftoken');
+    // // Get the CSRF token with getCookie()
+    // const csrftoken = getCookie('csrftoken');
 
-    console.log('csrftoken:', csrftoken);
+    // console.log('csrftoken:', csrftoken);
 
-    // Send the request to the server      
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('test_status', test_status)
+    // // Send the request to the server      
+    // const formData = new FormData();
+    // formData.append('email', email);
+    // formData.append('test_status', test_status)
 
-    try {
-        const response = await axios.post('/api/proxy/mailchimp/', formData, {
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Content-Type': 'multipart/form-data'  // Set the content type to form data
-            }
-        });
-        console.log('Response:', response);
-    } catch (error) {
-        console.error('Error adding contact to list:', error);
-        throw error;
+    // try {
+    //     const response = await axios.post('/api/proxy/mailchimp/', formData, {
+    //         headers: {
+    //             'X-CSRFToken': csrftoken,
+    //             'Content-Type': 'multipart/form-data'  // Set the content type to form data
+    //         }
+    //     });
+    //     console.log('Response:', response);
+    // } catch (error) {
+    //     console.error('Error adding contact to list:', error);
+    //     throw error;
+    // }
+
+    const data = {
+        email: email,
+        test_status: test_status
     }
+
+    sendRequest('api/proxy/mailchimp/', data)
 }

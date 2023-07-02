@@ -46,7 +46,8 @@ class MailchimpProxy(View):
                 'message': 'You have successfully subscribed to our mailing list.',
             },  status=200)
         except ApiClientError as error:
-            print("An exception occurred: {}".format(error.text))
+            # Same with f string
+            print(f"An exception occurred: {error.text}")
 
             return JsonResponse({
                 'message': f"An error occurred: {error.text}",
