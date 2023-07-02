@@ -28,7 +28,6 @@ async function sendRequest(path, data) {
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-CSRFToken': csrfToken,
-        'Cookie': `csrftoken=${csrfToken}`,
     };
 
     try {
