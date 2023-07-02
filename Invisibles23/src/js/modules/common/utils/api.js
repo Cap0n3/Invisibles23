@@ -13,7 +13,6 @@ async function sendRequest(path, data) {
     // combine root domain with path
     const url = domain + path;
 
-    console.log('path:', path);
     console.log('data:', data);
     console.log('domain:', url);
 
@@ -28,15 +27,12 @@ async function sendRequest(path, data) {
 
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': csrfToken
-    };
-
-    const cookies = {
-        'csrftoken': csrfToken
+        'X-CSRFToken': csrfToken,
+        'Cookie': `csrftoken=${csrfToken}`,
     };
 
     try {
-        const response = await axios.post(url, params.toString(), { headers, withCredentials: true, cookies });
+        const response = await axios.post(url, params.toString(), { headers, withCredentials: true });
         console.log(response.data); // The response data
     } catch (error) {
         console.error(error);
