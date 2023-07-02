@@ -5,10 +5,14 @@ from mailchimp_marketing.api_client import ApiClientError
 from django.http import JsonResponse, HttpResponseBadRequest
 import environ
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 # Read the .env file
 env = environ.Env()
 env.read_env('../.env')
 
+@method_decorator(csrf_exempt, name='dispatch')
 class MailchimpProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
     server_prefix = "us21"
