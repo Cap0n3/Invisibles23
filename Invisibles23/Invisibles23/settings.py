@@ -29,15 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8_dpm17+j=c#n%1yvsxotts_cv0c3n(=xe1ok-ps-p60#_(aq0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'website.apps.WebsiteConfig',
+    'proxy.apps.ProxyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # CORS
 ]
 
 ROOT_URLCONF = 'Invisibles23.urls'
@@ -155,4 +156,7 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'https://invisibles23-production.up.railway.app/',
+]

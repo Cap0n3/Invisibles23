@@ -138,3 +138,9 @@ export function displayMessage(formObject, statusMessage, containersID, type) {
         }, 5000);
     }
 }
+
+export function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    const rawCookie = cookies.find(cookie => cookie.startsWith(name));
+    return rawCookie.split('=')[1];
+}

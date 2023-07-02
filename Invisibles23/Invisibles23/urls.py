@@ -20,6 +20,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include('website.urls')),
+    path('api/proxy/', include('proxy.urls')),
     path('admin/', admin.site.urls),
 ]
 

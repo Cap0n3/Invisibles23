@@ -1,4 +1,4 @@
-// api.js
+import { getCookie } from './helpers.js';
 const axios = require('axios');
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
@@ -67,23 +67,23 @@ export async function queryAPIAndCalculateTime() {
     const apiEndpoint = 'https://developers.ausha.co/v1/shows/44497/podcasts';
     const startTime = new Date().getTime(); // Get the current time in milliseconds
     const tokens = await fetchSensitiveData();
-  
+
     fetch(apiEndpoint, {
-      headers: {
-        'Authorization': `Bearer ${tokens.ausha_api_token}`
-      }
+        headers: {
+            'Authorization': `Bearer ${tokens.ausha_api_token}`
+        }
     })
-      .then(response => response.json())
-      .then(data => {
-        const endTime = new Date().getTime(); // Get the current time after the API request completes
-        const elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
-        console.log(`API query completed in ${elapsedTime} ms`);
-        // Process the retrieved data here
-      })
-      .catch(error => {
-        console.error('Error querying API:', error);
-      });
-  }
+        .then(response => response.json())
+        .then(data => {
+            const endTime = new Date().getTime(); // Get the current time after the API request completes
+            const elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
+            console.log(`API query completed in ${elapsedTime} ms`);
+            // Process the retrieved data here
+        })
+        .catch(error => {
+            console.error('Error querying API:', error);
+        });
+}
 
 // ===================== //
 // === Mailchimp API === //
@@ -105,37 +105,54 @@ export async function callPing() {
 }
 
 /**
- * Add a contact to a list.
- * @param {string} email - Email address of the contact to add
- * @param {string} listId - ID of the list to add the contact to
- * @reference https://mailchimp.com/developer/marketing/guides/create-your-first-audience/
+ * Add a contact to the Mailchimp list.
+ * 
+ * @param {string} email - Email address of the contact
+ * @param {int} test_status - For testing, set to any status code to simulate code being returned from the Mailchimp API (default: null)
+ * @returns {Promise} - Promise object representing the response from the server
+ * @throws {Error} - Error object
+ * 
+ * @example
+ * // Add a contact to the Mailchimp list with await
+ * const email = 'test@gmail.com';
+ * 
+ * try {
+ *  const response = await addContactToList(email, test_status);
+ * console.log('Response:', response);
+ * } catch (error) {
+ *  console.error('Error adding contact to list:', error);
+ * }
+ * 
+ * @example
+ * // Simulate a http 400 error with test_status
+ * const email = 'test@gmail.com'
+ * 
+ * try {
+ *  const response = await addContactToList(email, 400);
+ *  console.log('Response:', response);
+ * } catch (error) {
+ *  console.error('Error adding contact to list:', error);
+ * }
  */
-export async function addContactToList(email) {
-    if (process.env.TEST_MODE === 'true') {
-        if (process.env.TEST_ERROR === 'true') {
-            throw new Error('Testing error');
-        } else {
-            // Testing mode enabled, return a dummy response
-            const dummyResponse = {
-                status: 'success',
-                message: 'Contact added successfully (mocked)',
-            };
-            return dummyResponse;
-        }
-    }
-    else {
-        // Get the tokens from the server and set the config
-        const tokens = await fetchSensitiveData();
-        mailchimp.setConfig({
-            apiKey: tokens.mailchimp_api_key,
-            server: 'us21',
+export async function addContactToList(email, test_status = null) {
+    // Get the CSRF token with getCookie()
+    const csrftoken = getCookie('csrftoken');
+
+    // Send the request to the server      
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('test_status', test_status)
+
+    try {
+        const response = await axios.post('/api/proxy/mailchimp/', formData, {
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'multipart/form-data'  // Set the content type to form data
+            }
         });
-        const listId = tokens.mailchimp_list_id;
-        const response = await mailchimp.lists.addListMember(listId, {
-            email_address: email,
-            status: 'subscribed'
-        });
-        console.log(response);
-        console.log(mailchimp)
+        console.log('Response:', response);
+    } catch (error) {
+        console.error('Error adding contact to list:', error);
+        throw error;
     }
 }
