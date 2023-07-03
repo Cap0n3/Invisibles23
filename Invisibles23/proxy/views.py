@@ -25,54 +25,43 @@ class MailchimpProxy(View):
     mailchimp_api_key = env('MAILCHIMP_API_KEY')
     list_id = env('MAILCHIMP_LIST_ID')
     
-    def post(self, request):
+    def post(self, request):        
+        email = request.POST.get('email')
+        test_status = request.POST.get('test_status')
+        test_status = int(test_status) if test_status != "null" else None
 
+        if not email:
+            return HttpResponseBadRequest('Email is required')
 
-        #print all infos from request
-        print(request.POST)
-        
+        member_info = {
+            'email_address': email,
+            'status': 'subscribed'
+        }
 
-        # return response header to client
-        return HttpResponse('Hello, world!', status=200)
-
-        
-        # email = request.POST.get('email')
-        # test_status = request.POST.get('test_status')
-        # test_status = int(test_status) if test_status != "null" else None
-
-        # if not email:
-        #     return HttpResponseBadRequest('Email is required')
-
-        # member_info = {
-        #     'email_address': email,
-        #     'status': 'subscribed'
-        # }
-
-        # # Mailchimp API endpoint
-        # try:
-        #     if test_status and isinstance(test_status, int):
-        #         # Simulating a test error with custom status code and error message
-        #         raise ApiClientError("An error occurred", status_code=test_status)
+        # Mailchimp API endpoint
+        try:
+            if test_status and isinstance(test_status, int):
+                # Simulating a test error with custom status code and error message
+                raise ApiClientError("An error occurred", status_code=test_status)
             
-        #     client = MailchimpMarketing.Client()
-        #     client.set_config({
-        #         "api_key": self.mailchimp_api_key,
-        #         "server": self.server_prefix
-        #     })
-        #     response = client.lists.add_list_member(self.list_id, member_info)
-        #     print("response: {}".format(response))
+            client = MailchimpMarketing.Client()
+            client.set_config({
+                "api_key": self.mailchimp_api_key,
+                "server": self.server_prefix
+            })
+            response = client.lists.add_list_member(self.list_id, member_info)
+            print("response: {}".format(response))
             
-        #     return JsonResponse({
-        #         'message': 'You have successfully subscribed to our mailing list.',
-        #     },  status=200)
-        # except ApiClientError as error:
-        #     # Same with f string
-        #     print(f"An exception occurred: {error.text}")
+            return JsonResponse({
+                'message': 'You have successfully subscribed to our mailing list.',
+            },  status=200)
+        except ApiClientError as error:
+            # Same with f string
+            print(f"An exception occurred: {error.text}")
 
-        #     return JsonResponse({
-        #         'message': f"An error occurred: {error.text}",
-        #     }, status=error.status_code)
-
+            return JsonResponse({
+                'message': f"An error occurred: {error.text}",
+            }, status=error.status_code)
         
         
         

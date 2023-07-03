@@ -159,6 +159,6 @@ CKEDITOR_CONFIGS = {
 #     'https://invisibles23-production.up.railway.app/',
 # ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True # temporary for development
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://invisibles23-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://invisibles23-production.up.railway.app'] # Necessary for CSRF cookie to be sent to the frontend
