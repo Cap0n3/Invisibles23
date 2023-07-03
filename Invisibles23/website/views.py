@@ -34,15 +34,15 @@ class BaseThematicView(View):
     Base class for the thematic views
     """
     template_name = None
-    queryset = None
+    #queryset = None
 
-    def get_context_data(self):
+    def get_queryset(self):
         return {
-            'sections_content': self.queryset
+            'sections_content': getattr(self, 'model', None).objects.exclude(order=0) # Get section from the given model
         }
 
     def get(self, request):
-        context = self.get_context_data()
+        context = self.get_queryset()
         return render(request, self.template_name, context)
 
 class BaseRessourcesView(View):
@@ -105,15 +105,15 @@ class AboutView(View):
 
 class ChronicTabView(BaseThematicView):
     template_name = "website/chronic.html"
-    queryset = ChronicTabSections.objects.exclude(order=0)
+    model = ChronicTabSections # Model to query
 
 class InvisibleTabView(BaseThematicView):
     template_name = "website/invisible.html"
-    queryset = InvsibleTabSections.objects.exclude(order=0)
+    model = InvsibleTabSections # Model to query
     
 class MiscarriageTabView(BaseThematicView):
     template_name = "website/miscarriage.html"
-    queryset = MiscarriageTabSections.objects.exclude(order=0)
+    model = MiscarriageTabSections # Model to query
 
 class PodcastsView(View):
     template_name = "website/podcasts.html"
