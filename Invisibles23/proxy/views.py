@@ -4,6 +4,7 @@ import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 import environ
+import requests
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -12,13 +13,34 @@ from django.views.decorators.csrf import csrf_exempt
 env = environ.Env()
 env.read_env('../.env')
 
+class AushaProxy(View):
+    http_method_names = ['post'] # Only POST requests are allowed
+    ausha_api_key = env('AUSHA_API_TOKEN')
+    #url = "https://developers.ausha.co/v1/shows/44497/podcasts"
 
-'''
-@method_decorator(csrf_exempt, name='dispatch') is used to disable CSRF protection for this view.
-This is because we are not using Django forms or templates to submit post requests to this view.
-Requests will be rejected if CSRF protection is enabled.
-'''
-#@method_decorator(csrf_exempt, name='dispatch')
+    def post(self, request):
+        show_id = request.POST.get('show_id')
+        
+        if not show_id:
+            return HttpResponseBadRequest('Show ID is required')
+        
+        url = f"https://developers.ausha.co/v1/shows/{show_id}/podcasts"
+
+        # Send a request to Ausha API
+        try:
+            response = requests.get(url, headers={
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {self.ausha_api_key}'
+            })
+            return JsonResponse(response.json(), safe=False)
+        except Exception as error:
+            print(f"An exception occurred: {error}")
+            return JsonResponse({
+                'message': f"An error occurred: {error}",
+            }, status=500)
+
+
 class MailchimpProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
     server_prefix = "us21"
@@ -62,6 +84,5 @@ class MailchimpProxy(View):
             return JsonResponse({
                 'message': f"An error occurred: {error.text}",
             }, status=error.status_code)
-        
-        
+
         

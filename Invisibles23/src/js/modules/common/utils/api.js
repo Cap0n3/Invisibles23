@@ -2,8 +2,15 @@ import { getCookie } from './helpers.js';
 const axios = require('axios');
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
-
-async function sendRequest(path, data) {
+/**
+ * Send a request to proxy sever to handle API requests.
+ * 
+ * @param {string} email - The email address of the contact
+ * @param {number} listID - The ID of the list
+ * @returns {Promise} - Promise object representing the result of the request
+ * @throws {Error} - Error object
+ */
+async function sendProxyRequest(path, data) {
     // Get the CSRF token
     const csrfToken = getCookie('csrftoken');
 
@@ -13,17 +20,11 @@ async function sendRequest(path, data) {
     // combine root domain with path
     const url = domain + path;
 
-    console.log('data:', data);
-    console.log('domain:', url);
-
     const params = new URLSearchParams();
     // Convert the data object to a URLSearchParams object
     for (const key in data) {
         params.append(key, data[key]);
     }
-
-    console.log('params:', params.toString());
-    console.log('csrfToken:', csrfToken);
 
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -32,17 +33,17 @@ async function sendRequest(path, data) {
 
     try {
         const response = await axios.post(url, params.toString(), { headers, withCredentials: true });
-        console.log(response.data); // The response data
+        return response.data;
     } catch (error) {
-        console.error(error);
+        throw error;
     }
 }
 
-
-/*
-    * Fetch sensitive data from the server.
-    * @returns {Promise} - Promise object representing the sensitive data
-    * @throws {Error} - Error object
+/**
+    Fetch sensitive data from the server (not used for now).
+    
+    @returns {Promise} - Promise object representing the sensitive data
+    @throws {Error} - Error object
 */
 function fetchSensitiveData() {
     return axios.get('/get_sensitive_info/')
@@ -75,20 +76,12 @@ function fetchSensitiveData() {
  * }
  */
 export async function getAushaPodcasts(numberOfPodcasts = 0) {
-    const url = "https://developers.ausha.co/v1/shows/44497/podcasts";
-    const tokens = await fetchSensitiveData();
-
-    // Set the headers
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokens.ausha_api_token}`
+    const data = {
+        show_id: 44497,
     };
 
     try {
-        const response = await axios.get(url, { headers });
-        const allPodcasts = response.data;
-        console.log('All podcasts:', allPodcasts);
-
+        const allPodcasts = await sendProxyRequest('api/proxy/ausha/', data);
         return (numberOfPodcasts > 0) ? allPodcasts.data.slice(0, numberOfPodcasts) : allPodcasts;
     } catch (error) {
         console.error('Error retrieving podcasts:', error);
@@ -96,49 +89,9 @@ export async function getAushaPodcasts(numberOfPodcasts = 0) {
     }
 }
 
-/**
- * Test the API query and calculate the elapsed time.
- */
-export async function queryAPIAndCalculateTime() {
-    const apiEndpoint = 'https://developers.ausha.co/v1/shows/44497/podcasts';
-    const startTime = new Date().getTime(); // Get the current time in milliseconds
-    const tokens = await fetchSensitiveData();
-
-    fetch(apiEndpoint, {
-        headers: {
-            'Authorization': `Bearer ${tokens.ausha_api_token}`
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const endTime = new Date().getTime(); // Get the current time after the API request completes
-            const elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
-            console.log(`API query completed in ${elapsedTime} ms`);
-            // Process the retrieved data here
-        })
-        .catch(error => {
-            console.error('Error querying API:', error);
-        });
-}
-
 // ===================== //
 // === Mailchimp API === //
 // ===================== //
-
-export async function callPing() {
-    try {
-        const tokens = await fetchSensitiveData();
-        mailchimp.setConfig({
-            apiKey: tokens.mailchimp_api_key,
-            server: 'us21',
-        });
-        console.log('Calling ping...');
-        const response = await mailchimp.ping.get();
-        console.log(response);
-    } catch (error) {
-        console.error('An error occurred while calling ping:', error);
-    }
-}
 
 /**
  * Add a contact to the Mailchimp list.
@@ -171,36 +124,14 @@ export async function callPing() {
  * }
  */
 export async function addContactToList(email, test_status = null) {
-    // // Get the CSRF token with getCookie()
-    // const csrftoken = getCookie('csrftoken');
-
-    // console.log('csrftoken:', csrftoken);
-
-    // // Send the request to the server      
-    // const formData = new FormData();
-    // formData.append('email', email);
-    // formData.append('test_status', test_status)
-
-    // try {
-    //     const response = await axios.post('/api/proxy/mailchimp/', formData, {
-    //         headers: {
-    //             'X-CSRFToken': csrftoken,
-    //             'Content-Type': 'multipart/form-data'  // Set the content type to form data
-    //         }
-    //     });
-    //     console.log('Response:', response);
-    // } catch (error) {
-    //     console.error('Error adding contact to list:', error);
-    //     throw error;
-    // }
-
     const data = {
         email: email,
         test_status: test_status
     }
 
     try {
-        await sendRequest('api/proxy/mailchimp/', data)
+        const response = await sendProxyRequest('api/proxy/mailchimp/', data);
+        console.log('API response: ', response);
     }
     catch (error) {
         console.error('Error adding contact to list:', error);
