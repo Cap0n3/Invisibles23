@@ -63,14 +63,23 @@ class BaseRessourcesView(View):
 # == Views == #
 class HomeView(View):
     template_name = "website/home.html"
-    queryset = HomeSections.objects.all()
-    contact_query = ContactSection.objects.first() # For the contact form
+    #queryset = HomeSections.objects.all()
+    #contact_query = ContactSection.objects.first() # For the contact form
 
-    def get(self, request):
-        context = { 
-            'sections_content' : self.queryset,
-            'contact_content' : self.contact_query,
+    # Get queryset when every time the page is loaded
+    def get_queryset(self):
+        # return Home section and contact section queryset
+        return {
+            'sections_content' : HomeSections.objects.all(),
+            'contact_content' : ContactSection.objects.first()
         }
+        
+    def get(self, request):
+        # context = { 
+        #     'sections_content' : self.queryset,
+        #     'contact_content' : self.contact_query,
+        # }
+        context = self.get_queryset()
         return render(request, self.template_name, context)
 
 class AboutView(View):
