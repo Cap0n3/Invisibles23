@@ -37,7 +37,9 @@ class BaseThematicView(View):
     queryset = None
 
     def get_context_data(self):
-        return {'sections_content': self.queryset}
+        return {
+            'sections_content': self.queryset
+        }
 
     def get(self, request):
         context = self.get_context_data()
@@ -66,7 +68,6 @@ class HomeView(View):
     #queryset = HomeSections.objects.all()
     #contact_query = ContactSection.objects.first() # For the contact form
 
-    # Get queryset when every time the page is loaded
     def get_queryset(self):
         # return Home section and contact section queryset
         return {
@@ -84,14 +85,22 @@ class HomeView(View):
 
 class AboutView(View):
     template_name = "website/about.html"
-    queryset = AboutSections.objects.all()
-    allVideos = YoutubeVideos.objects.all()
+    #queryset = AboutSections.objects.all()
+    #allVideos = YoutubeVideos.objects.all()
+
+    def get_queryset(self):
+        # return About section and all videos queryset
+        return {
+            'sections_content' : AboutSections.objects.all(),
+            'videos' : YoutubeVideos.objects.all()
+        }
 
     def get(self, request):
-        context = {
-            'sections_content' : self.queryset,
-            'videos' : self.allVideos,
-        }    
+        # context = {
+        #     'sections_content' : self.queryset,
+        #     'videos' : self.allVideos,
+        # }
+        context = self.get_queryset()
         return render(request, self.template_name, context)
 
 class ChronicTabView(BaseThematicView):
@@ -126,12 +135,15 @@ class FinancialRessourcesView(BaseRessourcesView):
 
 class AssociationView(View):
     template_name = "website/association.html"
-    queryset = AssoSections.objects.all()
+    #queryset = AssoSections.objects.all()
+
+    def get_queryset(self):
+        return {
+            'sections_content' : AssoSections.objects.all(),
+        }
 
     def get(self, request):
-        context = {
-            'sections_content' : self.queryset,
-        }    
+        context = self.get_queryset()
         return render(request, self.template_name, context)
     
 class EventListView(View):
@@ -140,12 +152,13 @@ class EventListView(View):
 
     def get_queryset(self):
         # Get future events and order them by date
-        return self.queryset.filter(date__gte=date.today()).order_by('date')
+        #return self.queryset.filter(date__gte=date.today()).order_by('date')
+        return {
+            'events_content' : self.queryset.filter(date__gte=date.today()).order_by('date'),
+        }
     
     def get(self, request):
-        context = {
-            'events_content' : self.get_queryset(),
-        }    
+        context = self.get_queryset()
         return render(request, self.template_name, context)
     
 class EventDetailView(View):
@@ -160,13 +173,16 @@ class EventDetailView(View):
 
 class ContactView(View):
     template_name = "website/contact.html"
-    queryset = ContactSection.objects.first()
+    #queryset = ContactSection.objects.first()
 
-    def get(self, request):
-        context = {
-            'contact_content' : self.queryset,
+    def get_queryset(self):
+        # return Home section and contact section queryset
+        return {
+            'contact_content' : ContactSection.objects.first(),
         }
 
+    def get(self, request):
+        context = self.get_queryset()
         return render(request, self.template_name, context)
     
 class MembershipView(View):
@@ -177,11 +193,16 @@ class MembershipView(View):
     
 class StatusView(View):
     template_name = "website/status.html"
-    queryset = AssoStatus.objects.first()
+    #queryset = AssoStatus.objects.first()
+
+    # Get queryset when every time the page is loaded
+    def get_queryset(self):
+        # return Home section and contact section queryset
+        return AssoStatus.objects.first()
 
     def get(self, request):
         context = {
-            'status_content' : self.queryset,
+            'status_content' : self.get_queryset(),
         }    
         return render(request, self.template_name, context)
     
