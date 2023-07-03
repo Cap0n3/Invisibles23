@@ -13,11 +13,11 @@ async function sendProxyRequest(path, data) {
     // Get the CSRF token
     const csrfToken = getCookie('csrftoken');
 
-    // Get root domain
-    const domain = window.location.href;
+    // Get the root domain
+    const domain = window.location.origin;
 
-    // combine root domain with path
-    const url = domain + path;
+    // Combine root domain with path
+    const url = domain + '/' + path;
 
     const params = new URLSearchParams();
     // Convert the data object to a URLSearchParams object
