@@ -22,7 +22,7 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Domain
-DOMAIN = "https://invisibles23-production.up.railway.app"
+DOMAIN = "invisibles23-production.up.railway.app"
 
 
 # Quick-start development settings - unsuitable for production
