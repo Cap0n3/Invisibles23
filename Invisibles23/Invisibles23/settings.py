@@ -21,7 +21,7 @@ env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Domain
+# Domain (no www or https:// at the beginning)
 DOMAIN = "invisibles23-production.up.railway.app"
 
 
@@ -168,10 +168,10 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    DOMAIN, # Necessary for CSRF cookie to be sent to the frontend
+    f"https://{DOMAIN}", # Necessary for CSRF cookie to be sent to the frontend
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
-    DOMAIN,
+    f"https://{DOMAIN}",
 ]
