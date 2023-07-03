@@ -161,3 +161,4 @@ CKEDITOR_CONFIGS = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://invisibles23-production.up.railway.app/']

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import View
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 import environ
 
 from django.utils.decorators import method_decorator
@@ -18,7 +18,7 @@ env.read_env('../.env')
 This is because we are not using Django forms or templates to submit post requests to this view.
 Requests will be rejected if CSRF protection is enabled.
 '''
-@method_decorator(csrf_exempt, name='dispatch')
+#@method_decorator(csrf_exempt, name='dispatch')
 class MailchimpProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
     server_prefix = "us21"
@@ -26,42 +26,52 @@ class MailchimpProxy(View):
     list_id = env('MAILCHIMP_LIST_ID')
     
     def post(self, request):
-        email = request.POST.get('email')
-        test_status = request.POST.get('test_status')
-        test_status = int(test_status) if test_status != "null" else None
 
-        if not email:
-            return HttpResponseBadRequest('Email is required')
 
-        member_info = {
-            'email_address': email,
-            'status': 'subscribed'
-        }
+        #print all infos from request
+        print(request.POST)
+        
 
-        # Mailchimp API endpoint
-        try:
-            if test_status and isinstance(test_status, int):
-                # Simulating a test error with custom status code and error message
-                raise ApiClientError("An error occurred", status_code=test_status)
+        # return response header to client
+        return HttpResponse('Hello, world!', status=200)
+
+        
+        # email = request.POST.get('email')
+        # test_status = request.POST.get('test_status')
+        # test_status = int(test_status) if test_status != "null" else None
+
+        # if not email:
+        #     return HttpResponseBadRequest('Email is required')
+
+        # member_info = {
+        #     'email_address': email,
+        #     'status': 'subscribed'
+        # }
+
+        # # Mailchimp API endpoint
+        # try:
+        #     if test_status and isinstance(test_status, int):
+        #         # Simulating a test error with custom status code and error message
+        #         raise ApiClientError("An error occurred", status_code=test_status)
             
-            client = MailchimpMarketing.Client()
-            client.set_config({
-                "api_key": self.mailchimp_api_key,
-                "server": self.server_prefix
-            })
-            response = client.lists.add_list_member(self.list_id, member_info)
-            print("response: {}".format(response))
+        #     client = MailchimpMarketing.Client()
+        #     client.set_config({
+        #         "api_key": self.mailchimp_api_key,
+        #         "server": self.server_prefix
+        #     })
+        #     response = client.lists.add_list_member(self.list_id, member_info)
+        #     print("response: {}".format(response))
             
-            return JsonResponse({
-                'message': 'You have successfully subscribed to our mailing list.',
-            },  status=200)
-        except ApiClientError as error:
-            # Same with f string
-            print(f"An exception occurred: {error.text}")
+        #     return JsonResponse({
+        #         'message': 'You have successfully subscribed to our mailing list.',
+        #     },  status=200)
+        # except ApiClientError as error:
+        #     # Same with f string
+        #     print(f"An exception occurred: {error.text}")
 
-            return JsonResponse({
-                'message': f"An error occurred: {error.text}",
-            }, status=error.status_code)
+        #     return JsonResponse({
+        #         'message': f"An error occurred: {error.text}",
+        #     }, status=error.status_code)
 
         
         
