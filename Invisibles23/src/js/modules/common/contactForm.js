@@ -1,6 +1,7 @@
 import JustValidate from 'just-validate';
 import emailjs, { send } from '@emailjs/browser';
 import { displayMessage } from './utils/helpers';
+import { fetchSensitiveData } from './utils/helpers';
 
 const nameRegex = /^[^#+*/()=?°§$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
@@ -74,7 +75,7 @@ export function contactForm(formID) {
     });
 }
 
-function handleSubmit(formObject) {
+async function handleSubmit(formObject) {
     // Get form input values and put them in an object
     const formData = {
         first_name: formObject.target.elements["first_name"].value,
@@ -83,8 +84,9 @@ function handleSubmit(formObject) {
         message: formObject.target.elements["message"].value,
     };
 
-    sendEmail(formData)
-    .then(function(response) {
+    // Send email
+    try {
+        await sendEmail(formData);
         // Display success message
         displayMessage(
             formObject, 
@@ -95,9 +97,8 @@ function handleSubmit(formObject) {
             }, 
             "success"
         );
-        console.log("SUCCESS!", response.status, response.text);
-    })
-    .catch(function(error) {
+    }
+    catch(error) {
         // Display error message
         displayMessage(
             formObject, 
@@ -108,18 +109,50 @@ function handleSubmit(formObject) {
             },
             "error"
         );
-        console.log("FAILED...", error);
-    });
+    }
 }
 
-function sendEmail(data) {
-    return new Promise(function(resolve, reject) {
-        // Get environment variables from .env file
-        let serviceId = process.env.EMAILJS_SERVICE_ID;
-        let templateId = process.env.EMAILJS_TEMPLATE_ID;
-        let userId = process.env.EMAILJS_USER_ID;
-        // Use EmailJS library or service to send the email
-        emailjs.send(
+/**
+ * Send email with EmailJS
+ * 
+ * @param {*} data - Object containing the data to send
+ * @param {*} test_error - Boolean to simulate an error (for testing purposes)
+ * @param {*} error_type - String to specify the type of error to simulate (emailjs, fetch or left empty string for default)
+ */
+async function sendEmail(data, test_error=false, error_type="") {
+    // Define env variables
+    let serviceId, templateId, userId;
+
+    // get sensitive data from .env file
+    try {
+        const sensitiveData = await fetchSensitiveData();
+        serviceId = sensitiveData.emailjs_service_id;
+        templateId = sensitiveData.emailjs_template_id;
+        userId = sensitiveData.emailjs_user_id;
+    } catch (error) {
+        throw new Error('Error getting sensitive data from server ', error);
+    }
+
+    // Simulate an error (for testing purposes), create switch on error_type
+    if(test_error) {
+        //console.error("Simulating an error for testing purposes");
+        switch(error_type) {
+            case "emailjs":
+                // Mess with EmailJS service ID
+                console.log("Simulating an error with EmailJS service ID");
+                serviceId = "wrong_service_id_forTesting";
+                break;
+            case "fetch":
+                throw new Error('Error getting sensitive data from server ', error);
+                break;
+            default:
+                throw new Error('Error sending email: ', error);
+        }
+    }
+
+    // Send email with EmailJS
+    try {
+        const response = await emailjs.send(
             serviceId, 
             templateId, {
                 to_email: "afra.amaya7@gmail.com",
@@ -130,13 +163,13 @@ function sendEmail(data) {
                 email: data.email,
                 message: data.message,
             }, 
-            userId,
-        )
-        .then(function(response) {
-            resolve(response); // Resolve the Promise when email is sent successfully
-        })
-        .catch(function(error) {
-            reject(error); // Reject the Promise if there is an error in sending the email
-        });
-    });
+            userId
+        );
+        console.log('SUCCESS!', response.status, response.text);
+    }
+    catch(error) {
+        console.log(error);
+        throw error;
+    }
+
 }

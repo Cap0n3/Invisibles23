@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 /**
  * Function to expand text with a toggle link to show more or less text.
  * 
@@ -143,4 +145,18 @@ export function getCookie(name) {
     const cookies = document.cookie.split(';');
     const rawCookie = cookies.find(cookie => cookie.startsWith(name));
     return rawCookie.split('=')[1];
+}
+
+/**
+    Fetch sensitive data from the server.
+    
+    @returns {Promise} - Promise object representing the sensitive data
+    @throws {Error} - Error object
+*/
+export async function fetchSensitiveData() {
+    return axios.get('/get_sensitive_info/')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching sensitive information:', error);
+        });
 }

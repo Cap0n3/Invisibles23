@@ -1,6 +1,5 @@
 import { getCookie } from './helpers.js';
 const axios = require('axios');
-const mailchimp = require('@mailchimp/mailchimp_marketing');
 
 /**
  * Send a request to proxy sever to handle API requests.
@@ -37,20 +36,6 @@ async function sendProxyRequest(path, data) {
     } catch (error) {
         throw error;
     }
-}
-
-/**
-    Fetch sensitive data from the server (not used for now).
-    
-    @returns {Promise} - Promise object representing the sensitive data
-    @throws {Error} - Error object
-*/
-function fetchSensitiveData() {
-    return axios.get('/get_sensitive_info/')
-        .then(response => response.data)
-        .catch(error => {
-            console.error('Error fetching sensitive information:', error);
-        });
 }
 
 // ======================== //
