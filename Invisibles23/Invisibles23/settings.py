@@ -154,11 +154,18 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:8000',
-#     'https://invisibles23-production.up.railway.app/',
-# ]
 
-CORS_ORIGIN_ALLOW_ALL = True # temporary for development
-ALLOWED_HOSTS = ['*']
+
+# CORS_ORIGIN_ALLOW_ALL = True # temporary for development
+ALLOWED_HOSTS = [
+    '.localhost', 
+    '127.0.0.1', 
+    '[::1]',
+    '.invisibles23-production.up.railway.app',
+]
 CSRF_TRUSTED_ORIGINS = ['https://invisibles23-production.up.railway.app'] # Necessary for CSRF cookie to be sent to the frontend
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'https://invisibles23-production.up.railway.app',
+]
