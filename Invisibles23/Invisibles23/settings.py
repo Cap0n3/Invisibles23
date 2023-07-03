@@ -21,6 +21,9 @@ env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Domain
+DOMAIN = "https://invisibles23-production.up.railway.app"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -154,18 +157,21 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-
+# ====== SECURITY ====== #
 
 # CORS_ORIGIN_ALLOW_ALL = True # temporary for development
 ALLOWED_HOSTS = [
     '.localhost', 
     '127.0.0.1', 
     '[::1]',
-    '.invisibles23-production.up.railway.app',
+    f".{DOMAIN}",
 ]
-CSRF_TRUSTED_ORIGINS = ['https://invisibles23-production.up.railway.app'] # Necessary for CSRF cookie to be sent to the frontend
+
+CSRF_TRUSTED_ORIGINS = [
+    DOMAIN, # Necessary for CSRF cookie to be sent to the frontend
+]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
-    'https://invisibles23-production.up.railway.app',
+    DOMAIN,
 ]
