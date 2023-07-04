@@ -1,10 +1,12 @@
 #scrollToTopButton {
     display: none;
     position: fixed;
+    justify-content: center;
+    align-items: center;
     bottom: 20px;
     left: 20px;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     font-size: 24px;
     background-color: $font-deep-blue;
     border: none;

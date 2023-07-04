@@ -4,7 +4,7 @@ export function scrollToTop() {
     window.addEventListener("scroll", event => {
         const scrollPos = document.documentElement.scrollTop
         if (scrollPos > 300) {
-            scrollToTopButton.style.display = 'block';
+            scrollToTopButton.style.display = 'flex';
         } else {
             scrollToTopButton.style.display = 'none';
         }
