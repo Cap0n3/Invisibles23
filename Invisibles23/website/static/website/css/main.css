@@ -863,6 +863,7 @@ nav.show {
   border: none;
   border-radius: 50%;
   -webkit-appearance: none;
+  overflow: hidden;
   cursor: pointer;
 }
 #scrollToTopButton i {
