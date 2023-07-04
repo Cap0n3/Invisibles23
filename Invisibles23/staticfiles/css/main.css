@@ -862,7 +862,6 @@ nav.show {
   background-color: #002E48;
   border: none;
   border-radius: 50%;
-  -webkit-appearance: none;
   overflow: hidden;
   cursor: pointer;
 }
