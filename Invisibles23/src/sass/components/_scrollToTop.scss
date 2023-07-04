@@ -9,13 +9,10 @@
     background-color: $font-deep-blue;
     border: none;
     border-radius: 50%;
+    -webkit-appearance: none;
     cursor: pointer;
 
     i {
         color: #fff;
     }
-}
-
-#scrollToTopButton:hover {
-    background-color: #555;
 }

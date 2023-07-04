@@ -862,14 +862,11 @@ nav.show {
   background-color: #002E48;
   border: none;
   border-radius: 50%;
+  -webkit-appearance: none;
   cursor: pointer;
 }
 #scrollToTopButton i {
   color: #fff;
-}
-
-#scrollToTopButton:hover {
-  background-color: #555;
 }
 
 body {
