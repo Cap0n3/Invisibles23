@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from django.utils.safestring import mark_safe
 from datetime import date
+from cloudinary.models import CloudinaryField
 
 # == Base models to stay DRY == #
 class BaseSections(models.Model):
@@ -13,7 +14,7 @@ class BaseSections(models.Model):
     title = models.CharField(max_length=50) # Actual title of the section
     richText = RichTextField(max_length=10000, default="Écrire ici", verbose_name="Contenu de la section")
     custom_html = models.TextField(blank=True)
-    image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
+    image = CloudinaryField('image', blank=True)
     image_title = models.CharField(max_length=50, blank=True)
     image_alt = models.CharField(max_length=50, blank=True)
     reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
