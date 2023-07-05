@@ -92,6 +92,13 @@ class BaseRessources(models.Model):
     image_alt = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Texte alternatif de l'image")
     keywords = models.CharField(max_length=100, verbose_name="Mots-clés (séparés par des virgules)")
 
+    # If image is not provided, use the default image
+    def save(self, *args, **kwargs):
+        print("Saving !!!")
+        if not self.image:
+            self.image = "default_Img_ressources"
+        super().save(*args, **kwargs)
+
 class AdminRessources(BaseRessources):
     class Meta:
         verbose_name = "Ressources administratives"

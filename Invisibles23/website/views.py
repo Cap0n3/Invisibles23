@@ -50,11 +50,24 @@ class BaseRessourcesView(View):
     Base class for the ressources views
     """
     template_name = "website/ressources.html"
-    queryset = None
+    #queryset = None
     filter_class = None
 
+    def get_queryset(self):
+        # Get all objects from the given model
+        queryset = getattr(self, 'model', None).objects.all()
+        # default_image = "default_Img_ressources" # Default image name (on cloudinary)
+        
+        # # Check if image field is empty and replace it with a default image (default does not work with cloudinary)
+        # for ressource in queryset:
+        #     if not ressource.image:
+        #         queryset.filter(id=ressource.id).update(image=default_image)
+
+        return queryset
+    
+
     def get_context_data(self):
-        filter_form = self.filter_class(self.request.GET, queryset=self.queryset)
+        filter_form = self.filter_class(self.request.GET, queryset=self.get_queryset())
         ressources = filter_form.qs
         return {'ressources': ressources, 'filter_form': filter_form}
 
@@ -122,15 +135,18 @@ class PodcastsView(View):
         return render(request, self.template_name, {})
 
 class AdminRessourcesView(BaseRessourcesView):
-    queryset =  AdminRessources.objects.all()
+    #queryset =  AdminRessources.objects.all()
+    model = AdminRessources
     filter_class = AdminRessourcesFilter
 
 class TherapeuticRessourcesView(BaseRessourcesView):
-    queryset =  TherapeuticRessources.objects.all()
+    #queryset =  TherapeuticRessources.objects.all()
+    model = TherapeuticRessources
     filter_class = TherapeuticRessourcesFilter
 
 class FinancialRessourcesView(BaseRessourcesView):
-    queryset =  FinancialRessources.objects.all()
+    #queryset =  FinancialRessources.objects.all()
+    model = FinancialRessources
     filter_class = FinancialRessourcesFilter
 
 class AssociationView(View):
