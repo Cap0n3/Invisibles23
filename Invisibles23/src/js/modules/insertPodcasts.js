@@ -24,7 +24,7 @@ export function homepagePodcasts() {
                 spinner.classList.add('d-none');
             });
 
-            console.log('Last', n, 'podcasts:', podcasts);
+            //console.log('Last', n, 'podcasts:', podcasts);
             
             // Assign the podcasts to the podcastArray
             const podcastArray = podcasts;
