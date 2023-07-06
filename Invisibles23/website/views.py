@@ -24,7 +24,7 @@ from .filters import (
 from django.http import JsonResponse
 import environ
 
-# Initialise environment variables
+# Initialise env vars
 env = environ.Env()
 env.read_env('../.env')
 
@@ -50,19 +50,10 @@ class BaseRessourcesView(View):
     Base class for the ressources views
     """
     template_name = "website/ressources.html"
-    #queryset = None
     filter_class = None
 
     def get_queryset(self):
-        # Get all objects from the given model
-        queryset = getattr(self, 'model', None).objects.all()
-        # default_image = "default_Img_ressources" # Default image name (on cloudinary)
-        
-        # # Check if image field is empty and replace it with a default image (default does not work with cloudinary)
-        # for ressource in queryset:
-        #     if not ressource.image:
-        #         queryset.filter(id=ressource.id).update(image=default_image)
-
+        queryset = getattr(self, 'model', None).objects.all() # Get all objects from the given model
         return queryset
     
 
@@ -89,10 +80,6 @@ class HomeView(View):
         }
         
     def get(self, request):
-        # context = { 
-        #     'sections_content' : self.queryset,
-        #     'contact_content' : self.contact_query,
-        # }
         context = self.get_queryset()
         return render(request, self.template_name, context)
 
@@ -109,10 +96,6 @@ class AboutView(View):
         }
 
     def get(self, request):
-        # context = {
-        #     'sections_content' : self.queryset,
-        #     'videos' : self.allVideos,
-        # }
         context = self.get_queryset()
         return render(request, self.template_name, context)
 
@@ -135,23 +118,19 @@ class PodcastsView(View):
         return render(request, self.template_name, {})
 
 class AdminRessourcesView(BaseRessourcesView):
-    #queryset =  AdminRessources.objects.all()
     model = AdminRessources
     filter_class = AdminRessourcesFilter
 
 class TherapeuticRessourcesView(BaseRessourcesView):
-    #queryset =  TherapeuticRessources.objects.all()
     model = TherapeuticRessources
     filter_class = TherapeuticRessourcesFilter
 
 class FinancialRessourcesView(BaseRessourcesView):
-    #queryset =  FinancialRessources.objects.all()
     model = FinancialRessources
     filter_class = FinancialRessourcesFilter
 
 class AssociationView(View):
     template_name = "website/association.html"
-    #queryset = AssoSections.objects.all()
 
     def get_queryset(self):
         return {
@@ -168,7 +147,6 @@ class EventListView(View):
 
     def get_queryset(self):
         # Get future events and order them by date
-        #return self.queryset.filter(date__gte=date.today()).order_by('date')
         return {
             'events_content' : self.queryset.filter(date__gte=date.today()).order_by('date'),
         }
@@ -189,7 +167,6 @@ class EventDetailView(View):
 
 class ContactView(View):
     template_name = "website/contact.html"
-    #queryset = ContactSection.objects.first()
 
     def get_queryset(self):
         # return Home section and contact section queryset
@@ -209,9 +186,7 @@ class MembershipView(View):
     
 class StatusView(View):
     template_name = "website/status.html"
-    #queryset = AssoStatus.objects.first()
 
-    # Get queryset when every time the page is loaded
     def get_queryset(self):
         # return Home section and contact section queryset
         return AssoStatus.objects.first()

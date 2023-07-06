@@ -20,7 +20,6 @@ class BaseSections(models.Model):
     reverse = models.BooleanField(default=False, verbose_name="Inverser l'ordre de l'image et du texte")
     class Meta:
         abstract = True
-        #ordering = ['pk'].reverse()
 
 class BaseThematic(models.Model):
     """
@@ -36,7 +35,6 @@ class BaseThematic(models.Model):
     title = models.CharField(max_length=100, verbose_name="Titre de la section")
     richText = RichTextField(verbose_name="Contenu de la section")
     custom_html = models.TextField(blank=True)
-    #image = models.ImageField(upload_to='', blank=True, verbose_name="Image de la section")
     image = CloudinaryField('image', blank=True)
     image_title = models.CharField(max_length=50, blank=True, verbose_name="Titre de l'image")
     image_alt = models.CharField(max_length=50, blank=True, verbose_name="Texte alternatif de l'image")
@@ -86,7 +84,6 @@ class BaseRessources(models.Model):
     address = models.CharField(max_length=100, blank=True, verbose_name="Adresse de la ressource")
     phone = models.CharField(max_length=20, blank=True, verbose_name="Numéro de téléphone de la ressource")
     link = models.URLField(verbose_name="Lien vers la ressource", blank=True)
-    #image = models.ImageField(upload_to='', default="DefaultRessources.jpg" ,blank=True, verbose_name="Image de la section")
     image = CloudinaryField('image', blank=True)
     image_title = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Titre de l'image")
     image_alt = models.CharField(max_length=50, blank=True, default="Default image", verbose_name="Texte alternatif de l'image")
