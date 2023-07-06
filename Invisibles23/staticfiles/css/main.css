@@ -680,7 +680,7 @@ nav.show {
   align-items: center;
   width: 100%;
   height: 230px;
-  background-color: #FFC4C4;
+  background-color: #F7ECFE;
 }
 @media screen and (min-width: 768px) {
   .ressources-cards .image-col, .event-cards .image-col, .event-cards .date-col {
@@ -744,7 +744,7 @@ nav.show {
   align-items: center;
   width: 100%;
   height: 230px;
-  background-color: #FFC4C4;
+  background-color: #F7ECFE;
 }
 @media screen and (min-width: 768px) {
   .ressources-cards .image-col, .event-cards .image-col, .event-cards .date-col {
@@ -938,12 +938,21 @@ body .btn-outline-dark:hover i {
     width: 100%;
   }
 }
-body .social-icons {
-  font-size: 2.5rem;
-  color: #002E48;
+body .social-link {
   cursor: pointer;
 }
-body .social-icons:hover {
+body .social-link i {
+  color: #002E48;
+  font-size: 2.2rem;
+}
+body .social-link:hover {
+  color: #00456c;
+}
+body .modal-social-icons {
+  font-size: 2.2rem;
+  cursor: pointer;
+}
+body .modal-social-icons:hover {
   color: #00456c;
 }
 body i {

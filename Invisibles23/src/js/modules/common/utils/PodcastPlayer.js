@@ -586,10 +586,10 @@ export class PodcastPlayer {
                     </div>
                     <div class="modal-body">
                         <div class="d-flex gap-5 justify-content-center">
-                            <i class="share-icons-${this.podcastID} social-icons bi bi-facebook"></i>
-                            <i class="share-icons-${this.podcastID} social-icons bi bi-twitter"></i>
-                            <i class="share-icons-${this.podcastID} social-icons bi bi-linkedin"></i>
-                            <i class="share-icons-${this.podcastID} social-icons bi bi-envelope"></i>
+                            <i class="share-icons-${this.podcastID} modal-social-icons bi bi-facebook"></i>
+                            <i class="share-icons-${this.podcastID} modal-social-icons bi bi-twitter"></i>
+                            <i class="share-icons-${this.podcastID} modal-social-icons bi bi-linkedin"></i>
+                            <i class="share-icons-${this.podcastID} modal-social-icons bi bi-envelope"></i>
                         </div>
                         <hr />
                         <div class="d-flex justify-content-center gap-3">   

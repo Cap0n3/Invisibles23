@@ -92,9 +92,21 @@ body {
         }
     }
 
-    .social-icons {
-        font-size: 2.5rem;
-        color: $font-deep-blue;
+    .social-link  {
+        cursor: pointer;
+
+        i {
+            color: $font-deep-blue;
+            font-size: 2.2rem;
+        }
+
+        &:hover {
+            color: lighten($font-deep-blue, 7%);
+        }
+    }
+
+    .modal-social-icons {
+        font-size: 2.2rem;
         cursor: pointer;
 
         &:hover {
@@ -158,6 +170,16 @@ body {
         justify-content: flex-start;
         align-items: center;
         gap: 8%;
+
+        // i {
+        //     font-size: 2.2rem;
+        //     color: $font-deep-blue;
+        //     cursor: pointer;
+
+        //     &:hover {
+        //         color: lighten($font-deep-blue, 7%);
+        //     }
+        // }
     
         @include lessThan-lg {
             justify-content: space-between;
