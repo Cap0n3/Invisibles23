@@ -5,4 +5,13 @@
     {% include "website/components/page-header.html" with headerImgID="membership-header" headerTitle="Devenir membre" %}
     <!--CONTENT-->
     {% include "website/components/no-content.html" with title="En construction" message="Cette section est en construction, on vous tient au courant dès que c'est prêt ! C'est promis :-)" bg="bg-light-beige" %}
+    <!--FORM-->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="lookup_key" value="membership-test">
+        <input type="submit" value="Submit">
+    </form>
+    
+
 {% endblock content %}

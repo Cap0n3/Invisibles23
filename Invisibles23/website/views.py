@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from .forms import MembershipForm
 from datetime import date
 from .models import (
     HomeSections,
@@ -23,6 +24,10 @@ from .filters import (
 )
 from django.http import JsonResponse
 import environ
+import requests
+from django.middleware.csrf import get_token
+from django.conf import settings
+from django.shortcuts import redirect
 
 # Initialise env vars
 env = environ.Env()
@@ -180,9 +185,49 @@ class ContactView(View):
     
 class MembershipView(View):
     template_name = "website/membership.html"
+    form_class = MembershipForm()
 
     def get(self, request):
-        return render(request, self.template_name, {})
+        form = MembershipForm()
+        # Render the form
+        return render(request, self.template_name, {'form': form})
+    
+    def post(self, request):
+        form = MembershipForm(request.POST)
+        domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
+
+        if form.is_valid():
+            first_name = form.cleaned_data['fname']
+            last_name = form.cleaned_data['lname']
+            lookup_key = request.POST.get('lookup_key')
+            csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
+            
+            # Create the request to send to the proxy server
+            headers = {
+                'X-CSRFToken': csrf_token,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            
+            data = {
+                'lookup_key': lookup_key,
+                'fname': first_name,
+                'lname': last_name,
+            }
+ 
+            # Get the session url from the proxy server
+            response = requests.post(
+                domain + '/api/proxy/stripe/',
+                headers=headers, data=data,
+                cookies=request.COOKIES, allow_redirects=False
+            )
+
+            response_json = response.json()
+            
+            return redirect(response_json['sessionUrl'], code=303)
+        else:
+            print("Form is not valid")
+            return render(request, self.template_name, {'form': form})
+    
     
 class StatusView(View):
     template_name = "website/status.html"

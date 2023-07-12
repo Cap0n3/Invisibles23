@@ -5,9 +5,8 @@ from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 import environ
 import requests
-
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+import stripe
+from django.conf import settings
 
 # Read the .env file
 env = environ.Env()
@@ -16,7 +15,6 @@ env.read_env('../.env')
 class AushaProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
     ausha_api_key = env('AUSHA_API_TOKEN')
-    #url = "https://developers.ausha.co/v1/shows/44497/podcasts"
 
     def post(self, request):
         show_id = request.POST.get('show_id')
@@ -39,7 +37,6 @@ class AushaProxy(View):
             return JsonResponse({
                 'message': f"An error occurred: {error}",
             }, status=500)
-
 
 class MailchimpProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed
@@ -84,5 +81,48 @@ class MailchimpProxy(View):
             return JsonResponse({
                 'message': f"An error occurred: {error.text}",
             }, status=error.status_code)
+
+class StripeProxy(View):
+    http_method_names = ['post'] # Only POST requests are allowed 
+    stripe.api_key = env('STRIPE_API_TOKEN')
+    
+    def post(self, request):
+        # Get the form data
+        lookup_key = request.POST.get('lookup_key')
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+
+        try:
+            domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
+            
+            # Get prices from Stripe
+            prices = stripe.Price.list(
+                lookup_keys=[lookup_key],
+                expand=['data.product']
+            )
+
+            # Create checkout session to redirect to Stripe
+            checkout_session = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        'price': prices.data[0].id,
+                        'quantity': 1,
+                    },
+                ],
+                mode='subscription',
+                success_url = domain + '/success.html?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url = domain + '/cancel.html',
+            )
+            
+            return JsonResponse({
+                'sessionId': checkout_session['id'],
+                'sessionUrl': checkout_session['url'],
+            }, status=200)
+
+        except Exception as error:
+            print(f"An exception occurred: {error}")
+            return JsonResponse({
+                'message': f"An error occurred: {error}",
+            }, status=500)
 
         
