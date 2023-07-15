@@ -7,6 +7,8 @@ import environ
 import requests
 import stripe
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # Read the .env file
 env = environ.Env()
@@ -91,15 +93,41 @@ class StripeProxy(View):
         lookup_key = request.POST.get('lookup_key')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
+        email = request.POST.get('email')
 
         try:
             domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
+
+            # Check if customer already exists
+            customer_search = stripe.Customer.search(
+                query=f"name:'{fname} {lname}' AND email:'{email}'",
+            )
+
+            if customer_search.data:
+                print("Customer found")
+                return JsonResponse({
+                    'error': 'Customer already exists in database.',
+                    'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
+                },  status=409)
             
             # Get prices from Stripe
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key],
                 expand=['data.product']
             )
+
+            # Create payment intent (necessary ?)
+            # payment_intent = stripe.PaymentIntent.create(
+            #     amount=prices.data[0].unit_amount,
+            #     currency=prices.data[0].currency,
+            #     payment_method_types=['card'],
+            #     customer=customer_search.data[0].id,
+            #     setup_future_usage='off_session',
+            #     metadata={
+            #         'fname': fname,
+            #         'lname': lname,
+            #     }
+            # )
 
             # Create checkout session to redirect to Stripe
             checkout_session = stripe.checkout.Session.create(
@@ -125,4 +153,27 @@ class StripeProxy(View):
                 'message': f"An error occurred: {error}",
             }, status=500)
 
+@method_decorator(csrf_exempt, name='dispatch')
+class StripeWebhook(View):
+    http_method_names = ['post'] # Only POST requests are allowed
+    
+    def post(self, request):
+        payload = request.body
+        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+        stripe_secret = env('STRIPE_WEBHOOK_SECRET')
+        event = None
         
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, stripe_secret
+            )
+            data = event['data']
+            return HttpResponse(status=200)
+        except ValueError as e:
+            # Invalid payload
+            print("Invalid payload")
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            print("Invalid signature")
+            return HttpResponse(status=403)

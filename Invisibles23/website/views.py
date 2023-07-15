@@ -199,6 +199,7 @@ class MembershipView(View):
         if form.is_valid():
             first_name = form.cleaned_data['fname']
             last_name = form.cleaned_data['lname']
+            email = form.cleaned_data['email']
             lookup_key = request.POST.get('lookup_key')
             csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
             
@@ -212,6 +213,7 @@ class MembershipView(View):
                 'lookup_key': lookup_key,
                 'fname': first_name,
                 'lname': last_name,
+                'email': email,
             }
  
             # Get the session url from the proxy server
@@ -222,8 +224,12 @@ class MembershipView(View):
             )
 
             response_json = response.json()
-            
-            return redirect(response_json['sessionUrl'], code=303)
+
+            if response.status_code == 200:
+                return redirect(response_json['sessionUrl'], code=303)
+            elif response.status_code == 409:
+                print(response_json['error'])
+                return render(request, self.template_name, {'form': form, 'error': response_json['error-message']})
         else:
             print("Form is not valid")
             return render(request, self.template_name, {'form': form})
