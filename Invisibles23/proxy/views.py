@@ -103,31 +103,27 @@ class StripeProxy(View):
                 query=f"name:'{fname} {lname}' AND email:'{email}'",
             )
 
+            # If customer exists, check if they have an active subscription
             if customer_search.data:
-                print("Customer found")
-                return JsonResponse({
-                    'error': 'Customer already exists in database.',
-                    'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
-                },  status=409)
+                existing_customer_id = customer_search.data[0].id
+                # Search for active subscription
+                subscription_search = stripe.Subscription.search(
+                    query=f"status:'active'",
+                )
+                # Loop through subscriptions and find the one with the customer ID
+                for subscription in subscription_search.data:
+                    if subscription.customer == existing_customer_id:
+                        print(f"Customer already has an active subscription: {subscription}")
+                        return JsonResponse({
+                            'error': 'Customer already exists in database.',
+                            'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
+                        },  status=409)
             
             # Get prices from Stripe
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key],
                 expand=['data.product']
             )
-
-            # Create payment intent (necessary ?)
-            # payment_intent = stripe.PaymentIntent.create(
-            #     amount=prices.data[0].unit_amount,
-            #     currency=prices.data[0].currency,
-            #     payment_method_types=['card'],
-            #     customer=customer_search.data[0].id,
-            #     setup_future_usage='off_session',
-            #     metadata={
-            #         'fname': fname,
-            #         'lname': lname,
-            #     }
-            # )
 
             # Create checkout session to redirect to Stripe
             checkout_session = stripe.checkout.Session.create(
@@ -137,6 +133,17 @@ class StripeProxy(View):
                         'quantity': 1,
                     },
                 ],
+                currency="chf",
+                customer_email=email,
+                billing_address_collection='required',
+                subscription_data={
+                    #'description': f"{fname} {lname}",
+                    'metadata': {
+                        "name": f"{fname} {lname}",
+                        "greeting": "Hello World",
+                        # Add more custom metadata as needed
+                    },
+                },
                 mode='subscription',
                 success_url = domain + '/success.html?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url = domain + '/cancel.html',
