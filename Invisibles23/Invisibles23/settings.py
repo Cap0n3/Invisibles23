@@ -23,7 +23,7 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Domain (no www or https:// at the beginning)
-DOMAIN = "invisibles23-production.up.railway.app"
+DOMAIN = "www.lesinvisibles.ch"
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,7 +33,7 @@ DOMAIN = "invisibles23-production.up.railway.app"
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 INSTALLED_APPS = [
