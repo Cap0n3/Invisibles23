@@ -94,6 +94,9 @@ class StripeProxy(View):
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
         email = request.POST.get('email')
+        discount = request.POST.get('discount')
+        # Convert back discount to a boolean (checkboxes return "True" or "False" as strings)
+        discount = True if discount == "True" else False
 
         try:
             domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
@@ -119,6 +122,9 @@ class StripeProxy(View):
                             'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
                         },  status=409)
             
+            # Add discount to lookup key if checkbox is checked
+            lookup_key = f"{lookup_key}-discount" if discount else lookup_key
+
             # Get prices from Stripe
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key],

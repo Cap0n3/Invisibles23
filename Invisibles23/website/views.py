@@ -200,6 +200,7 @@ class MembershipView(View):
             first_name = form.cleaned_data['fname']
             last_name = form.cleaned_data['lname']
             email = form.cleaned_data['email']
+            discount = form.cleaned_data['discount']
             lookup_key = request.POST.get('lookup_key')
             csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
             
@@ -214,6 +215,7 @@ class MembershipView(View):
                 'fname': first_name,
                 'lname': last_name,
                 'email': email,
+                'discount': discount,
             }
  
             # Get the session url from the proxy server
