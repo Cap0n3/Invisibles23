@@ -91,10 +91,14 @@ class StripeProxy(View):
     def post(self, request):
         # Get the form data
         lookup_key = request.POST.get('lookup_key')
+        discount = request.POST.get('discount')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
+        birthday = request.POST.get('birthday')
+        address = request.POST.get('address')
+        zip_code = request.POST.get('zip_code')
+        city = request.POST.get('city')
         email = request.POST.get('email')
-        discount = request.POST.get('discount')
         # Convert back discount to a boolean (checkboxes return "True" or "False" as strings)
         discount = True if discount == "True" else False
 
@@ -141,13 +145,13 @@ class StripeProxy(View):
                 ],
                 currency="chf",
                 customer_email=email,
-                billing_address_collection='required',
                 subscription_data={
-                    #'description': f"{fname} {lname}",
                     'metadata': {
-                        "name": f"{fname} {lname}",
-                        "greeting": "Hello World",
-                        # Add more custom metadata as needed
+                        "Membre": f"{fname} {lname}",
+                        "addresse": address,
+                        "Code postal": zip_code,
+                        "Ville": city,
+                        "email": email,
                     },
                 },
                 mode='subscription',

@@ -196,11 +196,17 @@ class MembershipView(View):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
 
+        print("HELLO")
+
         if form.is_valid():
+            discount = form.cleaned_data['discount']
             first_name = form.cleaned_data['fname']
             last_name = form.cleaned_data['lname']
+            birthday = form.cleaned_data['birthday']
+            address = form.cleaned_data['address']
+            zip_code = form.cleaned_data['zip_code']
+            city = form.cleaned_data['city']
             email = form.cleaned_data['email']
-            discount = form.cleaned_data['discount']
             lookup_key = request.POST.get('lookup_key')
             csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
             
@@ -212,10 +218,15 @@ class MembershipView(View):
             
             data = {
                 'lookup_key': lookup_key,
+                'discount': discount,
                 'fname': first_name,
                 'lname': last_name,
+                'birthday': birthday,
+                'address': address,
+                'zip_code': zip_code,
+                'city': city,
                 'email': email,
-                'discount': discount,
+                
             }
  
             # Get the session url from the proxy server
