@@ -5,10 +5,18 @@ from django import forms
 
 # Create your forms here.
 class MembershipForm(forms.Form):
+    frequency_choices = [
+        ('yearly', 'Annuellement'),
+        ('monthly', 'Mensuellement'),
+    ]
     discount = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), 
         required=False, 
         label="Contribution annuelle réduite à CHF 45 pour les bénéficiaires de l'AVS/AI, les stagiaires/étudiants, les personnes en difficulté financière.",
+    )
+    frequency = forms.ChoiceField(
+        choices=frequency_choices,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
     )
     fname = forms.CharField(
         max_length=100, 
