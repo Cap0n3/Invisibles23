@@ -87,11 +87,36 @@ class MailchimpProxy(View):
 class StripeProxy(View):
     http_method_names = ['post'] # Only POST requests are allowed 
     stripe.api_key = env('STRIPE_API_TOKEN')
+
+    @staticmethod
+    def choosePricing(subscription, frequency):
+        """
+        Choose the pricing based on the subscription and frequency. 
+        
+        It will return following values:
+        - support-monthly
+        - support-yearly
+        - normal-monthly
+        - normal-yearly
+        - reduced-monthly
+        - reduced-yearly
+        """
+        _lookup_key = ""
+        if subscription == "support":
+            _lookup_key = "support-monthly" if frequency == "monthly" else "support-yearly"
+        elif subscription == "normal":
+            _lookup_key = "normal-monthly" if frequency == "monthly" else "normal-yearly"
+        elif subscription == "reduced":
+            _lookup_key = "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
+
+        return _lookup_key
+
     
     def post(self, request):
         # Get the form data
         lookup_key = request.POST.get('lookup_key')
-        discount = request.POST.get('discount')
+        subscription = request.POST.get('subscription')
+        frequency = request.POST.get('frequency')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
         birthday = request.POST.get('birthday')
@@ -99,8 +124,6 @@ class StripeProxy(View):
         zip_code = request.POST.get('zip_code')
         city = request.POST.get('city')
         email = request.POST.get('email')
-        # Convert back discount to a boolean (checkboxes return "True" or "False" as strings)
-        discount = True if discount == "True" else False
 
         try:
             domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
@@ -126,9 +149,10 @@ class StripeProxy(View):
                             'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
                         },  status=409)
             
-            # Add discount to lookup key if checkbox is checked
-            lookup_key = f"{lookup_key}-discount" if discount else lookup_key
+            lookup_key = self.choosePricing(subscription, frequency)
 
+            print(f"lookup_key: {lookup_key}")
+            
             # Get prices from Stripe
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key],
@@ -148,6 +172,7 @@ class StripeProxy(View):
                 subscription_data={
                     'metadata': {
                         "Membre": f"{fname} {lname}",
+                        "Date de naissance": birthday,
                         "addresse": address,
                         "Code postal": zip_code,
                         "Ville": city,

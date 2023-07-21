@@ -871,6 +871,10 @@ nav.show {
   color: #fff;
 }
 
+#assistance-card i {
+  font-size: 3rem;
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;

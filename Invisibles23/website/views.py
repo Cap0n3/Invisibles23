@@ -186,10 +186,10 @@ class ContactView(View):
 class MembershipView(View):
     template_name = "website/membership.html"
     form_class = MembershipForm()
+    initial_form_state = {'subscription': 'normal', 'frequency': 'yearly'}
 
     def get(self, request):
-        form = MembershipForm()
-        # Render the form
+        form = MembershipForm(initial=self.initial_form_state)
         return render(request, self.template_name, {'form': form})
     
     def post(self, request):
@@ -199,7 +199,8 @@ class MembershipView(View):
         print("HELLO")
 
         if form.is_valid():
-            discount = form.cleaned_data['discount']
+            subscription = form.cleaned_data['subscription']
+            frequency = form.cleaned_data['frequency']
             first_name = form.cleaned_data['fname']
             last_name = form.cleaned_data['lname']
             birthday = form.cleaned_data['birthday']
@@ -218,7 +219,8 @@ class MembershipView(View):
             
             data = {
                 'lookup_key': lookup_key,
-                'discount': discount,
+                'subscription': subscription,
+                'frequency': frequency,
                 'fname': first_name,
                 'lname': last_name,
                 'birthday': birthday,
