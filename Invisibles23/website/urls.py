@@ -17,5 +17,6 @@ urlpatterns = [
     path('membership/', views.MembershipView.as_view(), name='membership'),
     path('status/', views.StatusView.as_view(), name='status'),
     path('contact/', views.ContactView.as_view(), name='contact'),
+    path('success/', views.SuccessView.as_view(), name='success'),
     path('get_sensitive_info/', views.get_sensitive_info, name='get_sensitive_info'),
 ]

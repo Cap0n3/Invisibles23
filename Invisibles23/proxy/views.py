@@ -111,7 +111,6 @@ class StripeProxy(View):
 
         return _lookup_key
 
-    
     def post(self, request):
         # Get the form data
         lookup_key = request.POST.get('lookup_key')
@@ -149,10 +148,9 @@ class StripeProxy(View):
                             'error-message': "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
                         },  status=409)
             
+            # Get the lookup key according to the subscription and frequency
             lookup_key = self.choosePricing(subscription, frequency)
 
-            print(f"lookup_key: {lookup_key}")
-            
             # Get prices from Stripe
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key],
@@ -180,7 +178,7 @@ class StripeProxy(View):
                     },
                 },
                 mode='subscription',
-                success_url = domain + '/success.html?session_id={CHECKOUT_SESSION_ID}',
+                success_url = domain + '/success.html',
                 cancel_url = domain + '/cancel.html',
             )
             

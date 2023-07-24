@@ -263,6 +263,13 @@ class StatusView(View):
         }    
         return render(request, self.template_name, context)
     
+class SuccessView(View):
+    template_name = "website/success.html"
+
+    def get(self, request):
+        print("SUCCESS")
+        return render(request, self.template_name, {})
+
 def get_sensitive_info(request):
     data = {
         'ausha_api_token': env('AUSHA_API_TOKEN'),

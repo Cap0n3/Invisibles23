@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "website/components/page-header.html" with headerImgID="membership-header" headerTitle="Les Invisibles" %}
+    <!--CONTENT-->
+    <section class="normal-section container-fluid text-center p-5 bg-light-beige">
+        <h2 class="d-lg-none mb-5 text-uppercase">Merci pour votre soutien !</h2>
+        <div class="row p-lg-3">
+            <div class="col-12 col-lg-6 px-lg-5 d-md-flex align-items-md-center  order-lg-2">
+                <img src={% static "website/medias/images/thankYou.png" %} class="img-fluid rounded-4" alt="undraw" title="Thank you" width="" height="" />
+            </div>
+            <div class="col-12 col-lg-6 px-lg-5 order-lg-1">
+                <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">Merci pour votre soutien !</h2>
+                <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
+                    <p>Merci infiniment pour votre soutien ! Vous recevrez un email de confirmation dans les prochaines minutes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
