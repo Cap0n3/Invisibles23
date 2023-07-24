@@ -208,7 +208,6 @@ class StripeWebhook(View):
                 payload, sig_header, stripe_secret
             )
             data = event['data']
-            return HttpResponse(status=200)
         except ValueError as e:
             # Invalid payload
             print("Invalid payload")
@@ -217,3 +216,9 @@ class StripeWebhook(View):
             # Invalid signature
             print("Invalid signature")
             return HttpResponse(status=403)
+        
+        # Handle the checkout.session.completed event
+        if event['type'] == 'checkout.session.completed':
+            print("Checkout session completed") # TODO SEND EMAIL
+
+        return HttpResponse(status=200)
