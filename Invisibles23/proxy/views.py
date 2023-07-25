@@ -9,6 +9,7 @@ import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from .utils.helpers import sendEmail
 
 # Read the .env file
 env = environ.Env()
@@ -219,6 +220,9 @@ class StripeWebhook(View):
         
         # Handle the checkout.session.completed event
         if event['type'] == 'checkout.session.completed':
-            print("Checkout session completed") # TODO SEND EMAIL
+            print("Checkout session completed")
+            member_name = data["object"]["customer_details"]["name"]
+            member_email = data["object"]["customer_details"]["email"]
+            sendEmail(member_name, member_email)
 
         return HttpResponse(status=200)
