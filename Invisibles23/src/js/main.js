@@ -1,6 +1,6 @@
 import { navbar } from "./modules/common/navbar.js";
 import { scrollToTop } from "./modules/common/ScrollToTop.js";
-import { contactForm } from "./modules/common/contactForm.js";
+import { formValidation } from "./modules/common/forms.js";
 import { homepagePodcasts, podcastsPage } from "./modules/insertPodcasts.js";
 import { searchBehavior } from "./modules/ressources.js";
 import { expandText } from "./modules/common/utils/helpers.js";
@@ -17,7 +17,7 @@ async function initialize() {
     newsletterForm("newsletterFooter"); // Initialize the newsletter form (footer)
    
     if (currentPage === '/') {
-        contactForm("#contactForm"); // Initialize the contact form
+        formValidation("#contactForm"); // Initialize the contact form
         homepagePodcasts(); // Get and create the last podcasts for the homepage section
         newsletterForm("newsletterC2A"); // Initialize the newsletter form (c2a section)
     }
@@ -29,7 +29,10 @@ async function initialize() {
         expandText('card-text', 25); // Initialize the expand text behavior
     }
     else if (currentPage === '/contact/') {
-        contactForm("#contactFormPage"); // Initialize the contact form
+        formValidation("#contactFormPage"); // Initialize the contact form
+    }
+    else if (currentPage === '/membership/') {
+        formValidation("#membershipForm"); // Initialize the membership form
     }
     
     // Initialize bootstrap popovers (to remove if not used)

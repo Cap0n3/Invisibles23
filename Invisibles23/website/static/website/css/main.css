@@ -1016,6 +1016,10 @@ body .site-pagination ul > li > a.active {
   background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
+.bg-light-red {
+  background: #FFDEDF;
+}
+
 /* ============ */
 /* === FORM === */
 /* ============ */

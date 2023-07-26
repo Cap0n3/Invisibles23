@@ -197,6 +197,11 @@ body {
     background: linear-gradient(180deg, rgba(238, 243, 239, 1) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
+// Background for django input errors (form)
+.bg-light-red {
+    background: #FFDEDF;
+}
+
 
 /* ============ */
 /* === FORM === */

@@ -2,11 +2,12 @@ import JustValidate from 'just-validate';
 import emailjs, { send } from '@emailjs/browser';
 import { displayMessage } from './utils/helpers';
 import { fetchSensitiveData } from './utils/helpers';
+import axios from 'axios';
 
-const nameRegex = /^[^#+*/()=?°§$£!%_;:<>]+$/;
+const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
 
-export function contactForm(formID) {
+export function formValidation(formID) {
     const form = document.querySelector(formID);
 
     const validator = new JustValidate(formID, {
@@ -46,6 +47,28 @@ export function contactForm(formID) {
                     errorMessage: "Un caractère invalide a été détecté",
                 }
             );
+        } else if (inputType === 'number') {
+            rules.push(
+                {
+                    rule: 'required',
+                    errorMessage: "Ce champ est obligatoire",
+                },
+                {
+                    rule: 'minLength',
+                    value: 3,
+                    errorMessage: "Ce champ doit contenir au moins 3 chiffres",
+                },
+                {
+                    rule: 'maxLength',
+                    value: 20,
+                    errorMessage: "Ce champ ne peut pas contenir plus de 20 chiffres",
+                },
+                {
+                    rule: 'integer',
+                    errorMessage: "Ce champ doit contenir un nombre entier",
+                }
+            );
+            
         } else if (inputType === 'email') {
             rules.push(
                 {
@@ -55,6 +78,20 @@ export function contactForm(formID) {
                 {
                     rule: 'email',
                     errorMessage: "Veuillez saisir une adresse email valide",
+                }
+            );
+        } else if (inputType === 'radio') {
+            rules.push(
+                {
+                    rule: 'required',
+                    errorMessage: "Veuillez sélectionner une option",
+                }
+            );
+        } else if (inputType === 'date') {
+            rules.push(
+                {
+                    rule: 'required',
+                    errorMessage: "Ce champ est obligatoire",
                 }
             );
         }
@@ -70,8 +107,13 @@ export function contactForm(formID) {
         }        
     });
 
-    validator.onSuccess((form) => {
-        handleSubmit(form);
+    validator.onSuccess((formEvent) => {
+        if (formID === "#contactForm" || formID === "#contactFormPage") {
+            handleSubmit(formEvent);
+        } else {
+            // Let submit event continue
+            form.submit()
+        }
     });
 }
 

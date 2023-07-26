@@ -196,8 +196,6 @@ class MembershipView(View):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
 
-        print("HELLO")
-
         if form.is_valid():
             subscription = form.cleaned_data['subscription']
             frequency = form.cleaned_data['frequency']
@@ -247,9 +245,34 @@ class MembershipView(View):
                 return render(request, self.template_name, {'form': form, 'error': response_json['error-message']})
         else:
             print("Form is not valid")
-            return render(request, self.template_name, {'form': form})
-    
-    
+            error_data = form.errors.as_data()
+
+            # convert error_data to a dict and message to a string
+            error_dict = {}
+            for key, value in error_data.items():
+                error_dict[key] = str(value[0].message)
+
+            
+            # Create error_ul from error_dict
+            error_ul = '<ul><li>' + '</li><li>'.join(error_dict.values()) + '</li></ul>'
+            
+            # Loop through error_data and only get the error message for each field and put it in a list
+            #error_list = []
+            # for key, value in error_data.items():
+            #     error_list.append(str(value[0].message))
+            
+            # # Convert the list in a ul list
+            # error_ul = '<ul><li>' + '</li><li>'.join(error_list) + '</li></ul>'
+
+            # pass error_ul to the template as html
+            error_context = {
+                'form': form,
+                'error_inputs': error_dict.keys(),
+                'error_messages': error_ul
+            }
+
+            return render(request, self.template_name, error_context)
+        
 class StatusView(View):
     template_name = "website/status.html"
 

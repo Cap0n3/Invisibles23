@@ -2,12 +2,13 @@
     <div class="row">
         <!--FORM-->
         <div class="container text-md-start col-md-7 px-md-5">
-            {% if error %}
-                <div class="alert alert-warning" role="alert">
-                    {{ error}}
+            {% if error_messages %}
+                <div class="alert alert-warning mb-5" role="alert">
+                    <p>Une erreur est survenue lors de l'envoi du formulaire :</p>
+                    {{ error_messages | safe}}
                 </div>
             {% endif %}
-            <form method="post" class="form d-flex flex-column px-4">
+            <form method="post" id="membershipForm" class="form d-flex flex-column px-4" novalidate>
                 {% csrf_token %}
                 <div class="mb-4">
                     {% for radio in form.subscription %}
@@ -34,7 +35,9 @@
                 <hr>
                 <div class="my-4">
                     <h5 class="text-uppercase mb-5">Mes coordonées</h5>
-                    {{ form.fname }}
+                    <div class="my-4">
+                        {{ form.fname }}
+                    </div>
                     <div class="my-4">
                         {{ form.lname }}
                     </div>
@@ -48,8 +51,9 @@
                 <hr>
                 <div class="my-4">
                     <h5 class="text-uppercase mb-5">Mon adresse</h5>
-                    {{ form.address }}
-                
+                    <div class="text-start my-4">
+                        {{ form.address }}
+                    </div>
                     <div class="text-start my-4">
                         {{ form.zip_code }}
                     </div>

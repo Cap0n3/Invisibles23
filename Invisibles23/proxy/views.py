@@ -179,8 +179,8 @@ class StripeProxy(View):
                     },
                 },
                 mode='subscription',
-                success_url = domain + '/success.html',
-                cancel_url = domain + '/cancel.html',
+                success_url = domain + '/success/',
+                cancel_url = domain + '/cancel/',
             )
             
             return JsonResponse({
