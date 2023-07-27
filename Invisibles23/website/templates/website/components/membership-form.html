@@ -12,7 +12,7 @@
                 {% csrf_token %}
                 <div class="mb-4">
                     {% for radio in form.subscription %}
-                        <div class="form-check form-check-inline">
+                        <div class="form-check">
                             <label class="form-check-label">
                                 {{ radio.tag }}
                                 {{ radio.choice_label }}

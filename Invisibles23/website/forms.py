@@ -7,9 +7,9 @@ from .validators import validate_names, validate_address
 # Create your forms here.
 class MembershipForm(forms.Form):
     subscription_choices = [
-        ("support", "Soutien - CHF 85"),
-        ("normal", "Normal - CHF 45"),
-        ("reduced", "Réduit - CHF 25"),
+        ("support", "Soutien - CHF 84/année ou CHF 7.70/mois"),
+        ("normal", "Normal - CHF 50/année ou CHF 4.50/mois"),
+        ("reduced", "Réduit - CHF 25/année ou CHF 2.50/mois"),
     ]
     frequency_choices = [
         ("yearly", "Annuellement"),
