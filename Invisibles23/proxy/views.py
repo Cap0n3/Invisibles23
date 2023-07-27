@@ -9,12 +9,28 @@ import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .utils.helpers import sendEmail
+from .utils.helpers import sendEmailToMember, sendEmailToOwner
 
 # Read the .env file
 env = environ.Env()
 env.read_env("../.env")
 
+class GetAPISecrets(View):
+    http_method_names = ["post"]  # Only POST requests are allowed
+
+    def post(self, request):
+        print("Getting API secrets...")
+
+        data = {
+            "ausha_api_token": env("AUSHA_API_TOKEN"),
+            "mailchimp_api_key": env("MAILCHIMP_API_KEY"),
+            "mailchimp_list_id": env("MAILCHIMP_LIST_ID"),
+            "emailjs_service_id": env("EMAILJS_SERVICE_ID"),
+            "emailjs_template_id": env("EMAILJS_TEMPLATE_ID"),
+            "emailjs_user_id": env("EMAILJS_USER_ID"),
+        }
+
+        return JsonResponse(data)
 
 class AushaProxy(View):
     http_method_names = ["post"]  # Only POST requests are allowed
@@ -249,6 +265,54 @@ class StripeWebhook(View):
             print("Checkout session completed")
             member_name = data["object"]["customer_details"]["name"]
             member_email = data["object"]["customer_details"]["email"]
-            sendEmail(member_name, member_email)
+            sendEmailToMember(member_name, member_email)
 
         return HttpResponse(status=200)
+
+class EmailServer(View):
+    http_method_names = ["post"]  # Only POST requests are allowed
+
+    def post(self, request):
+        print("EmailServer")
+        print(request.POST)
+        # Get the form data
+        fname = request.POST.get("first_name")
+        lname = request.POST.get("last_name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        g_recaptcha_response = request.POST.get("recaptcha_token")
+
+        print(g_recaptcha_response)
+
+        # Verify reCAPTCHA
+        self.verifyRecaptchaV2(g_recaptcha_response)
+
+        try:
+            sendEmailToOwner(fname, lname, email, message)
+
+            return JsonResponse(
+                {
+                    "message": "Email sent successfully.",
+                },
+                status=200,
+            )
+
+        except Exception as error:
+            print(f"An exception occurred: {error}")
+            return JsonResponse(
+                {
+                    "message": f"An error occurred: {error}",
+                },
+                status=500,
+            )
+        
+    def verifyRecaptchaV2(self, g_recaptcha_response):
+        data = {
+            "secret": env("RECAPTCHA_SECRET"),
+            "response": g_recaptcha_response,
+        }
+        r = requests.post("https://www.google.com/recaptcha/api/siteverify", data=data)
+        result = r.json()
+        print(result)
+        #return result["success"]
+    

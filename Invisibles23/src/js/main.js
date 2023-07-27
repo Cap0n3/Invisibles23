@@ -7,6 +7,8 @@ import { expandText } from "./modules/common/utils/helpers.js";
 import { newsletterForm } from "./modules/common/newsletterForm.js";
 import { initRecaptchaV2 } from "./modules/common/utils/helpers.js";
 
+import { getAPISecrets } from "./modules/common/utils/api.js";
+
 /**
  * Initialize the webpage
  */
@@ -18,6 +20,8 @@ async function initialize() {
     newsletterForm("newsletterFooter"); // Initialize the newsletter form (footer)
 
     initRecaptchaV2(); // Initialize the recaptcha v2
+
+    getAPISecrets(); // Get the API secrets
    
     if (currentPage === '/') {
         formValidation("#contactForm"); // Initialize the contact form

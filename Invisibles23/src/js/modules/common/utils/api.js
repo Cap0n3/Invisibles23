@@ -123,3 +123,24 @@ export async function addContactToList(email, test_status = null) {
         throw error;
     }
 }
+
+export async function getAPISecrets() {
+    try {
+        const response = await sendProxyRequest('api/proxy/get_api_secrets/', {});
+        return response;
+    } catch (error) {
+        console.error('Error retrieving API secrets:', error);
+        throw error;
+    }
+}
+
+export async function sendEmail(data) {
+    try {
+        const response = await sendProxyRequest('api/proxy/email_server/', data);
+        console.log('API response: ', response)
+        return response;
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
+}
