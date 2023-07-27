@@ -2,7 +2,7 @@ import JustValidate from 'just-validate';
 import emailjs, { send } from '@emailjs/browser';
 import { displayMessage } from './utils/helpers';
 import { fetchSensitiveData } from './utils/helpers';
-import axios from 'axios';
+import { renderRecaptchaV2, resetRecaptchaV2 } from './utils/helpers';
 
 const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
@@ -14,7 +14,7 @@ const messageRegex = /^[^\[\]{}<>]+$/;
  */
 export function formValidation(formID) {
     const form = document.querySelector(formID);
-
+    
     const validator = new JustValidate(formID, {
         successFieldCssClass: 'is-valid', // CSS class to add when input is valid
         errorFieldCssClass: 'is-invalid', // CSS class to add when input is invalid
@@ -113,26 +113,50 @@ export function formValidation(formID) {
     });
 
     validator.onSuccess((formEvent) => {
+
         if (formID === "#contactForm" || formID === "#contactFormPage") {
-            handleSubmit(formEvent);
+            // Remove # from formID
+            const ID_attibute = formEvent.target.getAttribute("id");
+            const recaptchaContainer = document.querySelector(`#recaptcha-container_${ID_attibute}`);
+            // Render recaptcha
+            renderRecaptchaV2(recaptchaContainer, "6LdTY1wnAAAAABgHJBw3x5grn3iQvtKvefKdSks2", handleSubmit, formEvent);
         } else {
-            // Let submit event continue
+            // Let submit event continue if it's a django form (here it's membmership form)
             form.submit()
         }
     });
 }
 
-async function handleSubmit(formObject) {
+async function handleSubmit(formObject, token) {
+    const toggleSpinner = (showSpinner) => {
+        if (showSpinner) {
+            spinner.style.display = "inline-block";
+            submitText.style.display = "none";
+        } else {
+            spinner.style.display = "none";
+            submitText.style.display = "inline-block";
+        }
+    }
+
+    // Get spinner class and submit text
+    const spinner = document.querySelector(".submit-spinner");
+    const submitText = document.querySelector(".submit-text");
+
     // Get form input values and put them in an object
     const formData = {
         first_name: formObject.target.elements["first_name"].value,
         last_name: formObject.target.elements["last_name"].value,
         email: formObject.target.elements["email"].value,
         message: formObject.target.elements["message"].value,
+        recaptcha_token: token
     };
 
     // Send email
-    try {
+    try { 
+        console.log("Sending email...");
+        // Display spinner
+        toggleSpinner(true);  
+        // Send email
         await sendEmail(formData);
         // Display success message
         displayMessage(
@@ -144,6 +168,7 @@ async function handleSubmit(formObject) {
             }, 
             "success"
         );
+        resetRecaptchaV2(formObject);
     }
     catch(error) {
         // Display error message
@@ -156,6 +181,10 @@ async function handleSubmit(formObject) {
             },
             "error"
         );
+        resetRecaptchaV2(formObject);
+    } finally {
+        // Hide spinner
+        toggleSpinner(false);
     }
 }
 
@@ -202,13 +231,14 @@ async function sendEmail(data, test_error=false, error_type="") {
         const response = await emailjs.send(
             serviceId, 
             templateId, {
-                to_email: "afra.amaya7@gmail.com",
-                from_email: "test@dev_invisibles23.com",
-                subject: "Test message for DEV",
+                to_email: "association@lesinvisibles.ch",
+                from_email: data.email,
+                subject: "Les Invisibles - Nouveau message",
                 first_name: data.first_name,
                 last_name: data.last_name,
                 email: data.email,
                 message: data.message,
+                "g-recaptcha-response": data.recaptcha_token
             }, 
             userId
         );

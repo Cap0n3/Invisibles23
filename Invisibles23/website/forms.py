@@ -1,10 +1,7 @@
 from django import forms
 from .validators import validate_names, validate_address
 
-# class DateInput(forms.DateInput):
-#     input_type = 'date'
 
-# Create your forms here.
 class MembershipForm(forms.Form):
     subscription_choices = [
         ("support", "Soutien - CHF 84/année ou CHF 7.70/mois"),

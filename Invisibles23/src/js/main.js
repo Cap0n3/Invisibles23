@@ -5,6 +5,7 @@ import { homepagePodcasts, podcastsPage } from "./modules/insertPodcasts.js";
 import { searchBehavior } from "./modules/ressources.js";
 import { expandText } from "./modules/common/utils/helpers.js";
 import { newsletterForm } from "./modules/common/newsletterForm.js";
+import { initRecaptchaV2 } from "./modules/common/utils/helpers.js";
 
 /**
  * Initialize the webpage
@@ -15,6 +16,8 @@ async function initialize() {
     navbar(); // Initialize the navbar
     scrollToTop(); // Initialize the scroll to top button
     newsletterForm("newsletterFooter"); // Initialize the newsletter form (footer)
+
+    initRecaptchaV2(); // Initialize the recaptcha v2
    
     if (currentPage === '/') {
         formValidation("#contactForm"); // Initialize the contact form

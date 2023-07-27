@@ -160,3 +160,77 @@ export async function fetchSensitiveData() {
             console.error('Error fetching sensitive information:', error);
         });
 }
+
+export function initRecaptchaV2() {
+    
+    if(typeof grecaptcha === 'undefined') {
+        grecaptcha = {};
+      }
+      grecaptcha.ready = function(cb){
+        if(typeof grecaptcha === 'undefined') {
+          // window.__grecaptcha_cfg is a global variable that stores reCAPTCHA's
+          // configuration. By default, any functions listed in its 'fns' property
+          // are automatically executed when reCAPTCHA loads.
+          const c = '___grecaptcha_cfg';
+          window[c] = window[c] || {};
+          (window[c]['fns'] = window[c]['fns']||[]).push(cb);
+        } else {
+          cb();
+        }
+      }
+}
+
+/**
+ * Render recaptcha v2 in the given container and match captcha box design for small screens.
+ * 
+ * @param {String} container - The ID of the container where to render recaptcha
+ * @param {String} sitekey - The sitekey of the recaptcha
+ * @param {Function} submit - The function to execute when the recaptcha is validated
+ * @param {Object} formEvent - The event object of the form
+ */
+export function renderRecaptchaV2 (container, sitekey, submit, formEvent) {
+    // Check if recaptcha is already rendered to avoid error
+    const isRecaptchaRendered = container.hasAttribute("data-widget-rendered");
+    
+    // Make recaptcha appear if captcha was already loaded
+    if (container.style.display === "none") {
+        container.style.display = "block";
+    }
+
+    // check if screen width is between 1090 and 992 or smaller than 451 (for form responsive design purpose)
+    const isSmallScreen = window.matchMedia("only screen and (max-width: 1090px) and (min-width: 992px)").matches || window.matchMedia("only screen and (max-width: 451px)").matches;
+
+    // Avoid multiple rendering of recaptcha
+    if(!isRecaptchaRendered) {
+        // Set attribute to avoid multiple rendering of recaptcha
+        container.setAttribute("data-widget-rendered", "true");
+        // Render recaptcha
+        grecaptcha.ready(function () {
+            grecaptcha.ready(function() {
+                grecaptcha.render(container, {
+                    sitekey: sitekey,
+                    callback: function(token) {
+                        //get id of the form
+                        submit(formEvent, token);   
+                    },
+                    size: isSmallScreen ? "compact" : "normal",
+                });
+            });                      
+        });
+    }
+}
+
+/**
+ * Reset recaptcha v2 and hide it.
+ * 
+ * @param {Object} formObject - The form object to get the form id
+ */
+export function resetRecaptchaV2(formObject) {
+    // Get form id to get to the right recaptcha container
+    const ID_attibute = formObject.target.getAttribute("id");
+    // get recaptcha container
+    const container = document.querySelector(`#recaptcha-container_${ID_attibute}`);
+    // Reset recaptcha
+    grecaptcha.reset(container);
+    container.style.display = "none";
+}

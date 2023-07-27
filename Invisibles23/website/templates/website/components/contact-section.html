@@ -19,7 +19,13 @@
                 <div class="form-group mb-4">
                     <textarea name="message" id="message_{{ formID }}" class="form-control normal-input" rows="4" placeholder="Votre message" required></textarea>
                 </div>
-                <button type="submit" id="contactFormSubmit_{{ formID }}" class="btn btn-primary">Submit</button>
+                <div id="recaptcha-container_{{ formID }}" class="mb-4" data-sitekey="6LdTY1wnAAAAABgHJBw3x5grn3iQvtKvefKdSks2" data-size="invsible"></div>
+                <button type="submit" id="contactFormSubmit_{{ formID }}" class="btn btn-primary">
+                    <span class="submit-text">Submit</span>
+                    <div class="spinner-border text-light submit-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
                 <!--Success or error message box-->
                 <div id="successMessage" class="hideMessage alert alert-success" role="alert"></div>
                 <div id="errorMessage" class="hideMessage alert alert-danger" role="alert"></div>

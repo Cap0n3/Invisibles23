@@ -191,7 +191,7 @@ class EventDetailView(View):
 
 class ContactView(View):
     template_name = "website/contact.html"
-
+    
     def get_queryset(self):
         # return Home section and contact section queryset
         return {
@@ -206,7 +206,7 @@ class ContactView(View):
 class MembershipView(View):
     template_name = "website/membership.html"
     form_class = MembershipForm()
-    initial_form_state = {"subscription": "normal", "frequency": "yearly"}
+    initial_form_state = {"subscription": "normal", "frequency": "yearly"} # Default state of radio buttons
 
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
