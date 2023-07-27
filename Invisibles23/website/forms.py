@@ -7,56 +7,70 @@ from .validators import validate_names, validate_address
 # Create your forms here.
 class MembershipForm(forms.Form):
     subscription_choices = [
-        ('support', 'Soutien - CHF 85'),
-        ('normal', 'Normal - CHF 45'),
-        ('reduced', 'Réduit - CHF 25')
+        ("support", "Soutien - CHF 85"),
+        ("normal", "Normal - CHF 45"),
+        ("reduced", "Réduit - CHF 25"),
     ]
     frequency_choices = [
-        ('yearly', 'Annuellement'),
-        ('monthly', 'Mensuellement'),
+        ("yearly", "Annuellement"),
+        ("monthly", "Mensuellement"),
     ]
     # discount = forms.BooleanField(
-    #     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), 
-    #     required=False, 
+    #     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+    #     required=False,
     #     label="Contribution annuelle réduite à CHF 45 pour les bénéficiaires de l'AVS/AI, les stagiaires/étudiants, les personnes en difficulté financière.",
     # )
     subscription = forms.ChoiceField(
         choices=subscription_choices,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
     frequency = forms.ChoiceField(
         choices=frequency_choices,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
     fname = forms.CharField(
-        max_length=100, 
-        widget=forms.TextInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Prénom'}),
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Prénom"}
+        ),
         validators=[validate_names],
     )
     lname = forms.CharField(
-        max_length=100, 
-        widget=forms.TextInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Nom'}),
-        validators=[validate_names]
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Nom"}
+        ),
+        validators=[validate_names],
     )
     birthday = forms.DateField(
         label="Date de naissance",
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control normal-input'})
+        widget=forms.DateInput(
+            attrs={"type": "date", "class": "form-control normal-input"}
+        ),
     )
     address = forms.CharField(
-        max_length=100, 
-        widget=forms.TextInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Adresse'}),
-        validators=[validate_address]
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Adresse"}
+        ),
+        validators=[validate_address],
     )
     zip_code = forms.IntegerField(
-        widget=forms.NumberInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Code postal'}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Code postal"}
+        ),
     )
     city = forms.CharField(
-        max_length=100, 
-        widget=forms.TextInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Ville'}),    
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Ville"}
+        ),
     )
     email = forms.EmailField(
         max_length=100,
-        widget=forms.EmailInput(attrs={'class': 'form-control normal-input', 'placeholder': 'Email'}),
+        widget=forms.EmailInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Email"}
+        ),
     )
 
     # def clean_fname(self):

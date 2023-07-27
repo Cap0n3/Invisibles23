@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
-    HomeSections, 
+    HomeSections,
     AboutSections,
-    YoutubeVideos, 
+    YoutubeVideos,
     AssoSections,
     ChronicTabSections,
     InvsibleTabSections,
