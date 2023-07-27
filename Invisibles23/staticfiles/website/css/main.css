@@ -871,6 +871,10 @@ nav.show {
   color: #fff;
 }
 
+#assistance-card i {
+  font-size: 3rem;
+}
+
 body {
   color: #002E48;
   font-family: "Nunito", sans-serif;
@@ -1012,6 +1016,10 @@ body .site-pagination ul > li > a.active {
   background: linear-gradient(180deg, rgb(238, 243, 239) 0%, rgba(252, 246, 236, 0) 100%);
 }
 
+.bg-light-red {
+  background: #FFDEDF;
+}
+
 /* ============ */
 /* === FORM === */
 /* ============ */
@@ -1021,6 +1029,14 @@ body .site-pagination ul > li > a.active {
   background-position: 100% 95%;
   border: 0.5px solid #000000;
   filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.25));
+}
+#contactForm .submit-spinner, #contactFormPage .submit-spinner {
+  display: none;
+  width: 25px;
+  height: 25px;
+}
+#contactForm .submit-text, #contactFormPage .submit-text {
+  display: inline-block;
 }
 
 .hideMessage {
