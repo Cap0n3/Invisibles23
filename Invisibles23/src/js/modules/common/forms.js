@@ -7,6 +7,11 @@ import axios from 'axios';
 const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
 
+/**
+ * Validate a website forms with JustValidate
+ * 
+ * @param {*} formID 
+ */
 export function formValidation(formID) {
     const form = document.querySelector(formID);
 
