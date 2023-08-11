@@ -115,9 +115,10 @@ export function formValidation(formID) {
     validator.onSuccess((formEvent) => {
 
         if (formID === "#contactForm" || formID === "#contactFormPage") {
-            // Remove # from formID
+            // Get active recaptcha container
             const ID_attibute = formEvent.target.getAttribute("id");
             const recaptchaContainer = document.querySelector(`#recaptcha-container_${ID_attibute}`);
+            
             // Render recaptcha
             renderRecaptchaV2(recaptchaContainer, "6LdTY1wnAAAAABgHJBw3x5grn3iQvtKvefKdSks2", handleSubmit, formEvent);
         } else {

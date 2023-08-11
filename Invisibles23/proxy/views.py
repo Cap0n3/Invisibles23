@@ -3,6 +3,7 @@ from django.views import View
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+import json
 import environ
 import requests
 import stripe
@@ -269,7 +270,7 @@ class StripeWebhook(View):
 
         return HttpResponse(status=200)
 
-class EmailServer(View):
+class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
@@ -282,37 +283,43 @@ class EmailServer(View):
         message = request.POST.get("message")
         g_recaptcha_response = request.POST.get("recaptcha_token")
 
-        print(g_recaptcha_response)
-
         # Verify reCAPTCHA
-        self.verifyRecaptchaV2(g_recaptcha_response)
+        if self.verifyRecaptchaV2(g_recaptcha_response):
+            try:
+                sendEmailToOwner(fname, lname, email, message)
 
-        try:
-            sendEmailToOwner(fname, lname, email, message)
+                return JsonResponse(
+                    {
+                        "message": "Email sent successfully.",
+                    },
+                    status=200,
+                )
 
+            except Exception as error:
+                print(f"An exception occurred: {error}")
+                return JsonResponse(
+                    {
+                        "message": f"An error occurred: {error}",
+                    },
+                    status=500,
+                )
+        else:
             return JsonResponse(
                 {
-                    "message": "Email sent successfully.",
-                },
-                status=200,
-            )
-
-        except Exception as error:
-            print(f"An exception occurred: {error}")
-            return JsonResponse(
-                {
-                    "message": f"An error occurred: {error}",
+                    "message": "reCAPTCHA verification failed.",
                 },
                 status=500,
             )
         
     def verifyRecaptchaV2(self, g_recaptcha_response):
+        # Build POST request
         data = {
             "secret": env("RECAPTCHA_SECRET"),
             "response": g_recaptcha_response,
         }
+        # Send request to Google
         r = requests.post("https://www.google.com/recaptcha/api/siteverify", data=data)
         result = r.json()
-        print(result)
-        #return result["success"]
+        
+        return result["success"]
     

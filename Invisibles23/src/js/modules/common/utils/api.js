@@ -32,6 +32,7 @@ async function sendProxyRequest(path, data) {
 
     try {
         const response = await axios.post(url, params.toString(), { headers, withCredentials: true });
+        //console.log('Response (sendProxyRequest):', response);
         return response.data;
     } catch (error) {
         throw error;
@@ -116,7 +117,7 @@ export async function addContactToList(email, test_status = null) {
 
     try {
         const response = await sendProxyRequest('api/proxy/mailchimp/', data);
-        console.log('API response: ', response);
+        //console.log('API response: ', response);
     }
     catch (error) {
         console.error('Error adding contact to list:', error);
@@ -134,10 +135,15 @@ export async function getAPISecrets() {
     }
 }
 
+/**
+ * Send an email to the contact with proxy server.
+ * 
+ * @param {object} data - The data to send to the server
+ */
 export async function sendEmail(data) {
     try {
         const response = await sendProxyRequest('api/proxy/email_server/', data);
-        console.log('API response: ', response)
+        //console.log('API response (sendEmail) : ', response)
         return response;
     } catch (error) {
         console.error('Error sending email:', error);

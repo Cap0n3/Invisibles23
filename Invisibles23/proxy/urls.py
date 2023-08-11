@@ -7,5 +7,5 @@ urlpatterns = [
     path("stripe/", views.StripeProxy.as_view(), name="stripe-proxy"),
     path("stripe-webhook/", views.StripeWebhook.as_view(), name="stripe-webhook"),
     path("get_api_secrets/", views.GetAPISecrets.as_view(), name="get-api-secrets"),
-    path("email_server/", views.EmailServer.as_view(), name="email-server"),
+    path("email_server/", views.EmailSender.as_view(), name="email-server"),
 ]

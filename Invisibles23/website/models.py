@@ -320,7 +320,7 @@ class ContactSection(models.Model):
         verbose_name_plural = "Section Contact"
 
     def clean(self):
-        if ContactSection.objects.count() >= 1:
+        if ContactSection.objects.count() > 1:
             raise ValidationError("Seulement une section contact est autorisée !")
 
     def __str__(self):

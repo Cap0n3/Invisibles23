@@ -180,7 +180,7 @@ export function initRecaptchaV2() {
 export function renderRecaptchaV2 (container, sitekey, submit, formEvent) {
     // Check if recaptcha is already rendered to avoid error
     const isRecaptchaRendered = container.hasAttribute("data-widget-rendered");
-    
+
     // Make recaptcha appear if captcha was already loaded
     if (container.style.display === "none") {
         container.style.display = "block";
@@ -219,6 +219,7 @@ export function resetRecaptchaV2(formObject) {
     const ID_attibute = formObject.target.getAttribute("id");
     // get recaptcha container
     const container = document.querySelector(`#recaptcha-container_${ID_attibute}`);
+
     // Reset recaptcha
     grecaptcha.reset(container);
     container.style.display = "none";
