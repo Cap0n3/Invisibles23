@@ -337,7 +337,7 @@ class AssoStatus(models.Model):
 
     def clean(self):
         print(AssoStatus.objects.count())
-        if AssoStatus.objects.count() >= 1:
+        if AssoStatus.objects.count() > 1:
             raise ValidationError("Seulement un statut est autorisé !")
 
     def __str__(self):
