@@ -320,7 +320,7 @@ class ContactSection(models.Model):
         verbose_name_plural = "Section Contact"
 
     def clean(self):
-        if ContactSection.objects.count() > 1:
+        if ContactSection.objects.exists() and self.pk is None:
             raise ValidationError("Seulement une section contact est autorisée !")
 
     def __str__(self):
@@ -336,8 +336,7 @@ class AssoStatus(models.Model):
         verbose_name_plural = "Statuts de l'association"
 
     def clean(self):
-        print(AssoStatus.objects.count())
-        if AssoStatus.objects.count() > 1:
+        if AssoStatus.objects.exists() and self.pk is None:
             raise ValidationError("Seulement un statut est autorisé !")
 
     def __str__(self):
