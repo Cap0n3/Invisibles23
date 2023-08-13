@@ -11,6 +11,7 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 
 CURR_PATH = os.path.dirname(os.path.realpath(__file__))
 
+# TO REPLACE WITH SendEmail() !!!
 def sendEmailToOwner(fname, lname, email, message):
     try:
         # Email configuration
@@ -53,22 +54,24 @@ def sendEmailToOwner(fname, lname, email, message):
         print("Email sent successfully")
         return True
 
+def sendEmail(receiver_email, subject, email_file, placeholders={}):
+    """
+    Send an email to the given receiver email address. The email file is an HTML file that contains the email content. 
+    The placeholders in the email file are replaced with the actual values.
 
-def sendEmailToMember(name, email):
-    # Email configuration
+    Param
+    ------
+    receiver_email: str
+        The email address of the receiver
+    subject: str
+        The subject of the email
+    email_file: str
+        The name of the email file to send
+    placeholders: dict
+        A dictionary of placeholders and their values
+    """
     sender_email = "association@lesinvisibles.ch"
     sender_password = env("INFOMANIAK_EMAIL_PASSWORD")
-    receiver_email = email
-    subject = "Adhésion à l'association Les Invisibles"
-
-    with open(f"{CURR_PATH}/adhesion_email.html", "r") as f:
-        html_content = f.read()
-
-    # Replace the {name} placeholder with the actual customer name
-    html_content = html_content.replace("{name}", name)
-
-    # Create a MIMEText object for HTML content
-    html_part = MIMEText(html_content, "html")
 
     # Create a MIMEText object to represent the email
     message = MIMEMultipart()
@@ -76,6 +79,18 @@ def sendEmailToMember(name, email):
     message["To"] = receiver_email
     message["Subject"] = subject
 
+    # Read the email file
+    with open(f"{CURR_PATH}/{email_file}", "r") as f:
+        html_content = f.read()
+
+    # Replace the placeholders in email with the actual values
+    if len(placeholders) != 0:
+        for key, value in placeholders.items():
+            html_content = html_content.replace(f"{{{key}}}", value)
+
+    # Create a MIMEText object for HTML content
+    html_part = MIMEText(html_content, "html")
+    
     # Attach the HTML part to the message
     message.attach(html_part)
 

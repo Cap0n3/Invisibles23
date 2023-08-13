@@ -10,7 +10,7 @@ import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .utils.helpers import sendEmailToMember, sendEmailToOwner
+from .utils.helpers import sendEmailToOwner, sendEmail
 
 # Read the .env file
 env = environ.Env()
@@ -208,12 +208,12 @@ class StripeProxy(View):
                 customer_email=email,
                 subscription_data={
                     "metadata": {
-                        "Membre": f"{fname} {lname}",
-                        "Date de naissance": birthday,
-                        "addresse": address,
-                        "Code postal": zip_code,
+                        "Nom": f"{fname} {lname}",
+                        "Anniversaire": birthday,
+                        "adresse": address,
+                        "CP": zip_code,
                         "Ville": city,
-                        "email": email,
+                        "Email": email,
                     },
                 },
                 mode="subscription",
@@ -261,12 +261,53 @@ class StripeWebhook(View):
             print("Invalid signature")
             return HttpResponse(status=403)
 
-        # Handle the checkout.session.completed event
+        # Handle the event
         if event["type"] == "checkout.session.completed":
-            print("Checkout session completed")
-            member_name = data["object"]["customer_details"]["name"]
-            member_email = data["object"]["customer_details"]["email"]
-            sendEmailToMember(member_name, member_email)
+            # Maybe log the event (to do later)
+            print("Checkout session completed")     
+
+        elif event["type"] == "invoice.finalized":
+            print("Invoice finalized")
+    
+            # Get data from event
+            member_name = data["object"]["customer_name"]
+            member_email = data["object"]["customer_email"]
+            invoice_url = data["object"]["hosted_invoice_url"]
+            member_birthday = data["object"]["subscription_details"]["metadata"]["Anniversaire"]
+            member_address = data["object"]["subscription_details"]["metadata"]["adresse"]
+            member_postal_code = data["object"]["subscription_details"]["metadata"]["CP"]
+            member_city = data["object"]["subscription_details"]["metadata"]["Ville"]
+            membership_description = data["object"]["lines"]["data"][0]["description"]
+
+            # FOR TESTING
+            member_email = "afra.amaya@tutanota.com"
+
+            # Send email to owner
+            sendEmail(
+                member_email,
+                "Un nouveau membre a rejoint l'association Les Invisibles",
+                "adhesion_notification.html",
+                {
+                    "name": member_name,
+                    "email": member_email,
+                    "birthday": member_birthday,
+                    "address": member_address,
+                    "postal_code": member_postal_code,
+                    "city": member_city,
+                    "description": membership_description,
+                },
+            )            
+            
+            # Send email to member
+            sendEmail(
+                member_email, 
+                "Adhésion à l'association Les Invisibles", 
+                "adhesion_email.html", 
+                {
+                    "name": member_name,
+                    "invoice_url": invoice_url,
+                }
+            )
 
         return HttpResponse(status=200)
 
