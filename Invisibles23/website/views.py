@@ -254,6 +254,7 @@ class MembershipView(View):
             # Print headers and data for debugging
             print(f"Form submission headers: {headers}")
             print(f"Form submission data: {data}")
+            print(f"Cookie: {request.COOKIES}")
 
             # Get the session url from the proxy server
             response = requests.post(
