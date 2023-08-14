@@ -334,7 +334,7 @@ class SuccessView(View):
     template_name = "website/success.html"
 
     def get(self, request):
-        print("SUCCESS")
+        logger.info("Payment successful ... redirecting to success page")
         return render(request, self.template_name, {})
 
 
