@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from Invisibles23.logging_config import logger
 from .forms import MembershipForm
 from datetime import date
 from .models import (
@@ -215,8 +216,8 @@ class MembershipView(View):
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
-        print(f"Will send request to {domain}/api/proxy/stripe/")
-        print(f"Request data: {request.POST}")
+        logger.info(f"Will send request to {domain}/api/proxy/stripe/")
+        logger.debug(f"Request data: {request.POST}")
 
         if form.is_valid():
             print("Membership form is valid")
@@ -252,9 +253,9 @@ class MembershipView(View):
             }
 
             # Print headers and data for debugging
-            print(f"Form submission headers: {headers}")
-            print(f"Form submission data: {data}")
-            print(f"Cookie: {request.COOKIES}")
+            logger.debug(f"Form submission headers: {headers}")
+            logger.debug(f"Form submission data: {data}")
+            logger.debug(f"Cookie: {request.COOKIES}")
 
             # Get the session url from the proxy server
             response = requests.post(
@@ -267,23 +268,23 @@ class MembershipView(View):
 
             response_json = response.json()
 
-            print(response_json)
+            logger.debug(f"Json object: {response_json}")
 
             if response.status_code == 200:
-                print("Session created successfully ... redirecting to checkout")
-                print(f"Session url: {response_json['sessionUrl']}")
+                logger.info("Session created successfully ... redirecting to checkout")
+                logger.debug(f"Session url: {response_json['sessionUrl']}")
                 return redirect(response_json["sessionUrl"], code=303)
             elif response.status_code == 409:
-                print("An error 409 occured ... redirecting to membership page")
-                print(response_json["error"])
+                logger.warning("An error 409 occured ... redirecting to membership page")
+                logger.error(response_json["error"])
                 return render(
                     request,
                     self.template_name,
                     {"form": form, "error": response_json["error-message"]},
                 )
             elif response.status_code != 200 and response.status_code != 409:
-                print("An unkownn error occured ... redirecting to membership page")
-                print(response_json["error"])
+                logger.warning("An unkownn error occured ... redirecting to membership page")
+                logger.error(response_json["error"])
                 return render(
                     request,
                     self.template_name,
@@ -291,7 +292,7 @@ class MembershipView(View):
                 )
             
         else:
-            print("Form is not valid")
+            logger.error("Form is not valid")
             error_data = form.errors.as_data()
 
             # convert error_data to a dict and message to a string

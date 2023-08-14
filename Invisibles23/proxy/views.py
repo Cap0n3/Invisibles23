@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from Invisibles23.logging_config import logger
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
@@ -148,7 +149,9 @@ class StripeProxy(View):
         return _lookup_key
 
     def post(self, request):
-        print("Stripe proxy is handling form submission ...")
+        logger.info("Stripe proxy is handling form submission ...")
+        logger.debug(f"request.POST: {request.POST}")
+
         # Get the form data
         lookup_key = request.POST.get("lookup_key")
         subscription = request.POST.get("subscription")
@@ -179,7 +182,7 @@ class StripeProxy(View):
                 # Loop through subscriptions and find the one with the customer ID
                 for subscription in subscription_search.data:
                     if subscription.customer == existing_customer_id:
-                        print(
+                        logger.info(
                             f"Customer already has an active subscription: {subscription}"
                         )
                         return JsonResponse(
@@ -232,7 +235,7 @@ class StripeProxy(View):
             )
 
         except Exception as error:
-            print(f"An exception occurred: {error}")
+            logger.error(f"An exception occurred: {error}")
             return JsonResponse(
                 {
                     "message": f"An error occurred: {error}",
