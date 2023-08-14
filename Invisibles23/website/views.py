@@ -266,30 +266,34 @@ class MembershipView(View):
                 allow_redirects=False,
             )
 
-            response_json = response.json()
+            try:
+                response_json = response.json()
 
-            logger.debug(f"Json object: {response_json}")
+                logger.debug(f"Json object: {response_json}")
 
-            if response.status_code == 200:
-                logger.info("Session created successfully ... redirecting to checkout")
-                logger.debug(f"Session url: {response_json['sessionUrl']}")
-                return redirect(response_json["sessionUrl"], code=303)
-            elif response.status_code == 409:
-                logger.warning("An error 409 occured ... redirecting to membership page")
-                logger.error(response_json["error"])
-                return render(
-                    request,
-                    self.template_name,
-                    {"form": form, "error": response_json["error-message"]},
-                )
-            elif response.status_code != 200 and response.status_code != 409:
-                logger.warning("An unkownn error occured ... redirecting to membership page")
-                logger.error(response_json["error"])
-                return render(
-                    request,
-                    self.template_name,
-                    {"form": form, "error": response_json["error-message"]},
-                )
+                if response.status_code == 200:
+                    logger.info("Session created successfully ... redirecting to checkout")
+                    logger.debug(f"Session url: {response_json['sessionUrl']}")
+                    return redirect(response_json["sessionUrl"], code=303)
+                elif response.status_code == 409:
+                    logger.warning("An error 409 occured ... redirecting to membership page")
+                    logger.error(response_json["error"])
+                    return render(
+                        request,
+                        self.template_name,
+                        {"form": form, "error": response_json["error-message"]},
+                    )
+                elif response.status_code != 200 and response.status_code != 409:
+                    logger.warning(f"An error occured, received status code: {str(response.status_code)}")
+                    logger.error(response_json["error"])
+                    return render(
+                        request,
+                        self.template_name,
+                        {"form": form, "error": response_json["error-message"]},
+                    )
+            except requests.RequestException as e:
+                logger.error(f"An error occurred while sending the request: {str(e)}")
+                return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
             
         else:
             logger.error("Form is not valid")

@@ -21,7 +21,7 @@ class GetAPISecrets(View):
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
-        print("Getting API secrets...")
+        logger.info("Getting API secrets...")
 
         data = {
             "ausha_api_token": env("AUSHA_API_TOKEN"),
