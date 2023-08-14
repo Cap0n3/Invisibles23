@@ -116,6 +116,7 @@ class MailchimpProxy(View):
 class StripeProxy(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     stripe.api_key = env("STRIPE_API_TOKEN")
+    print("Stripe proxy is ready ...")
 
     @staticmethod
     def choosePricing(subscription, frequency):
@@ -147,6 +148,7 @@ class StripeProxy(View):
         return _lookup_key
 
     def post(self, request):
+        print("Stripe proxy is handling form submission ...")
         # Get the form data
         lookup_key = request.POST.get("lookup_key")
         subscription = request.POST.get("subscription")

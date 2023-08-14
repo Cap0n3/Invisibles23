@@ -215,7 +215,6 @@ class MembershipView(View):
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
-
         print(f"Will send request to {domain}/api/proxy/stripe/")
 
         if form.is_valid():
