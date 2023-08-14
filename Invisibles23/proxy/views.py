@@ -117,7 +117,7 @@ class MailchimpProxy(View):
 class StripeProxy(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     stripe.api_key = env("STRIPE_API_TOKEN")
-    print("Stripe proxy is ready ...")
+    logger.info("Stripe proxy is ready ...")
 
     @staticmethod
     def choosePricing(subscription, frequency):
@@ -249,6 +249,7 @@ class StripeWebhook(View):
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
+        logger.info("Stripe webhook initiated ...")
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         stripe_secret = env("STRIPE_WEBHOOK_SECRET")
@@ -259,20 +260,20 @@ class StripeWebhook(View):
             data = event["data"]
         except ValueError as e:
             # Invalid payload
-            print("Invalid payload")
+            logger.error("Invalid payload")
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
             # Invalid signature
-            print("Invalid signature")
+            logger.error("Invalid signature")
             return HttpResponse(status=403)
 
         # Handle the event
         if event["type"] == "checkout.session.completed":
             # Maybe log the event (to do later)
-            print("Checkout session completed")     
+            logger.info("Checkout session completed")     
 
         elif event["type"] == "invoice.finalized":
-            print("Invoice finalized")
+            logger.info("Invoice finalized")
     
             # Get data from event
             member_name = data["object"]["customer_name"]
@@ -318,7 +319,7 @@ class StripeWebhook(View):
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
-    print("EmailSender initialized ...")
+    logger.info("EmailSender initialized ...")
 
     def post(self, request):
         # Get the form data
@@ -331,7 +332,7 @@ class EmailSender(View):
         # Verify reCAPTCHA
         if self.verifyRecaptchaV2(g_recaptcha_response):
             try:
-                print("Recaptcha verified. Sending email...")
+                logger.info("Recaptcha verified. Sending email...")
                 sendEmail(
                     email,
                     "Merci pour votre message",
@@ -352,7 +353,7 @@ class EmailSender(View):
                 )
 
             except Exception as error:
-                print(f"An exception occurred: {error}")
+                logger.error(f"An exception occurred: {error}")
                 return JsonResponse(
                     {
                         "message": f"An error occurred: {error}",
