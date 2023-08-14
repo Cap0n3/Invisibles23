@@ -272,14 +272,15 @@ class MembershipView(View):
                     self.template_name,
                     {"form": form, "error": response_json["error-message"]},
                 )
-            else:
-                print("An unknown error occured ... redirecting to membership page")
+            elif response.status_code != 200 and response.status_code != 409:
+                print("An unkownn error occured ... redirecting to membership page")
                 print(response_json["error"])
                 return render(
                     request,
                     self.template_name,
                     {"form": form, "error": response_json["error-message"]},
                 )
+            
         else:
             print("Form is not valid")
             error_data = form.errors.as_data()
