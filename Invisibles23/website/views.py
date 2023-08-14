@@ -217,7 +217,7 @@ class MembershipView(View):
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
 
         if form.is_valid():
-            print("Membership is valid")
+            print("Membership form is valid")
             subscription = form.cleaned_data["subscription"]
             frequency = form.cleaned_data["frequency"]
             first_name = form.cleaned_data["fname"]
@@ -265,7 +265,15 @@ class MembershipView(View):
                 print(f"Session url: {response_json['sessionUrl']}")
                 return redirect(response_json["sessionUrl"], code=303)
             elif response.status_code == 409:
-                print("An error occured ... redirecting to membership page")
+                print("An error 409 occured ... redirecting to membership page")
+                print(response_json["error"])
+                return render(
+                    request,
+                    self.template_name,
+                    {"form": form, "error": response_json["error-message"]},
+                )
+            else:
+                print("An unknown error occured ... redirecting to membership page")
                 print(response_json["error"])
                 return render(
                     request,
