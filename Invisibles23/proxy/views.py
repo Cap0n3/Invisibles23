@@ -162,7 +162,7 @@ class StripeProxy(View):
         email = request.POST.get("email")
 
         try:
-            domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
+            domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
 
             # Check if customer already exists
             customer_search = stripe.Customer.search(
