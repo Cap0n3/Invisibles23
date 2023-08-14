@@ -220,7 +220,7 @@ class MembershipView(View):
         logger.debug(f"Request data: {request.POST}")
 
         if form.is_valid():
-            print("Membership form is valid")
+            logger.info("Membership form is valid")
             subscription = form.cleaned_data["subscription"]
             frequency = form.cleaned_data["frequency"]
             first_name = form.cleaned_data["fname"]
@@ -257,16 +257,15 @@ class MembershipView(View):
             logger.debug(f"Form submission data: {data}")
             logger.debug(f"Cookie: {request.COOKIES}")
 
-            # Get the session url from the proxy server
-            response = requests.post(
-                domain + "/api/proxy/stripe/",
-                headers=headers,
-                data=data,
-                cookies=request.COOKIES,
-                allow_redirects=False,
-            )
-
             try:
+                # Get the session url from the proxy server
+                response = requests.post(
+                    domain + "/api/proxy/stripe/",
+                    headers=headers,
+                    data=data,
+                    cookies=request.COOKIES,
+                    allow_redirects=False,
+                )
                 response_json = response.json()
 
                 logger.debug(f"Json object: {response_json}")
@@ -291,7 +290,7 @@ class MembershipView(View):
                         self.template_name,
                         {"form": form, "error": response_json["error-message"]},
                     )
-            except requests.RequestException as e:
+            except Exception as e:
                 logger.error(f"An error occurred while sending the request: {str(e)}")
                 return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
             
