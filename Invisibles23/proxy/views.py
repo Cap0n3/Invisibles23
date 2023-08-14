@@ -10,7 +10,7 @@ import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .utils.helpers import sendEmailToOwner, sendEmail
+from .utils.helpers import sendEmail
 
 # Read the .env file
 env = environ.Env()
@@ -315,8 +315,6 @@ class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
-        print("EmailServer")
-        print(request.POST)
         # Get the form data
         fname = request.POST.get("first_name")
         lname = request.POST.get("last_name")
@@ -327,7 +325,18 @@ class EmailSender(View):
         # Verify reCAPTCHA
         if self.verifyRecaptchaV2(g_recaptcha_response):
             try:
-                sendEmailToOwner(fname, lname, email, message)
+                #sendEmailToOwner(fname, lname, email, message)
+                sendEmail(
+                    email,
+                    "Merci pour votre message",
+                    "contact_email.html",
+                    {
+                        "fname": fname,
+                        "lname": lname,
+                        "email": email,
+                        "message": message,
+                    },
+                )
 
                 return JsonResponse(
                     {

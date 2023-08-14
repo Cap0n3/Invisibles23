@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adhésion membre</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <p><strong>Objet : </strong>Nouvelle adhésion</p>
+    <p>Chère Tamara,</p>
+    <p>J'ai le plaisir de t'annoncer que l'association Les Invisibles compte un nouveau membre !</p>
+    <p>Voici ses informations :</p>
+    <table style="border: 1px solid black;">
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Nom</th>
+            <td style="border: 1px solid black; padding: 5px;">{name}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Adresse e-mail</th>
+            <td style="border: 1px solid black; padding: 5px;">{email}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Date de naissance</th>
+            <td style="border: 1px solid black; padding: 5px;">{birthday}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Adresse</th>
+            <td style="border: 1px solid black; padding: 5px;">{address}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Code postal</th>
+            <td style="border: 1px solid black; padding: 5px;">{postal_code}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Ville</th>
+            <td style="border: 1px solid black; padding: 5px;">{city}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Type de cotisation</th>
+            <td style="border: 1px solid black; padding: 5px;">{description}</td>
+        </tr>
+    </table>
+    <p>Tu pourras trouver cette nouvelle inscription ainsi que toutes les autres sur le tableau de bord de <a href="https://stripe.com/">Stripe</a> dans l'onglet "Client". Pour voir le tableau de bord, il te suffit de te connecter avec tes identifiants.</p>
+    <p>L'Association Les Invisibles<br>association@lesinvisibles.ch</p>
+</body>
+</html>
