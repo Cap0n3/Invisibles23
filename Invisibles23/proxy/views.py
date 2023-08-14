@@ -315,6 +315,7 @@ class StripeWebhook(View):
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
+    print("EmailSender initialized ...")
 
     def post(self, request):
         # Get the form data
@@ -327,7 +328,7 @@ class EmailSender(View):
         # Verify reCAPTCHA
         if self.verifyRecaptchaV2(g_recaptcha_response):
             try:
-                #sendEmailToOwner(fname, lname, email, message)
+                print("Recaptcha verified. Sending email...")
                 sendEmail(
                     email,
                     "Merci pour votre message",

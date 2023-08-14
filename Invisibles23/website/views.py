@@ -216,6 +216,7 @@ class MembershipView(View):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else settings.DOMAIN
         print(f"Will send request to {domain}/api/proxy/stripe/")
+        print(f"Request data: {request.POST}")
 
         if form.is_valid():
             print("Membership form is valid")
@@ -249,6 +250,10 @@ class MembershipView(View):
                 "city": city,
                 "email": email,
             }
+
+            # Print headers and data for debugging
+            print(f"Form submission headers: {headers}")
+            print(f"Form submission data: {data}")
 
             # Get the session url from the proxy server
             response = requests.post(
