@@ -164,16 +164,22 @@ class StripeProxy(View):
         city = request.POST.get("city")
         email = request.POST.get("email")
 
+        logger.debug("Just before the try block")
+
         try:
+            logger.debug("Inside the try block")
+
             domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
 
             # Check if customer already exists
+            logger.info("Checking if customer already exists ...")
             customer_search = stripe.Customer.search(
                 query=f"name:'{fname} {lname}' AND email:'{email}'",
             )
 
             # If customer exists, check if they have an active subscription
             if customer_search.data:
+                logger.info(f"Customer already exists: {customer_search.data[0]}")
                 existing_customer_id = customer_search.data[0].id
                 # Search for active subscription
                 subscription_search = stripe.Subscription.search(
@@ -182,7 +188,7 @@ class StripeProxy(View):
                 # Loop through subscriptions and find the one with the customer ID
                 for subscription in subscription_search.data:
                     if subscription.customer == existing_customer_id:
-                        logger.info(
+                        logger.warning(
                             f"Customer already has an active subscription: {subscription}"
                         )
                         return JsonResponse(
@@ -197,11 +203,13 @@ class StripeProxy(View):
             lookup_key = self.choosePricing(subscription, frequency)
 
             # Get prices from Stripe
+            logger.info("Getting prices from Stripe ...")
             prices = stripe.Price.list(
                 lookup_keys=[lookup_key], expand=["data.product"]
             )
 
             # Create checkout session to redirect to Stripe
+            logger.info("Creating checkout session ...")
             checkout_session = stripe.checkout.Session.create(
                 line_items=[
                     {
