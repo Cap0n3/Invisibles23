@@ -217,8 +217,9 @@ class MembershipView(View):
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
-        stripeProxy_url = reverse("stripe-proxy")
-        logger.info(f"Will send request to {domain}{stripeProxy_url}")
+        stripeProxy_path = reverse("stripe-proxy")
+        stripeProxy_full_url = f"{domain}{stripeProxy_path}"
+        logger.info(f"Will send request to {stripeProxy_full_url}")
         logger.debug(f"Request data: {request.POST}")
 
         if form.is_valid():
@@ -267,7 +268,7 @@ class MembershipView(View):
                     data=data,
                     cookies=request.COOKIES,
                     allow_redirects=False,
-                    timeout=40,
+                    timeout=20,
                 )
                 response_json = response.json()
 
