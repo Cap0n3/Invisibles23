@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
+from django.urls import reverse
 from .forms import MembershipForm
 from datetime import date
 from .models import (
@@ -216,7 +217,8 @@ class MembershipView(View):
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
-        logger.info(f"Will send request to {domain}/api/proxy/stripe/")
+        stripeProxy_url = reverse("stripe-proxy")
+        logger.info(f"Will send request to {domain}{stripeProxy_url}")
         logger.debug(f"Request data: {request.POST}")
 
         if form.is_valid():
@@ -265,6 +267,7 @@ class MembershipView(View):
                     data=data,
                     cookies=request.COOKIES,
                     allow_redirects=False,
+                    timeout=5,
                 )
                 response_json = response.json()
 

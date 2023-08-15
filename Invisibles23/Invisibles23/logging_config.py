@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 # === 5. Définir le format des logs === #
 # Définir un format pour la console
-stream_format = logging.Formatter('[%(asctime)s] [%(levelname)s] {%(funcName)s} - %(message)s')
+stream_format = logging.Formatter('[%(asctime)s] [%(levelname)s] {%(module)s -> %(funcName)s} - %(message)s')
 
 # Associer les formats au handlers
 stream_handler.setFormatter(stream_format)
