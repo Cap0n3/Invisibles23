@@ -164,11 +164,7 @@ class StripeProxy(View):
         city = request.POST.get("city")
         email = request.POST.get("email")
 
-        logger.debug("Just before the try block")
-
         try:
-            logger.debug("Inside the try block")
-
             domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
 
             # Check if customer already exists

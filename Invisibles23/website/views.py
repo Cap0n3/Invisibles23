@@ -31,6 +31,8 @@ from django.middleware.csrf import get_token
 from django.conf import settings
 from django.shortcuts import redirect
 
+import stripe
+
 # Initialise env vars
 env = environ.Env()
 env.read_env("../.env")
@@ -210,6 +212,35 @@ class MembershipView(View):
     form_class = MembershipForm()
     initial_form_state = {"subscription": "normal", "frequency": "yearly"} # Default state of radio buttons
 
+    @staticmethod
+    def choosePricing(subscription, frequency):
+        """
+        Choose the pricing based on the subscription and frequency.
+
+        It will return following values:
+        - support-monthly
+        - support-yearly
+        - normal-monthly
+        - normal-yearly
+        - reduced-monthly
+        - reduced-yearly
+        """
+        _lookup_key = ""
+        if subscription == "support":
+            _lookup_key = (
+                "support-monthly" if frequency == "monthly" else "support-yearly"
+            )
+        elif subscription == "normal":
+            _lookup_key = (
+                "normal-monthly" if frequency == "monthly" else "normal-yearly"
+            )
+        elif subscription == "reduced":
+            _lookup_key = (
+                "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
+            )
+
+        return _lookup_key
+
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
         return render(request, self.template_name, {"form": form})
@@ -237,66 +268,138 @@ class MembershipView(View):
             csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
 
             # Create the request to send to the proxy server
-            headers = {
-                "X-CSRFToken": csrf_token,
-                "Content-Type": "application/x-www-form-urlencoded",
-            }
+            # headers = {
+            #     "X-CSRFToken": csrf_token,
+            #     "Content-Type": "application/x-www-form-urlencoded",
+            # }
 
-            data = {
-                "lookup_key": lookup_key,
-                "subscription": subscription,
-                "frequency": frequency,
-                "fname": first_name,
-                "lname": last_name,
-                "birthday": birthday,
-                "address": address,
-                "zip_code": zip_code,
-                "city": city,
-                "email": email,
-            }
-
-            # Print headers and data for debugging
-            logger.debug(f"Form submission headers: {headers}")
-            logger.debug(f"Form submission data: {data}")
-            logger.debug(f"Cookie: {request.COOKIES}")
+            # data = {
+            #     "lookup_key": lookup_key,
+            #     "subscription": subscription,
+            #     "frequency": frequency,
+            #     "fname": first_name,
+            #     "lname": last_name,
+            #     "birthday": birthday,
+            #     "address": address,
+            #     "zip_code": zip_code,
+            #     "city": city,
+            #     "email": email,
+            # }
 
             try:
-                # Get the session url from the proxy server
-                response = requests.post(
-                    domain + "/api/proxy/stripe/",
-                    headers=headers,
-                    data=data,
-                    cookies=request.COOKIES,
-                    allow_redirects=False,
-                    timeout=180,
+                # Check if customer already exists
+                logger.info("Checking if customer already exists ...")
+                customer_search = stripe.Customer.search(
+                    query=f"name:'{first_name} {last_name}' AND email:'{email}'",
                 )
-                response_json = response.json()
 
-                logger.debug(f"Json object: {response_json}")
+                # If customer exists, check if they have an active subscription
+                if customer_search.data:
+                    logger.info(f"Customer already exists: {customer_search.data[0]}")
+                    existing_customer_id = customer_search.data[0].id
+                    # Search for active subscription
+                    subscription_search = stripe.Subscription.search(
+                        query=f"status:'active'",
+                    )
+                    # Loop through subscriptions and find the one with the customer ID
+                    for subscription in subscription_search.data:
+                        if subscription.customer == existing_customer_id:
+                            logger.warning(
+                                f"Customer already has an active subscription: {subscription}"
+                            )
+                            return JsonResponse(
+                                {
+                                    "error": "Customer already exists in database.",
+                                    "error-message": "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
+                                },
+                                status=409,
+                            )
 
-                if response.status_code == 200:
-                    logger.info("Session created successfully ... redirecting to checkout")
-                    logger.debug(f"Session url: {response_json['sessionUrl']}")
-                    return redirect(response_json["sessionUrl"], code=303)
-                elif response.status_code == 409:
-                    logger.warning("An error 409 occured ... redirecting to membership page")
-                    logger.error(response_json["error"])
-                    return render(
-                        request,
-                        self.template_name,
-                        {"form": form, "error": response_json["error-message"]},
-                    )
-                elif response.status_code != 200 and response.status_code != 409:
-                    logger.warning(f"An error occured, received status code: {str(response.status_code)}")
-                    logger.error(response_json["error"])
-                    return render(
-                        request,
-                        self.template_name,
-                        {"form": form, "error": response_json["error-message"]},
-                    )
-            except Exception as e:
-                logger.error(f"An error occurred while sending the request: {str(e)}")
+                # Get the lookup key according to the subscription and frequency
+                lookup_key = self.choosePricing(subscription, frequency)
+
+                # Get prices from Stripe
+                logger.info("Getting prices from Stripe ...")
+                prices = stripe.Price.list(
+                    lookup_keys=[lookup_key], expand=["data.product"]
+                )
+
+                # Create checkout session to redirect to Stripe
+                logger.info("Creating checkout session ...")
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            "price": prices.data[0].id,
+                            "quantity": 1,
+                        },
+                    ],
+                    currency="chf",
+                    customer_email=email,
+                    subscription_data={
+                        "metadata": {
+                            "Nom": f"{first_name} {last_name}",
+                            "Anniversaire": birthday,
+                            "adresse": address,
+                            "CP": zip_code,
+                            "Ville": city,
+                            "Email": email,
+                        },
+                    },
+                    mode="subscription",
+                    success_url=domain + "/success/",
+                    cancel_url=domain + "/cancel/",
+                )
+            
+                logger.info("Session created successfully ... redirecting to checkout")
+                logger.debug(f"Session url: {checkout_session['url']}")
+                return redirect(checkout_session["url"], code=303)
+
+            except Exception as error:
+                logger.error(f"An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
+
+            # # Print headers and data for debugging
+            # logger.debug(f"Form submission headers: {headers}")
+            # logger.debug(f"Form submission data: {data}")
+            # logger.debug(f"Cookie: {request.COOKIES}")
+
+            # try:
+            #     # Get the session url from the proxy server
+            #     response = requests.post(
+            #         domain + "/api/proxy/stripe/",
+            #         headers=headers,
+            #         data=data,
+            #         cookies=request.COOKIES,
+            #         allow_redirects=False,
+            #         timeout=180,
+            #     )
+            #     response_json = response.json()
+
+            #     logger.debug(f"Json object: {response_json}")
+
+            #     if response.status_code == 200:
+            #         logger.info("Session created successfully ... redirecting to checkout")
+            #         logger.debug(f"Session url: {response_json['sessionUrl']}")
+            #         return redirect(response_json["sessionUrl"], code=303)
+            #     elif response.status_code == 409:
+            #         logger.warning("An error 409 occured ... redirecting to membership page")
+            #         logger.error(response_json["error"])
+            #         return render(
+            #             request,
+            #             self.template_name,
+            #             {"form": form, "error": response_json["error-message"]},
+            #         )
+            #     elif response.status_code != 200 and response.status_code != 409:
+            #         logger.warning(f"An error occured, received status code: {str(response.status_code)}")
+            #         logger.error(response_json["error"])
+            #         return render(
+            #             request,
+            #             self.template_name,
+            #             {"form": form, "error": response_json["error-message"]},
+            #         )
+            # except Exception as e:
+            #     logger.error(f"An error occurred while sending the request: {str(e)}")
+            #     return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
             
         else:
             logger.error("Form is not valid")
