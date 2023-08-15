@@ -268,7 +268,7 @@ class MembershipView(View):
                     data=data,
                     cookies=request.COOKIES,
                     allow_redirects=False,
-                    timeout=20,
+                    timeout=180,
                 )
                 response_json = response.json()
 
