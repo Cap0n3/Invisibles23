@@ -248,9 +248,6 @@ class MembershipView(View):
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
-        stripeProxy_path = reverse("stripe-proxy")
-        stripeProxy_full_url = f"{domain}{stripeProxy_path}"
-        logger.info(f"Will send request to {stripeProxy_full_url}")
         logger.debug(f"Request data: {request.POST}")
 
         if form.is_valid():
@@ -265,26 +262,6 @@ class MembershipView(View):
             city = form.cleaned_data["city"]
             email = form.cleaned_data["email"]
             lookup_key = request.POST.get("lookup_key")
-            csrf_token = request.COOKIES.get(settings.CSRF_COOKIE_NAME)
-
-            # Create the request to send to the proxy server
-            # headers = {
-            #     "X-CSRFToken": csrf_token,
-            #     "Content-Type": "application/x-www-form-urlencoded",
-            # }
-
-            # data = {
-            #     "lookup_key": lookup_key,
-            #     "subscription": subscription,
-            #     "frequency": frequency,
-            #     "fname": first_name,
-            #     "lname": last_name,
-            #     "birthday": birthday,
-            #     "address": address,
-            #     "zip_code": zip_code,
-            #     "city": city,
-            #     "email": email,
-            # }
 
             try:
                 # Check if customer already exists
@@ -357,49 +334,6 @@ class MembershipView(View):
             except Exception as error:
                 logger.error(f"An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
-
-            # # Print headers and data for debugging
-            # logger.debug(f"Form submission headers: {headers}")
-            # logger.debug(f"Form submission data: {data}")
-            # logger.debug(f"Cookie: {request.COOKIES}")
-
-            # try:
-            #     # Get the session url from the proxy server
-            #     response = requests.post(
-            #         domain + "/api/proxy/stripe/",
-            #         headers=headers,
-            #         data=data,
-            #         cookies=request.COOKIES,
-            #         allow_redirects=False,
-            #         timeout=180,
-            #     )
-            #     response_json = response.json()
-
-            #     logger.debug(f"Json object: {response_json}")
-
-            #     if response.status_code == 200:
-            #         logger.info("Session created successfully ... redirecting to checkout")
-            #         logger.debug(f"Session url: {response_json['sessionUrl']}")
-            #         return redirect(response_json["sessionUrl"], code=303)
-            #     elif response.status_code == 409:
-            #         logger.warning("An error 409 occured ... redirecting to membership page")
-            #         logger.error(response_json["error"])
-            #         return render(
-            #             request,
-            #             self.template_name,
-            #             {"form": form, "error": response_json["error-message"]},
-            #         )
-            #     elif response.status_code != 200 and response.status_code != 409:
-            #         logger.warning(f"An error occured, received status code: {str(response.status_code)}")
-            #         logger.error(response_json["error"])
-            #         return render(
-            #             request,
-            #             self.template_name,
-            #             {"form": form, "error": response_json["error-message"]},
-            #         )
-            # except Exception as e:
-            #     logger.error(f"An error occurred while sending the request: {str(e)}")
-            #     return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
             
         else:
             logger.error("Form is not valid")
