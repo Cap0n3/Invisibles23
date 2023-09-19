@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import environ
 from Invisibles23.settings import BASE_DIR
+from Invisibles23.logging_config import logger
 
 # Read the environment variables
 env = environ.Env()
@@ -27,6 +28,7 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}):
     placeholders: dict
         A dictionary of placeholders and their values
     """
+    logger.info(f"Sending email to {receiver_email}...")
     sender_email = "association@lesinvisibles.ch"
     sender_password = env("INFOMANIAK_EMAIL_PASSWORD")
 
