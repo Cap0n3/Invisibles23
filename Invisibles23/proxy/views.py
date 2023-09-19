@@ -143,6 +143,8 @@ class StripeWebhook(View):
 
         elif event["type"] == "customer.subscription.created":
             logger.info("Customer subscription created")
+
+            logger.debug(f"Event data: {data}")
     
             # Get data from event
             member_name = data["object"]["customer_name"]
