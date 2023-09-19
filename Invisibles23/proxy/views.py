@@ -141,8 +141,8 @@ class StripeWebhook(View):
             # Maybe log the event (to do later)
             logger.info("Checkout session completed")     
 
-        elif event["type"] == "invoice.finalized":
-            logger.info("Invoice finalized")
+        elif event["type"] == "customer.subscription.created":
+            logger.info("Customer subscription created")
     
             # Get data from event
             member_name = data["object"]["customer_name"]
