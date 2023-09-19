@@ -155,7 +155,8 @@ class StripeWebhook(View):
             membership_description = data["object"]["lines"]["data"][0]["description"]
 
             # FOR TESTING
-            member_email = "afra.amaya@tutanota.com"
+            member_email = "dev.aguillin@gmail.com"
+            logger.debug(f"About to send email to {member_email}")
 
             # Send email to owner
             sendEmail(
