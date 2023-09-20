@@ -167,16 +167,22 @@ class StripeWebhook(View):
             # member_city = data["object"]["subscription_details"]["metadata"]["Ville"]
             # membership_description = data["object"]["lines"]["data"][0]["description"]
 
-            member_birthday = data["object"]["metadata"].get("Anniversaire", None)
-            member_address = data["object"]["metadata"]["adresse"]
-            member_postal_code = data["object"]["metadata"]["CP"]
-            member_city = data["object"]["metadata"]["Ville"]
+            member_name = data["object"]["metadata"].get("Nom", "Null")
+            member_email = data["object"]["metadata"].get("Email", "Null")
+            member_birthday = data["object"]["metadata"].get("Anniversaire", "Null")
+            member_address = data["object"]["metadata"].get("adresse", "Null")
+            member_postal_code = data["object"]["metadata"].get("CP", "Null")
+            member_city = data["object"]["metadata"].get("Ville", "Null")
+            membership_description = data["object"]["price"].get("lookup_key", "Null")
 
             # Log data
+            logger.debug(f"Nom: {member_name}")
+            logger.debug(f"Email: {member_email}")
             logger.debug(f"Anniversaire: {member_birthday}")
             logger.debug(f"Adresse: {member_address}")
             logger.debug(f"Code postal: {member_postal_code}")
             logger.debug(f"Ville: {member_city}")
+            logger.debug(f"Description: {membership_description}")
 
             # Log metadata
             logger.debug(f"Object: {data['object']}")
