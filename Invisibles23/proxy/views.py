@@ -173,7 +173,7 @@ class StripeWebhook(View):
             member_address = data["object"]["metadata"].get("adresse", "Null")
             member_postal_code = data["object"]["metadata"].get("CP", "Null")
             member_city = data["object"]["metadata"].get("Ville", "Null")
-            membership_description = data["object"]["price"].get("lookup_key", "Null")
+            membership_description = data["object"]["items"]["data"][0]["price"].get("lookup_key", "Null")
 
             # Log data
             logger.debug(f"Nom: {member_name}")
