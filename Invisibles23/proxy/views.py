@@ -218,21 +218,21 @@ class StripeWebhook(View):
             logger.debug(f"About to send email to {member_email}")
 
 
-            # # Send email to owner
-            # sendEmail(
-            #     member_email,
-            #     "Un nouveau membre a rejoint l'association Les Invisibles",
-            #     "adhesion_notification.html",
-            #     {
-            #         "name": member_name,
-            #         "email": member_email,
-            #         "birthday": member_birthday,
-            #         "address": member_address,
-            #         "postal_code": member_postal_code,
-            #         "city": member_city,
-            #         "description": membership_description,
-            #     },
-            # )            
+            # Send email to owner
+            sendEmail(
+                member_email,
+                "Un nouveau membre a rejoint l'association Les Invisibles",
+                "adhesion_notification.html",
+                {
+                    "name": member_name if member_name else "Null",
+                    "email": member_email if member_email else "Null",
+                    "birthday": member_birthday if member_birthday else "Null",
+                    "address": member_address if member_address else "Null",
+                    "postal_code": member_postal_code  if member_postal_code else "Null",
+                    "city": member_city if member_city else "Null",
+                    "description": membership_description if membership_description else "Null",
+                },
+            )            
             
             # # Send email to member
             # sendEmail(
