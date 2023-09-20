@@ -147,15 +147,41 @@ class StripeWebhook(View):
             logger.debug(f"Event data: {data}")
     
             # Get data from event
-            member_name = data["object"]["customer_name"]
-            member_email = data["object"]["customer_email"]
-            invoice_url = data["object"]["hosted_invoice_url"]
-            member_birthday = data["object"]["subscription_details"]["metadata"]["Anniversaire"]
-            member_address = data["object"]["subscription_details"]["metadata"]["adresse"]
-            member_postal_code = data["object"]["subscription_details"]["metadata"]["CP"]
-            member_city = data["object"]["subscription_details"]["metadata"]["Ville"]
-            membership_description = data["object"]["lines"]["data"][0]["description"]
+            # member_name = data["object"]["customer_name"]
+            # member_email = data["object"]["customer_email"]
+            # invoice_url = data["object"]["hosted_invoice_url"]
+            # member_birthday = data["object"]["subscription_details"]["metadata"]["Anniversaire"]
+            # member_address = data["object"]["subscription_details"]["metadata"]["adresse"]
+            # member_postal_code = data["object"]["subscription_details"]["metadata"]["CP"]
+            # member_city = data["object"]["subscription_details"]["metadata"]["Ville"]
+            # membership_description = data["object"]["lines"]["data"][0]["description"]
 
+            # Initialize variables with default values
+            member_name = data["object"].get("customer_name", None)
+            member_email = data["object"].get("customer_email", None)
+            invoice_url = data["object"].get("hosted_invoice_url", None)
+
+            # Access subscription_details metadata safely
+            subscription_details = data["object"].get("subscription_details", {})
+            member_birthday = subscription_details.get("metadata", {}).get("Anniversaire", None)
+            member_address = subscription_details.get("metadata", {}).get("adresse", None)
+            member_postal_code = subscription_details.get("metadata", {}).get("CP", None)
+            member_city = subscription_details.get("metadata", {}).get("Ville", None)
+
+            # Access lines data description safely
+            lines_data = data["object"]["lines"]["data"][0] if "lines" in data["object"] else {}
+            membership_description = lines_data.get("description", None)
+
+            # Log data
+            logger.debug(f"member_name: {member_name}")
+            logger.debug(f"member_email: {member_email}")
+            logger.debug(f"invoice_url: {invoice_url}")
+            logger.debug(f"member_birthday: {member_birthday}")
+            logger.debug(f"member_address: {member_address}")
+            logger.debug(f"member_postal_code: {member_postal_code}")
+            logger.debug(f"member_city: {member_city}")
+            logger.debug(f"membership_description: {membership_description}")
+            
             # FOR TESTING
             member_email = "dev.aguillin@gmail.com"
             logger.debug(f"About to send email to {member_email}")
