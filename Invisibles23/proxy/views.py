@@ -126,7 +126,7 @@ class StripeWebhook(View):
 
         try:
             event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
-            data = json.loads(event["data"])
+            data = event["data"]
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
