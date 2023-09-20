@@ -162,11 +162,11 @@ class StripeWebhook(View):
             invoice_url = data["object"].get("hosted_invoice_url", None)
 
             # Access subscription_details metadata safely
-            subscription_details = data["object"].get("subscription_details", {})
-            member_birthday = subscription_details.get("metadata", {}).get("Anniversaire", None)
-            member_address = subscription_details.get("metadata", {}).get("adresse", None)
-            member_postal_code = subscription_details.get("metadata", {}).get("CP", None)
-            member_city = subscription_details.get("metadata", {}).get("Ville", None)
+            #subscription_details = data["object"].get("subscription_details", {})
+            member_birthday = data["metadata"].get("Anniversaire", None)
+            member_address = data["metadata"].get("adresse", None)
+            member_postal_code = data["metadata"].get("CP", None)
+            member_city = data["metadata"].get("Ville", None)
 
             # Access lines data description safely
             lines_data = data["object"]["lines"]["data"][0] if "lines" in data["object"] else {}
