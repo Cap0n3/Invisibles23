@@ -144,9 +144,7 @@ class StripeWebhook(View):
         elif event["type"] == "customer.subscription.created":
             logger.info("Customer subscription created")
 
-            # Get type o data 
-            logger.debug(f"Event type: {event['type']}")
-
+            # Log event data
             logger.debug(f"Event data: {data}")
     
             # Get data from event
@@ -192,32 +190,33 @@ class StripeWebhook(View):
             member_email = "dev.aguillin@gmail.com"
             logger.debug(f"About to send email to {member_email}")
 
-            # Send email to owner
-            sendEmail(
-                member_email,
-                "Un nouveau membre a rejoint l'association Les Invisibles",
-                "adhesion_notification.html",
-                {
-                    "name": member_name,
-                    "email": member_email,
-                    "birthday": member_birthday,
-                    "address": member_address,
-                    "postal_code": member_postal_code,
-                    "city": member_city,
-                    "description": membership_description,
-                },
-            )            
+
+            # # Send email to owner
+            # sendEmail(
+            #     member_email,
+            #     "Un nouveau membre a rejoint l'association Les Invisibles",
+            #     "adhesion_notification.html",
+            #     {
+            #         "name": member_name,
+            #         "email": member_email,
+            #         "birthday": member_birthday,
+            #         "address": member_address,
+            #         "postal_code": member_postal_code,
+            #         "city": member_city,
+            #         "description": membership_description,
+            #     },
+            # )            
             
-            # Send email to member
-            sendEmail(
-                member_email, 
-                "Adhésion à l'association Les Invisibles", 
-                "adhesion_email.html", 
-                {
-                    "name": member_name,
-                    "invoice_url": invoice_url,
-                }
-            )
+            # # Send email to member
+            # sendEmail(
+            #     member_email, 
+            #     "Adhésion à l'association Les Invisibles", 
+            #     "adhesion_email.html", 
+            #     {
+            #         "name": member_name,
+            #         "invoice_url": invoice_url,
+            #     }
+            # )
 
         return HttpResponse(status=200)
 
