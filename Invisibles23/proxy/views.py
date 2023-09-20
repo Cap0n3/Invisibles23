@@ -167,72 +167,94 @@ class StripeWebhook(View):
             # member_city = data["object"]["subscription_details"]["metadata"]["Ville"]
             # membership_description = data["object"]["lines"]["data"][0]["description"]
 
-            member_name = data["object"]["metadata"].get("Nom", None)
-            member_email = data["object"]["metadata"].get("Email", None)
-            member_birthday = data["object"]["metadata"].get("Anniversaire", None)
-            member_address = data["object"]["metadata"].get("adresse", None)
-            member_postal_code = data["object"]["metadata"].get("CP", None)
-            member_city = data["object"]["metadata"].get("Ville", None)
-            membership_description = data["object"]["items"]["data"][0]["price"].get("lookup_key", None)
+            subscription_data = {
+                "member_name": data["object"]["metadata"].get("Nom", None),
+                "member_email": data["object"]["metadata"].get("Email", None),
+                "member_birthday": data["object"]["metadata"].get("Anniversaire", None),
+                "member_address": data["object"]["metadata"].get("adresse", None),
+                "member_postal_code": data["object"]["metadata"].get("CP", None),
+                "member_city": data["object"]["metadata"].get("Ville", None),
+                "membership_description": data["object"]["items"]["data"][0]["price"].get("lookup_key", None)
+            }
 
             # Log data
-            logger.debug(f"Nom: {member_name}")
-            logger.debug(f"Email: {member_email}")
-            logger.debug(f"Anniversaire: {member_birthday}")
-            logger.debug(f"Adresse: {member_address}")
-            logger.debug(f"Code postal: {member_postal_code}")
-            logger.debug(f"Ville: {member_city}")
-            logger.debug(f"Description: {membership_description}")
+            logger.debug(f"Member name: {subscription_data['member_name']}")
+            logger.debug(f"Member email: {subscription_data['member_email']}")
+            logger.debug(f"Member birthday: {subscription_data['member_birthday']}")
+            logger.debug(f"Member address: {subscription_data['member_address']}")
+            logger.debug(f"Member postal code: {subscription_data['member_postal_code']}")
+            logger.debug(f"Member city: {subscription_data['member_city']}")
+            logger.debug(f"Membership description: {subscription_data['membership_description']}")
 
-            # Log metadata
-            logger.debug(f"Object: {data['object']}")
+            # Check if one vale of subscription_data is None
+            if None in subscription_data.values():
+                logger.error("One or more values are None")
+                sendEmail(
+                    "dev.aguillin@gmail.com",
+                    "Erreur lors de la création d'un abonnement",
+                    "error_notification.html",
+                    {
+                        "name": subscription_data["member_name"] if subscription_data["member_name"] else "Null",
+                        "email": subscription_data["member_email"] if subscription_data["member_email"] else "Null",
+                        "birthday": subscription_data["member_birthday"] if subscription_data["member_birthday"] else "Null",
+                        "address": subscription_data["member_address"] if subscription_data["member_address"] else "Null",
+                        "postal_code": subscription_data["member_postal_code"] if subscription_data["member_postal_code"] else "Null",
+                        "city": subscription_data["member_city"] if subscription_data["member_city"] else "Null",
+                        "description": subscription_data["membership_description"] if subscription_data["membership_description"] else "Null",
+                        "stripe_object": data,
+                    },
+                )
+                #return HttpResponse(status=400)
+            else:
+                # Log metadata
+                logger.debug(f"Object: {data['object']}")
 
-            # # Initialize variables with default values
-            # member_name = data["object"].get("customer_name", None)
-            # member_email = data["object"].get("customer_email", None)
-            # invoice_url = data["object"].get("hosted_invoice_url", None)
+                # # Initialize variables with default values
+                # member_name = data["object"].get("customer_name", None)
+                # member_email = data["object"].get("customer_email", None)
+                # invoice_url = data["object"].get("hosted_invoice_url", None)
 
-            # # Access subscription_details metadata safely
-            # #subscription_details = data["object"].get("subscription_details", {})
-            # member_birthday = data["metadata"].get("Anniversaire", None)
-            # member_address = data["metadata"].get("adresse", None)
-            # member_postal_code = data["metadata"].get("CP", None)
-            # member_city = data["metadata"].get("Ville", None)
+                # # Access subscription_details metadata safely
+                # #subscription_details = data["object"].get("subscription_details", {})
+                # member_birthday = data["metadata"].get("Anniversaire", None)
+                # member_address = data["metadata"].get("adresse", None)
+                # member_postal_code = data["metadata"].get("CP", None)
+                # member_city = data["metadata"].get("Ville", None)
 
-            # # Access lines data description safely
-            # lines_data = data["object"]["lines"]["data"][0] if "lines" in data["object"] else {}
-            # membership_description = lines_data.get("description", None)
+                # # Access lines data description safely
+                # lines_data = data["object"]["lines"]["data"][0] if "lines" in data["object"] else {}
+                # membership_description = lines_data.get("description", None)
 
-            # # Log data
-            # logger.debug(f"member_name: {member_name}")
-            # logger.debug(f"member_email: {member_email}")
-            # logger.debug(f"invoice_url: {invoice_url}")
-            # logger.debug(f"member_birthday: {member_birthday}")
-            # logger.debug(f"member_address: {member_address}")
-            # logger.debug(f"member_postal_code: {member_postal_code}")
-            # logger.debug(f"member_city: {member_city}")
-            # logger.debug(f"membership_description: {membership_description}")
-            
-            # FOR TESTING
-            member_email = "dev.aguillin@gmail.com"
-            logger.debug(f"About to send email to {member_email}")
+                # # Log data
+                # logger.debug(f"member_name: {member_name}")
+                # logger.debug(f"member_email: {member_email}")
+                # logger.debug(f"invoice_url: {invoice_url}")
+                # logger.debug(f"member_birthday: {member_birthday}")
+                # logger.debug(f"member_address: {member_address}")
+                # logger.debug(f"member_postal_code: {member_postal_code}")
+                # logger.debug(f"member_city: {member_city}")
+                # logger.debug(f"membership_description: {membership_description}")
+                
+                # FOR TESTING
+                member_email = "dev.aguillin@gmail.com"
+                logger.debug(f"About to send email to {member_email}")
 
 
-            # Send email to owner
-            sendEmail(
-                member_email,
-                "Un nouveau membre a rejoint l'association Les Invisibles",
-                "adhesion_notification.html",
-                {
-                    "name": member_name if member_name else "Null",
-                    "email": member_email if member_email else "Null",
-                    "birthday": member_birthday if member_birthday else "Null",
-                    "address": member_address if member_address else "Null",
-                    "postal_code": member_postal_code  if member_postal_code else "Null",
-                    "city": member_city if member_city else "Null",
-                    "description": membership_description if membership_description else "Null",
-                },
-            )            
+                # Send email to owner
+                sendEmail(
+                    member_email,
+                    "Un nouveau membre a rejoint l'association Les Invisibles",
+                    "adhesion_notification.html",
+                    {
+                        "name": subscription_data["member_name"] if subscription_data["member_name"] else "Null",
+                        "email": subscription_data["member_email"] if subscription_data["member_email"] else "Null",
+                        "birthday": subscription_data["member_birthday"] if subscription_data["member_birthday"] else "Null",
+                        "address": subscription_data["member_address"] if subscription_data["member_address"] else "Null",
+                        "postal_code": subscription_data["member_postal_code"] if subscription_data["member_postal_code"] else "Null",
+                        "city": subscription_data["member_city"] if subscription_data["member_city"] else "Null",
+                        "description": subscription_data["membership_description"] if subscription_data["membership_description"] else "Null",
+                    },
+                )            
             
             # # Send email to member
             # sendEmail(
