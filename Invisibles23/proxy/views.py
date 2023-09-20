@@ -163,7 +163,7 @@ class StripeWebhook(View):
             # membership_description = data["object"]["lines"]["data"][0]["description"]
 
             # Log metadata
-            logger.debug(f"Metadata: {data['metadata']}")
+            logger.debug(f"Object: {data['object']}")
 
             # # Initialize variables with default values
             # member_name = data["object"].get("customer_name", None)
