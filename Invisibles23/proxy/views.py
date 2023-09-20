@@ -154,7 +154,7 @@ class StripeWebhook(View):
             logger.debug (f"Event data type: {type(data)}")
 
             # Get keys of data
-            data_keys = data.keys()
+            data_keys = data["object"].keys()
             logger.debug(f"Data keys: {data_keys}")
     
             # Get data from event
