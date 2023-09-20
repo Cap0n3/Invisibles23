@@ -201,7 +201,8 @@ class StripeWebhook(View):
                         "postal_code": subscription_data["member_postal_code"] if subscription_data["member_postal_code"] else "Null",
                         "city": subscription_data["member_city"] if subscription_data["member_city"] else "Null",
                         "description": subscription_data["membership_description"] if subscription_data["membership_description"] else "Null",
-                        "stripe_object": data,
+                        # Convert data object to string in dict with key stripe_object
+                        "stripe_object": json.dumps(data["object"])
                     },
                 )
                 #return HttpResponse(status=400)
