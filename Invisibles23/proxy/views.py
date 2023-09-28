@@ -130,6 +130,7 @@ class StripeWebhook(View):
             event = stripe.Event.construct_from(
                 json.loads(payload), stripe_secret
             )
+            data = event["data"]
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -146,8 +147,6 @@ class StripeWebhook(View):
 
         elif event["type"] == "customer.subscription.created":
             logger.info("Customer subscription created")
-
-            data = event["data"]
 
             # Log event data
             logger.debug(f"Event data: {data}")
