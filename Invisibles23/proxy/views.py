@@ -255,6 +255,7 @@ class StripeWebhook(View):
                 "invoice_email.html", 
                 {
                     "name": invoice_data["member_name"],
+                    "email": invoice_data["member_email"],
                     "invoice_url": invoice_data["invoice_url"],
                     "membership_plan": invoice_data["plan"],
                 }
