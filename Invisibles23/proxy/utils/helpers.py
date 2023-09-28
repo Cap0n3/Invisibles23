@@ -45,7 +45,7 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}):
     # Replace the placeholders in email with the actual values
     if len(placeholders) != 0:
         for key, value in placeholders.items():
-            html_content = html_content.replace(f"{{{key}}}", value)
+            html_content = html_content.replace(f"{{{key}}}", value if value is not None else "None")
 
     # Create a MIMEText object for HTML content
     html_part = MIMEText(html_content, "html")

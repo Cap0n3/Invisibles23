@@ -186,26 +186,27 @@ class StripeWebhook(View):
             logger.debug(f"Member city: {subscription_data['member_city']}")
             logger.debug(f"Membership description: {subscription_data['membership_description']}")
 
-            # Check if one vale of subscription_data is None
+            # Check if any value of subscription_data is None to avoid errors
             if None in subscription_data.values():
                 logger.error("One or more values are None")
+                # Send email to developer
                 sendEmail(
                     "dev.aguillin@gmail.com",
                     "Erreur lors de la création d'un abonnement",
                     "error_notification.html",
                     {
-                        "name": subscription_data["member_name"] if subscription_data["member_name"] else "Null",
-                        "email": subscription_data["member_email"] if subscription_data["member_email"] else "Null",
-                        "birthday": subscription_data["member_birthday"] if subscription_data["member_birthday"] else "Null",
-                        "address": subscription_data["member_address"] if subscription_data["member_address"] else "Null",
-                        "postal_code": subscription_data["member_postal_code"] if subscription_data["member_postal_code"] else "Null",
-                        "city": subscription_data["member_city"] if subscription_data["member_city"] else "Null",
-                        "description": subscription_data["membership_description"] if subscription_data["membership_description"] else "Null",
+                        "name": subscription_data["member_name"],
+                        "email": subscription_data["member_email"],
+                        "birthday": subscription_data["member_birthday"],
+                        "address": subscription_data["member_address"],
+                        "postal_code": subscription_data["member_postal_code"],
+                        "city": subscription_data["member_city"],
+                        "description": subscription_data["membership_description"],
                         # Convert data object to string in dict with key stripe_object
                         "stripe_object": json.dumps(data["object"])
                     },
                 )
-                #return HttpResponse(status=400)
+                return HttpResponse(status=400, content="One or more values are None")
             else:
                 # Log metadata
                 logger.debug(f"Object: {data['object']}")
@@ -247,13 +248,13 @@ class StripeWebhook(View):
                     "Un nouveau membre a rejoint l'association Les Invisibles",
                     "adhesion_notification.html",
                     {
-                        "name": subscription_data["member_name"] if subscription_data["member_name"] else "Null",
-                        "email": subscription_data["member_email"] if subscription_data["member_email"] else "Null",
-                        "birthday": subscription_data["member_birthday"] if subscription_data["member_birthday"] else "Null",
-                        "address": subscription_data["member_address"] if subscription_data["member_address"] else "Null",
-                        "postal_code": subscription_data["member_postal_code"] if subscription_data["member_postal_code"] else "Null",
-                        "city": subscription_data["member_city"] if subscription_data["member_city"] else "Null",
-                        "description": subscription_data["membership_description"] if subscription_data["membership_description"] else "Null",
+                        "name": subscription_data["member_name"],
+                        "email": subscription_data["member_email"],
+                        "birthday": subscription_data["member_birthday"],
+                        "address": subscription_data["member_address"],
+                        "postal_code": subscription_data["member_postal_code"],
+                        "city": subscription_data["member_city"],
+                        "description": subscription_data["membership_description"],
                     },
                 )            
             
