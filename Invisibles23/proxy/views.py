@@ -242,7 +242,6 @@ class StripeWebhook(View):
                 "member_name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
                 "member_email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
                 "invoice_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
-                "membership_description": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
             }
 
             logger.debug(f"invoice_data: {invoice_data}")
