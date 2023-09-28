@@ -238,13 +238,14 @@ class StripeWebhook(View):
                 # logger.debug(f"membership_description: {membership_description}")
                 
                 # FOR TESTING
+                owner_email = "dev.aguillin@gmail.com"
                 member_email = "dev.aguillin@gmail.com"
-                logger.debug(f"About to send email to {member_email}")
+                logger.debug(f"About to send email to {owner_email}")
 
 
                 # Send email to owner
                 sendEmail(
-                    member_email,
+                    owner_email,
                     "Un nouveau membre a rejoint l'association Les Invisibles",
                     "adhesion_notification.html",
                     {
@@ -258,16 +259,30 @@ class StripeWebhook(View):
                     },
                 )            
             
-            # # Send email to member
+            # Send email to member
+            sendEmail(
+                member_email, 
+                "Confirmation d'adhésion à l'association Les Invisibles", 
+                "adhesion_email.html", 
+                {
+                    "name": subscription_data["member_name"],
+                }
+            )
+
+        elif event["type"] == "invoice.finalized":
+            logger.info("Invoice finalized")
+            logger.debug(f"Event data for invoice finalized : {event['data']}")
             # sendEmail(
             #     member_email, 
-            #     "Adhésion à l'association Les Invisibles", 
-            #     "adhesion_email.html", 
+            #     "Facture d'adhésion à l'association Les Invisibles", 
+            #     "invoice_email.html", 
             #     {
-            #         "name": member_name,
+            #         "name": subscription_data["member_name"],
             #         "invoice_url": invoice_url,
             #     }
             # )
+
+                
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
         
