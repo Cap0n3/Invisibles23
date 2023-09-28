@@ -240,6 +240,7 @@ class StripeWebhook(View):
             invoice_data = {
                 "member_name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
                 "member_email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
+                "customer_id": data["object"]["customer"] if data["object"]["customer"] else None,
                 "invoice_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
                 "plan": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
             }
@@ -257,6 +258,7 @@ class StripeWebhook(View):
                     "name": invoice_data["member_name"],
                     "email": invoice_data["member_email"],
                     "invoice_url": invoice_data["invoice_url"],
+                    "customer_id": invoice_data["customer_id"],
                     "membership_plan": invoice_data["plan"],
                 }
             )
