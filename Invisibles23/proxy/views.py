@@ -188,7 +188,7 @@ class StripeWebhook(View):
 
             # Check if any value of subscription_data is None to avoid errors
             if None in subscription_data.values():
-                logger.error("One or more values are None")
+                logger.error("One or more values are None - sending email to developer")
                 # Send email to developer
                 sendEmail(
                     "dev.aguillin@gmail.com",
@@ -268,7 +268,9 @@ class StripeWebhook(View):
             #         "invoice_url": invoice_url,
             #     }
             # )
-
+        else:
+            logger.warning(f"Unhandled event type: {event['type']}")
+        
         return HttpResponse(status=200)
 
 class EmailSender(View):
