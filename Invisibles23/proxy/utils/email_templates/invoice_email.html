@@ -4,10 +4,29 @@
     <title>Reçu de paiement pour votre adhésion</title>
 </head>
 <body>
-    <p><strong>Objet : </strong>Reçu de paiement pour votre adhésion à l'association Les Invisibles !</p>
+    <p><strong>Objet : </strong>Reçu de paiement pour votre adhésion à l'association Les Invisibles</p>
     <p>Cher·ère {name},</p>
     <p>Vous trouverez ci-dessous le lien pour consulter et télécharger reçu de paiement pour votre adhésion à l'association Les Invisibles.</p>
+    <br />
     <p><a href="{invoice_url}">Lien vers le reçu de paiement</a></p>
+    <br />
+    <p>Notez que vous serez facturé cycliquement pour votre adhésion et, selon le type de cotisation choisi, vous recevrez un reçu de paiement mensuellement ou annuellement.</p>
+    <p>Vous pouvez bien-sûr suspendre votre adhésion à tout moment en nous contactant par e-mail.</p>
+    <p>Voici un récapitulatif de votre adhésion :</p>
+    <table>
+        <tr>
+            <th align="left">Nom</th>
+            <td>{name}</td>
+        </tr>
+        <tr>
+            <th align="left">Adresse e-mail</th>
+            <td>{email}</td>
+        </tr>
+        <tr>
+            <th align="left">Type de cotisation</th>
+            <td>{membership_plan}</td>
+        </tr>
+    </table>
     <p>Si vous avez des questions, n'hésitez pas à nous contacter par e-mail.</p>
     <p>Avec une profonde gratitude,</p>
     <p>L'Association Les Invisibles<br>association@lesinvisibles.ch</p>
