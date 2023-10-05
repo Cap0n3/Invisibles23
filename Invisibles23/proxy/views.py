@@ -230,9 +230,9 @@ class StripeWebhook(View):
                 }
             )
 
-        elif event["type"] == "invoice.finalized":
-            logger.info("Invoice finalized")
-            #logger.debug(f"Event data for invoice finalized : {event['data']}")
+        elif event["type"] == "invoice.paid":
+            logger.info("Invoice paid")
+            logger.debug(f"Event data for invoice paid : {event['data']}")
             
             invoice_data = {
                 "member_name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
@@ -242,7 +242,7 @@ class StripeWebhook(View):
                 "plan": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
             }
 
-            #logger.debug(f"invoice_data: {invoice_data}")
+            logger.debug(f"invoice_data: {invoice_data}")
             
             # Sending invoice to member
             logger.info(f"Sending invoice to member at {invoice_data['member_email']} ...")
@@ -275,9 +275,6 @@ class StripeWebhook(View):
                     "membership_plan": invoice_data["plan"],
                 },
             )
-        
-        elif event["type"] == "invoice.paid":
-            logger.debug(f"Event data for invoice paid : {event['data']}")
         
         return HttpResponse(status=200)
 
