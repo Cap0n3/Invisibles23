@@ -266,7 +266,7 @@ class StripeWebhook(View):
             sendEmail(
                 settings.OWNER_EMAIL,
                 "Reçu de paiement adhésion",
-                "invoice_email.html",
+                "invoice_email_accounting.html",
                 {
                     "name": invoice_data["member_name"],
                     "email": invoice_data["member_email"],
