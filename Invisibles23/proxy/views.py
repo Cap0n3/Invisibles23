@@ -280,10 +280,10 @@ class StripeWebhook(View):
                 "Erreur lors du paiement d'un abonnement",
                 "payment_failed_notification.html",
                 {
-                    "name": data["object"]["customer_name"],
-                    "email": data["object"]["customer_email"],
-                    "payment_intent_id": data["object"]["id"],
-                    "payment_intent_last_payment_error": data["object"]["last_payment_error"]["message"],
+                    "name": data["object"]["last_payment_error"]["payment_method"]["billing_details"]["name"] if data["object"]["last_payment_error"]["payment_method"]["billing_details"]["name"] else None,
+                    "email": data["object"]["last_payment_error"]["payment_method"]["billing_details"]["email"] if data["object"]["last_payment_error"]["payment_method"]["billing_details"]["email"] else None,
+                    "payment_intent_id": data["object"]["id"] if data["object"]["id"] else None,
+                    "payment_intent_last_payment_error": data["object"]["last_payment_error"]["message"] if data["object"]["last_payment_error"]["message"] else None,
                 },
             )
         elif event["type"] == "invoice.payment_failed":
@@ -296,9 +296,9 @@ class StripeWebhook(View):
                 "Erreur lors du paiement d'un abonnement",
                 "payment_failed_email.html",
                 {
-                    "name": data["object"]["customer_name"],
-                    "email": data["object"]["customer_email"],
-                    "checkout_url": data["object"]["hosted_invoice_url"],
+                    "name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
+                    "email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
+                    "checkout_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
                 },
             )
 
