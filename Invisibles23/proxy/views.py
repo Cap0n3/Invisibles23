@@ -139,8 +139,6 @@ class StripeWebhook(View):
             return HttpResponse(status=403)
 
         # Handle events
-          
-
         if event["type"] == "customer.subscription.created":
             logger.info("Customer subscription created")
 
@@ -274,8 +272,36 @@ class StripeWebhook(View):
    
         elif event["type"] == "payment_intent.payment_failed":
             logger.warning("Payment intent failed")
-            logger.warning(f"Event data for payment intent failed : {event['data']}")
-        
+            logger.debug(f"Event data for payment intent failed : {event['data']}")
+
+            # Send email to owner for payment intent failed
+            sendEmail(
+                settings.OWNER_EMAIL,
+                "Erreur lors du paiement d'un abonnement",
+                "payment_failed_notification.html",
+                {
+                    "name": data["object"]["customer_name"],
+                    "email": data["object"]["customer_email"],
+                    "payment_intent_id": data["object"]["id"],
+                    "payment_intent_last_payment_error": data["object"]["last_payment_error"]["message"],
+                },
+            )
+        elif event["type"] == "invoice.payment_failed":
+            logger.warning("Payment failed - Sending back checkout link to member for payment.")
+            logger.debug(f"Event data for payment failed : {event['data']}")
+
+            # Resend checkout link to member
+            sendEmail(
+                data["object"]["customer_email"],
+                "Erreur lors du paiement d'un abonnement",
+                "payment_failed_email.html",
+                {
+                    "name": data["object"]["customer_name"],
+                    "email": data["object"]["customer_email"],
+                    "checkout_url": data["object"]["hosted_invoice_url"],
+                },
+            )
+
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
 

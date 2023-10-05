@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problème de paiement lors d'un checkout</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <p><strong>Objet : </strong>Problème de paiement lors d'un checkout sur le site lesinvisibles.ch.</p>
+    <p>Chère Tamara,</p>
+    <p>Il semble qu'il y a eu un problème lors du paiement durant l'adhésion d'un membres sur le site lesinvisibles.ch.</p>
+    <p>Il est possible que la carte bancaire du membre ait été refusée durant le checkout ou qu'un autre problème soit survenu.</p>
+    <p>Le membre en question a reçu un e-mail l'informant de l'erreur et il sera prié de réessayer le réglement. Pour pouvoir suivre l'état du paiement, tu peux te connecter sur le tableau de bord de <a href="https://stripe.com/">Stripe</a> avec tes identifiants.</p> 
+    <p>Voici les informations concernant le membre :</p>
+    <table style="border: 1px solid black;">
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Nom</th>
+            <td style="border: 1px solid black; padding: 5px;">{name}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Adresse e-mail</th>
+            <td style="border: 1px solid black; padding: 5px;">{email}</td>
+        </tr>
+        <tr>
+            <th align="left" style="border: 1px solid black; padding: 5px;">Message d'erreur</th>
+            <td style="border: 1px solid black; padding: 5px;">{payment_intent_last_payment_error}</td>
+        </tr>
+    </table>
+    <p><i>Cet e-mail a été envoyé automatiquement par le système de gestion des adhésions de l'association "Les Invisibles".</i></p>
+    <p>L'Association Les Invisibles<br>association@lesinvisibles.ch</p>
+</body>
+</html>
