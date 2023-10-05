@@ -200,14 +200,11 @@ class StripeWebhook(View):
             else:
                 # Log metadata
                 logger.debug(f"Object: {data['object']}")
-
-                
-                owner_email = "dev.aguillin@gmail.com" # FOR TESTING
-                logger.info(f"Sending email to owner at {owner_email} ...")
+                logger.info(f"Sending email to owner at {settings.OWNER_EMAIL} ...")
 
                 # Send email to owner
                 sendEmail(
-                    owner_email,
+                    settings.OWNER_EMAIL,
                     "Un nouveau membre a rejoint l'association Les Invisibles",
                     "adhesion_notification.html",
                     {
@@ -261,6 +258,22 @@ class StripeWebhook(View):
                     "customer_id": invoice_data["customer_id"],
                     "membership_plan": invoice_data["plan"],
                 }
+            )
+
+            # Sending invoice to owner
+            logger.info(f"Sending invoice to owner at {settings.DEFAULT_FROM_EMAIL} ...")
+
+            sendEmail(
+                settings.OWNER_EMAIL,
+                "Reçu de paiement adhésion",
+                "invoice_email.html",
+                {
+                    "name": invoice_data["member_name"],
+                    "email": invoice_data["member_email"],
+                    "invoice_url": invoice_data["invoice_url"],
+                    "customer_id": invoice_data["customer_id"],
+                    "membership_plan": invoice_data["plan"],
+                },
             )
         
         return HttpResponse(status=200)
