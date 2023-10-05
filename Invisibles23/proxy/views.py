@@ -175,7 +175,7 @@ class StripeWebhook(View):
                 logger.error("One or more values are None - sending email to developer")
                 # Send email to developer
                 sendEmail(
-                    "dev.aguillin@gmail.com",
+                    settings.DEV_EMAIL,
                     "Erreur lors de la création d'un abonnement",
                     "error_notification.html",
                     {
@@ -223,6 +223,9 @@ class StripeWebhook(View):
                     "name": subscription_data['member_email'],
                 }
             )
+        
+        elif event["type"] == "customer.subscription":
+            logger.info("CUSTOMER subscription event HAS BEEN handled")
 
         elif event["type"] == "invoice.paid":
             logger.info("Invoice paid")

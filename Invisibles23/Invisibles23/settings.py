@@ -25,8 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Domain (no www or https:// at the beginning)
 DOMAIN = "www.lesinvisibles.ch"
 
-# Owner email address
+# Owner & Dev email addresses
 OWNER_EMAIL = "dev.aguillin@gmail.com"
+DEV_EMAIL = "dev.aguillin@gmail.com"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
