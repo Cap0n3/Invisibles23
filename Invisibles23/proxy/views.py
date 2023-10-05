@@ -293,7 +293,7 @@ class StripeWebhook(View):
             # Resend checkout link to member
             sendEmail(
                 data["object"]["customer_email"],
-                "Erreur lors du paiement d'un abonnement",
+                "Invitation à reprendre le paiement",
                 "payment_failed_email.html",
                 {
                     "name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
