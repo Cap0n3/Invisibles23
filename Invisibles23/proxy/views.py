@@ -139,79 +139,38 @@ class StripeWebhook(View):
             return HttpResponse(status=403)
 
         # Handle events
-        if event["type"] == "customer.subscription.created":
-            logger.info("Customer subscription created")
+        if event["type"] == "checkout.session.completed":
+            logger.info("Checkout session completed")
 
             # Log event data
             logger.debug(f"Event data: {data}")
-            logger.debug (f"Event data type: {type(data)}")
-
-            # Get keys of data
-            data_keys = data["object"].keys()
-            logger.debug(f"Data keys: {data_keys}")
-    
-
+            
             subscription_data = {
-                "member_name": data["object"]["metadata"].get("Nom", None),
-                "member_email": data["object"]["metadata"].get("Email", None),
-                "member_birthday": data["object"]["metadata"].get("Anniversaire", None),
-                "member_address": data["object"]["metadata"].get("adresse", None),
-                "member_postal_code": data["object"]["metadata"].get("CP", None),
-                "member_city": data["object"]["metadata"].get("Ville", None),
-                "membership_description": data["object"]["items"]["data"][0]["price"].get("lookup_key", None)
+                "member_name": data["object"]["customer_details"].get("name", None),
+                "member_email": data["object"]["customer_details"].get("email", None),
+                "member_country": data["object"]["customer_details"]["address"].get("country", None),
             }
 
             # Log data
             logger.debug(f"Member name: {subscription_data['member_name']}")
             logger.debug(f"Member email: {subscription_data['member_email']}")
-            logger.debug(f"Member birthday: {subscription_data['member_birthday']}")
-            logger.debug(f"Member address: {subscription_data['member_address']}")
-            logger.debug(f"Member postal code: {subscription_data['member_postal_code']}")
-            logger.debug(f"Member city: {subscription_data['member_city']}")
-            logger.debug(f"Membership description: {subscription_data['membership_description']}")
+            logger.debug(f"Member country: {subscription_data['member_country']}")
 
-            # Check if any value of subscription_data is None to avoid errors
-            if None in subscription_data.values():
-                logger.error("One or more values are None - sending email to developer")
-                # Send email to developer
-                sendEmail(
-                    settings.DEV_EMAIL,
-                    "Erreur lors de la création d'un abonnement",
-                    "error_notification.html",
-                    {
-                        "name": subscription_data["member_name"],
-                        "email": subscription_data["member_email"],
-                        "birthday": subscription_data["member_birthday"],
-                        "address": subscription_data["member_address"],
-                        "postal_code": subscription_data["member_postal_code"],
-                        "city": subscription_data["member_city"],
-                        "description": subscription_data["membership_description"],
-                        # Convert data object to string in dict with key stripe_object
-                        "stripe_object": json.dumps(data["object"])
-                    },
-                )
-                return HttpResponse(status=400, content="One or more values are None")
-            else:
-                # Log metadata
-                #logger.debug(f"Object: {data['object']}")
-                logger.info(f"Sending email to owner at {settings.OWNER_EMAIL} ...")
+            # Log metadata
+            logger.info(f"Sending email to owner at {settings.OWNER_EMAIL} ...")
 
-                # Send email to owner
-                sendEmail(
-                    settings.OWNER_EMAIL,
-                    "Un nouveau membre a rejoint l'association Les Invisibles",
-                    "adhesion_notification.html",
-                    {
-                        "name": subscription_data["member_name"],
-                        "email": subscription_data["member_email"],
-                        "birthday": subscription_data["member_birthday"],
-                        "address": subscription_data["member_address"],
-                        "postal_code": subscription_data["member_postal_code"],
-                        "city": subscription_data["member_city"],
-                        "description": subscription_data["membership_description"],
-                    },
-                )            
-            
+            # Send email to owner
+            sendEmail(
+                settings.OWNER_EMAIL,
+                "Un nouveau membre a rejoint l'association Les Invisibles",
+                "adhesion_notification.html",
+                {
+                    "name": subscription_data["member_name"],
+                    "email": subscription_data["member_email"],
+                    "country": subscription_data["member_country"],
+                },
+            )            
+        
             logger.info(f"Sending email to member at {subscription_data['member_email']} ...")
             
             # Send email to member
@@ -223,9 +182,6 @@ class StripeWebhook(View):
                     "name": subscription_data['member_email'],
                 }
             )
-        
-        elif event["type"] == "customer.subscription":
-            logger.info("CUSTOMER subscription event HAS BEEN handled")
 
         elif event["type"] == "invoice.paid":
             logger.info("Invoice paid")
