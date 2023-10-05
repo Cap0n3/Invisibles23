@@ -179,7 +179,7 @@ class StripeWebhook(View):
                 "Confirmation d'adhésion à l'association Les Invisibles", 
                 "adhesion_email.html", 
                 {
-                    "name": subscription_data['member_email'],
+                    "name": subscription_data['member_name'],
                 }
             )
 
@@ -229,25 +229,23 @@ class StripeWebhook(View):
                 },
             )
    
-        elif event["type"] == "payment_intent.payment_failed":
-            logger.warning("Payment intent failed")
-            logger.debug(f"Event data for payment intent failed : {event['data']}")
+        elif event["type"] == "invoice.payment_failed":
+            logger.warning("Payment failed - Sending back checkout link for payment.")
+            logger.debug(f"Event data for payment failed : {event['data']}")
 
-            # Send email to owner for payment intent failed
+            # Send email to owner for payment failed
             sendEmail(
                 settings.OWNER_EMAIL,
                 "Erreur lors du paiement d'un abonnement",
                 "payment_failed_notification.html",
                 {
-                    "name": data["object"]["last_payment_error"]["payment_method"]["billing_details"]["name"] if data["object"]["last_payment_error"]["payment_method"]["billing_details"]["name"] else None,
-                    "email": data["object"]["last_payment_error"]["payment_method"]["billing_details"]["email"] if data["object"]["last_payment_error"]["payment_method"]["billing_details"]["email"] else None,
-                    "payment_intent_id": data["object"]["id"] if data["object"]["id"] else None,
-                    "payment_intent_last_payment_error": data["object"]["last_payment_error"]["message"] if data["object"]["last_payment_error"]["message"] else None,
+                    "name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
+                    "email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
+                    "customer_id": data["object"]["customer"] if data["object"]["customer"] else None,
+                    "subscription_id": data["object"]["subscription"] if data["object"]["subscription"] else None,
+                    "subcription_type": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
                 },
             )
-        elif event["type"] == "invoice.payment_failed":
-            logger.warning("Payment failed - Sending back checkout link to member for payment.")
-            logger.debug(f"Event data for payment failed : {event['data']}")
 
             # Resend checkout link to member
             sendEmail(
