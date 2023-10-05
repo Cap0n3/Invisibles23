@@ -125,8 +125,6 @@ class StripeWebhook(View):
         event = None
 
         try:
-            # event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
-            # data = event["data"]
             event = stripe.Event.construct_from(
                 json.loads(payload), stripe_secret
             )
@@ -140,143 +138,149 @@ class StripeWebhook(View):
             logger.error("Invalid signature")
             return HttpResponse(status=403)
 
-        # Handle the event
-        if event["type"] == "checkout.session.completed":
+        # Handle events
+        if event["type"] == "payment_intent.succeeded":
             # Maybe log the event (to do later)
-            logger.info("Checkout session completed")     
+            logger.info("Payment intent succeeded")   
 
-        elif event["type"] == "customer.subscription.created":
-            logger.info("Customer subscription created")
+            if event["type"] == "customer.subscription.created":
+                logger.info("Customer subscription created")
 
-            # Log event data
-            logger.debug(f"Event data: {data}")
-            logger.debug (f"Event data type: {type(data)}")
+                # Log event data
+                logger.debug(f"Event data: {data}")
+                logger.debug (f"Event data type: {type(data)}")
 
-            # Get keys of data
-            data_keys = data["object"].keys()
-            logger.debug(f"Data keys: {data_keys}")
-    
+                # Get keys of data
+                data_keys = data["object"].keys()
+                logger.debug(f"Data keys: {data_keys}")
+        
 
-            subscription_data = {
-                "member_name": data["object"]["metadata"].get("Nom", None),
-                "member_email": data["object"]["metadata"].get("Email", None),
-                "member_birthday": data["object"]["metadata"].get("Anniversaire", None),
-                "member_address": data["object"]["metadata"].get("adresse", None),
-                "member_postal_code": data["object"]["metadata"].get("CP", None),
-                "member_city": data["object"]["metadata"].get("Ville", None),
-                "membership_description": data["object"]["items"]["data"][0]["price"].get("lookup_key", None)
-            }
+                subscription_data = {
+                    "member_name": data["object"]["metadata"].get("Nom", None),
+                    "member_email": data["object"]["metadata"].get("Email", None),
+                    "member_birthday": data["object"]["metadata"].get("Anniversaire", None),
+                    "member_address": data["object"]["metadata"].get("adresse", None),
+                    "member_postal_code": data["object"]["metadata"].get("CP", None),
+                    "member_city": data["object"]["metadata"].get("Ville", None),
+                    "membership_description": data["object"]["items"]["data"][0]["price"].get("lookup_key", None)
+                }
 
-            # Log data
-            logger.debug(f"Member name: {subscription_data['member_name']}")
-            logger.debug(f"Member email: {subscription_data['member_email']}")
-            logger.debug(f"Member birthday: {subscription_data['member_birthday']}")
-            logger.debug(f"Member address: {subscription_data['member_address']}")
-            logger.debug(f"Member postal code: {subscription_data['member_postal_code']}")
-            logger.debug(f"Member city: {subscription_data['member_city']}")
-            logger.debug(f"Membership description: {subscription_data['membership_description']}")
+                # Log data
+                logger.debug(f"Member name: {subscription_data['member_name']}")
+                logger.debug(f"Member email: {subscription_data['member_email']}")
+                logger.debug(f"Member birthday: {subscription_data['member_birthday']}")
+                logger.debug(f"Member address: {subscription_data['member_address']}")
+                logger.debug(f"Member postal code: {subscription_data['member_postal_code']}")
+                logger.debug(f"Member city: {subscription_data['member_city']}")
+                logger.debug(f"Membership description: {subscription_data['membership_description']}")
 
-            # Check if any value of subscription_data is None to avoid errors
-            if None in subscription_data.values():
-                logger.error("One or more values are None - sending email to developer")
-                # Send email to developer
+                # Check if any value of subscription_data is None to avoid errors
+                if None in subscription_data.values():
+                    logger.error("One or more values are None - sending email to developer")
+                    # Send email to developer
+                    sendEmail(
+                        "dev.aguillin@gmail.com",
+                        "Erreur lors de la création d'un abonnement",
+                        "error_notification.html",
+                        {
+                            "name": subscription_data["member_name"],
+                            "email": subscription_data["member_email"],
+                            "birthday": subscription_data["member_birthday"],
+                            "address": subscription_data["member_address"],
+                            "postal_code": subscription_data["member_postal_code"],
+                            "city": subscription_data["member_city"],
+                            "description": subscription_data["membership_description"],
+                            # Convert data object to string in dict with key stripe_object
+                            "stripe_object": json.dumps(data["object"])
+                        },
+                    )
+                    return HttpResponse(status=400, content="One or more values are None")
+                else:
+                    # Log metadata
+                    #logger.debug(f"Object: {data['object']}")
+                    logger.info(f"Sending email to owner at {settings.OWNER_EMAIL} ...")
+
+                    # Send email to owner
+                    sendEmail(
+                        settings.OWNER_EMAIL,
+                        "Un nouveau membre a rejoint l'association Les Invisibles",
+                        "adhesion_notification.html",
+                        {
+                            "name": subscription_data["member_name"],
+                            "email": subscription_data["member_email"],
+                            "birthday": subscription_data["member_birthday"],
+                            "address": subscription_data["member_address"],
+                            "postal_code": subscription_data["member_postal_code"],
+                            "city": subscription_data["member_city"],
+                            "description": subscription_data["membership_description"],
+                        },
+                    )            
+                
+                logger.info(f"Sending email to member at {subscription_data['member_email']} ...")
+                
+                # Send email to member
                 sendEmail(
-                    "dev.aguillin@gmail.com",
-                    "Erreur lors de la création d'un abonnement",
-                    "error_notification.html",
+                    subscription_data["member_email"], 
+                    "Confirmation d'adhésion à l'association Les Invisibles", 
+                    "adhesion_email.html", 
                     {
-                        "name": subscription_data["member_name"],
-                        "email": subscription_data["member_email"],
-                        "birthday": subscription_data["member_birthday"],
-                        "address": subscription_data["member_address"],
-                        "postal_code": subscription_data["member_postal_code"],
-                        "city": subscription_data["member_city"],
-                        "description": subscription_data["membership_description"],
-                        # Convert data object to string in dict with key stripe_object
-                        "stripe_object": json.dumps(data["object"])
-                    },
+                        "name": subscription_data['member_email'],
+                    }
                 )
-                return HttpResponse(status=400, content="One or more values are None")
-            else:
-                # Log metadata
-                #logger.debug(f"Object: {data['object']}")
-                logger.info(f"Sending email to owner at {settings.OWNER_EMAIL} ...")
 
-                # Send email to owner
+            elif event["type"] == "invoice.paid":
+                logger.info("Invoice paid")
+                logger.debug(f"Event data for invoice paid : {event['data']}")
+                
+                invoice_data = {
+                    "member_name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
+                    "member_email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
+                    "customer_id": data["object"]["customer"] if data["object"]["customer"] else None,
+                    "invoice_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
+                    "plan": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
+                }
+
+                logger.debug(f"invoice_data: {invoice_data}")
+                
+                # Sending invoice to member
+                logger.info(f"Sending invoice to member at {invoice_data['member_email']} ...")
+
+                sendEmail(
+                    invoice_data['member_email'], 
+                    "Reçu de paiement adhésion", 
+                    "invoice_email.html", 
+                    {
+                        "name": invoice_data["member_name"],
+                        "email": invoice_data["member_email"],
+                        "invoice_url": invoice_data["invoice_url"],
+                        "customer_id": invoice_data["customer_id"],
+                        "membership_plan": invoice_data["plan"],
+                    }
+                )
+
+                # Sending invoice to owner
+                logger.info(f"Sending invoice to owner at {settings.DEFAULT_FROM_EMAIL} ...")
+
                 sendEmail(
                     settings.OWNER_EMAIL,
-                    "Un nouveau membre a rejoint l'association Les Invisibles",
-                    "adhesion_notification.html",
+                    "Reçu de paiement adhésion",
+                    "invoice_email_accounting.html",
                     {
-                        "name": subscription_data["member_name"],
-                        "email": subscription_data["member_email"],
-                        "birthday": subscription_data["member_birthday"],
-                        "address": subscription_data["member_address"],
-                        "postal_code": subscription_data["member_postal_code"],
-                        "city": subscription_data["member_city"],
-                        "description": subscription_data["membership_description"],
+                        "name": invoice_data["member_name"],
+                        "email": invoice_data["member_email"],
+                        "invoice_url": invoice_data["invoice_url"],
+                        "customer_id": invoice_data["customer_id"],
+                        "membership_plan": invoice_data["plan"],
                     },
-                )            
+                )
             
-            logger.info(f"Sending email to member at {subscription_data['member_email']} ...")
-            
-            # Send email to member
-            sendEmail(
-                subscription_data["member_email"], 
-                "Confirmation d'adhésion à l'association Les Invisibles", 
-                "adhesion_email.html", 
-                {
-                    "name": subscription_data['member_email'],
-                }
-            )
-
-        elif event["type"] == "invoice.paid":
-            logger.info("Invoice paid")
-            logger.debug(f"Event data for invoice paid : {event['data']}")
-            
-            invoice_data = {
-                "member_name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
-                "member_email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
-                "customer_id": data["object"]["customer"] if data["object"]["customer"] else None,
-                "invoice_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
-                "plan": data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None,
-            }
-
-            logger.debug(f"invoice_data: {invoice_data}")
-            
-            # Sending invoice to member
-            logger.info(f"Sending invoice to member at {invoice_data['member_email']} ...")
-
-            sendEmail(
-                invoice_data['member_email'], 
-                "Reçu de paiement adhésion", 
-                "invoice_email.html", 
-                {
-                    "name": invoice_data["member_name"],
-                    "email": invoice_data["member_email"],
-                    "invoice_url": invoice_data["invoice_url"],
-                    "customer_id": invoice_data["customer_id"],
-                    "membership_plan": invoice_data["plan"],
-                }
-            )
-
-            # Sending invoice to owner
-            logger.info(f"Sending invoice to owner at {settings.DEFAULT_FROM_EMAIL} ...")
-
-            sendEmail(
-                settings.OWNER_EMAIL,
-                "Reçu de paiement adhésion",
-                "invoice_email_accounting.html",
-                {
-                    "name": invoice_data["member_name"],
-                    "email": invoice_data["member_email"],
-                    "invoice_url": invoice_data["invoice_url"],
-                    "customer_id": invoice_data["customer_id"],
-                    "membership_plan": invoice_data["plan"],
-                },
-            )
+            return HttpResponse(status=200)
         
-        return HttpResponse(status=200)
+        elif event["type"] == "payment_intent.payment_failed":
+            logger.warning("Payment intent failed")
+            logger.warning(f"Event data for payment intent failed : {event['data']}")
+        else:
+            logger.warning(f"Unhandled event type: {event['type']}")
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
