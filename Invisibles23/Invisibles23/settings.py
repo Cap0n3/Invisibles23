@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DOMAIN = "www.lesinvisibles.ch"
 
 # Owner & Dev email addresses
-OWNER_EMAIL = "dev.aguillin@gmail.com"
+OWNER_EMAIL = "association@lesinvisibles.ch"
 DEV_EMAIL = "dev.aguillin@gmail.com"
 
 # Quick-start development settings - unsuitable for production
