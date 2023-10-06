@@ -238,6 +238,9 @@ class MembershipView(View):
             _lookup_key = (
                 "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
             )
+        else:
+            logger.error("Invalid subscription or frequency")
+            raise ValueError("Invalid subscription or frequency")
 
         return _lookup_key
 
@@ -334,7 +337,7 @@ class MembershipView(View):
 
             except Exception as error:
                 logger.error(f"An exception occurred: {error}")
-                return render(request, self.template_name, {"form": form, "error": "An error occurred during the request."})
+                return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
             
         else:
             logger.error("Form is not valid")
