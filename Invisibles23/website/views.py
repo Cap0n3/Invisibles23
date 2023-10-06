@@ -328,7 +328,7 @@ class MembershipView(View):
                     },
                     mode="subscription",
                     success_url=domain + "/success/",
-                    cancel_url=domain + "/cancel/",
+                    cancel_url=domain + "/membership/",
                 )
             
                 logger.info("Session created successfully ... redirecting to checkout")
