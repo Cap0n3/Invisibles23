@@ -304,8 +304,8 @@ class Event(models.Model):
 
 class MembershipSection(BaseSections):
     class Meta:
-        verbose_name = "Section Adhésion"
-        verbose_name_plural = "Section Adhésion"
+        verbose_name = "Page Adhésion"
+        verbose_name_plural = "Page Adhésion"
 
     def __str__(self):
         return self.title
