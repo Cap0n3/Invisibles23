@@ -18,6 +18,7 @@ from .models import (
     Event,
     ContactSection,
     AssoStatus,
+    MembershipSection,
 )
 from .filters import (
     AdminRessourcesFilter,
@@ -244,9 +245,20 @@ class MembershipView(View):
 
         return _lookup_key
 
+    def get_queryset(self):
+        # Text for the membership adhesion
+        return {
+            "sections_content": MembershipSection.objects.all(),
+        }    
+    
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
-        return render(request, self.template_name, {"form": form})
+        sections = self.get_queryset()
+        context = {
+            "form": form,
+            "sections_content": sections["sections_content"],
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request):
         form = MembershipForm(request.POST)

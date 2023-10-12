@@ -302,6 +302,13 @@ class Event(models.Model):
             f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>"
         )
 
+class MembershipSection(BaseSections):
+    class Meta:
+        verbose_name = "Section Adhésion"
+        verbose_name_plural = "Section Adhésion"
+
+    def __str__(self):
+        return self.title
 
 class ContactSection(models.Model):
     title = models.CharField(max_length=50, verbose_name="Titre de la section")
