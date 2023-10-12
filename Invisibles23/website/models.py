@@ -310,6 +310,15 @@ class MembershipSection(BaseSections):
     def __str__(self):
         return self.title
 
+
+class DonationSection(BaseSections):
+    class Meta:
+        verbose_name = "Page Dons"
+        verbose_name_plural = "Page Dons"
+
+    def __str__(self):
+        return self.title
+
 class ContactSection(models.Model):
     title = models.CharField(max_length=50, verbose_name="Titre de la section")
     text = models.TextField(

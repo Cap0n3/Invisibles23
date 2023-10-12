@@ -19,6 +19,7 @@ from .models import (
     ContactSection,
     AssoStatus,
     MembershipSection,
+    DonationSection,
 )
 from .filters import (
     AdminRessourcesFilter,
@@ -372,6 +373,19 @@ class MembershipView(View):
 
             return render(request, self.template_name, error_context)
 
+
+class DonationView(View):
+    template_name = "website/donation.html"
+
+    def get_queryset(self):
+        # Text for the donation adhesion
+        return {
+            "sections_content": DonationSection.objects.all(),
+        }
+
+    def get(self, request):
+        context = self.get_queryset()
+        return render(request, self.template_name, context)
 
 class StatusView(View):
     template_name = "website/status.html"
