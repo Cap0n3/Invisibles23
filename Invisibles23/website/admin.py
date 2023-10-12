@@ -13,6 +13,7 @@ from .models import (
     Event,
     ContactSection,
     AssoStatus,
+    MembershipSection,
 )
 
 # Register your models here.
@@ -29,3 +30,4 @@ admin.site.register(FinancialRessources)
 admin.site.register(Event)
 admin.site.register(ContactSection)
 admin.site.register(AssoStatus)
+admin.site.register(MembershipSection)
