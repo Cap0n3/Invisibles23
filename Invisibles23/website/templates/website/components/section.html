@@ -9,7 +9,7 @@
         {% endif %}
         <div class="col-12 {{ data.image|yesno:"col-lg-6, col-lg-12" }} px-lg-5 {{ data.reverse|yesno:"order-lg-2, order-lg-1 , order-lg-1" }}">
             <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ data.title }}</h2>
-            <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
+            <div class="section-text mt-5 mt-lg-0 text-lg-start">
                 {{ data.richText|safe }}
             </div>
             {% if data.custom_html %}
