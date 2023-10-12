@@ -5,9 +5,22 @@
     {% include "website/components/page-header.html" with headerImgID="membership-header" headerTitle="Faire un don" %}
     <!--CONTENT-->
     {% for section in sections_content %}
-        {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
+        {% if section.name_ID == "Bienvenue" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+        {% endif %}
+    {% endfor %}
+    {% for section in sections_content %}
+        {% if section.name_ID == "Comment" %}
             {% include "website/components/section.html" with data=section bg="bg-light-green" %}
-        {% else %}
+        {% endif %}
+    {% endfor %}
+    {% for section in sections_content %}
+        {% if section.name_ID == "Pourquoi" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+        {% endif %}
+    {% endfor %}
+    {% for section in sections_content %}
+        {% if section.name_ID == "Attestation" %}
             {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
