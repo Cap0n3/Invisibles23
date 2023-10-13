@@ -384,7 +384,11 @@ export class PodcastPlayer {
     // ========= Element creation methods ========= //
     
     createPodcastImage() {
-        return PodcastPlayer.generateHtmlTag('img', { className: 'podcast-image', src: this.podcastImage });;
+        return PodcastPlayer.generateHtmlTag('img', { 
+            className: 'podcast-image', 
+            src: this.podcastImage,
+            attributes: { alt: `Image du podcast "${this.podcastTitle}"` }
+        });
     }
 
     /**
