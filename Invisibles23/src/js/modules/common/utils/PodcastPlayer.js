@@ -387,7 +387,8 @@ export class PodcastPlayer {
         return PodcastPlayer.generateHtmlTag('img', { 
             className: 'podcast-image', 
             src: this.podcastImage,
-            alt: `Image du podcast "${this.podcastTitle}"`
+            title: `${this.podcastTitle}`,
+            alt: `${this.podcastTitle}`
         });
     }
 
