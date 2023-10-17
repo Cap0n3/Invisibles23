@@ -387,6 +387,7 @@ class DonationView(View):
         context = self.get_queryset()
         return render(request, self.template_name, context)
 
+
 class StatusView(View):
     template_name = "website/status.html"
 
