@@ -12,6 +12,8 @@
             {% include "website/components/about-section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
+    <!--CALL TO ACTION - JOIN ASSOCIATION -->
+    {% include "website/components/c2a-section.html" with c2aType="join" bg="bg-c2a-men1" %} 
     <!--CALL TO ACTION - NEWSLETTER-->
     {% include "website/components/c2a-section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
      <!--SECTION BOOK-->
