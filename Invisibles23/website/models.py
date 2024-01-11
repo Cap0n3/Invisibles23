@@ -160,8 +160,8 @@ class TherapeuticRessources(BaseRessources):
 
 class FinancialRessources(BaseRessources):
     class Meta:
-        verbose_name = "Ressources financières"
-        verbose_name_plural = "Ressources financières"
+        verbose_name = "Bibliothèque"
+        verbose_name_plural = "Bibliothèque"
 
     def __str__(self):
         return self.title
@@ -302,6 +302,7 @@ class Event(models.Model):
             f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>"
         )
 
+
 class MembershipSection(BaseSections):
     class Meta:
         verbose_name = "Page Adhésion"
@@ -318,6 +319,7 @@ class DonationSection(BaseSections):
 
     def __str__(self):
         return self.title
+
 
 class ContactSection(models.Model):
     title = models.CharField(max_length=50, verbose_name="Titre de la section")
