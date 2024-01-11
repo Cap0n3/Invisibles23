@@ -281,8 +281,8 @@ class EmailSender(View):
             try:
                 logger.info("Recaptcha verified. Sending email...")
                 sendEmail(
-                    email,
-                    "Merci pour votre message",
+                    settings.OWNER_EMAIL,
+                    "Un nouveau message a été envoyé depuis le site web",
                     "contact_email.html",
                     {
                         "fname": fname,
