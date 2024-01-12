@@ -4,6 +4,30 @@ nav {
   transition: background-color 500ms;
   /* Navbar links */
 }
+nav .navbar-nav #offset-li {
+  margin-left: 0;
+  /* Offset the first navbar link "HOME" to center navbar logo */
+}
+@media screen and (min-width: 1120px) and (max-width: 1160px) {
+  nav .navbar-nav #offset-li {
+    margin-left: 50px;
+  }
+}
+@media screen and (min-width: 1160px) and (max-width: 1200px) {
+  nav .navbar-nav #offset-li {
+    margin-left: 70px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  nav .navbar-nav #offset-li {
+    margin-left: 80px;
+  }
+}
+@media screen and (min-width: 1400px) {
+  nav .navbar-nav #offset-li {
+    margin-left: 80px;
+  }
+}
 nav .navbar-nav li a {
   color: #002E48 !important;
   font-size: 1rem;
@@ -42,7 +66,6 @@ nav.show {
   background-color: #ffffff;
 }
 
-/** Remove legacy code below if navbar is working properly **/
 /* === HERO HEADER (Home page) === */
 #heroHeader {
   /* == CAPTIONS (Hero text block) == */

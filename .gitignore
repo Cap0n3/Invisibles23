@@ -13,6 +13,7 @@ media
 Invisibles23/uploaded/
 
 # Database dump
+database_backups/
 whole.json
 whole_alt.json
 
