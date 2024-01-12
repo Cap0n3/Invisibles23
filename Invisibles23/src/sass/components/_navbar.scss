@@ -4,6 +4,29 @@ nav {
     background-color: rgba(0,0,0,0); /* transparent */
     transition: background-color 500ms;
 
+    .navbar-nav #offset-li {
+        margin-left: 0;
+        
+        /* Offset the first navbar link "HOME" to center navbar logo */
+        @media screen and (min-width: 1120px) and (max-width: 1160px) {
+            margin-left: 50px;
+        }
+               
+        @media screen and (min-width: 1160px) and (max-width: 1200px) {
+            margin-left: 70px;    
+        }
+
+        @include xl {
+            margin-left: 80px;
+            // border: 1px solid blue;
+        }
+
+        @include xxl {
+            margin-left: 80px;
+            // border: 1px solid purple;
+        }
+    }
+
     /* Navbar links */
     .navbar-nav li a {
         color: $font-deep-blue !important;
@@ -44,44 +67,3 @@ nav {
 nav.show {
     background-color: $white;
 }
-
-
-/** Remove legacy code below if navbar is working properly **/
-
-// REMOVE HERE !
-
-// nav {
-//     background-color: rgba(0,0,0,0); /* transparent */
-//     transition: background-color 500ms;
-// }
-
-// nav.show {
-//     background-color: $white;
-// }
-
-// /* Navbar links */
-// .navbar-nav li a {
-//     color: $font-deep-blue !important;
-//     font-size: 1rem;
-//     font-weight: 400;
-//     text-transform: uppercase;
-// }
-
-// .navbar-nav li > .active {
-//     color: purple !important;
-// }
-
-// #navLogo {
-//     display: none;
-//     @include lg {
-//         /* Make logo disappear in offcanvas */
-//         display: inline-block;
-//     }
-// }
-
-// .offcanvas {
-//     /* Make menu width 100% on mobile */
-//     @include lessThan-md {
-//         width: 100% !important;
-//     }
-// }

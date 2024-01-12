@@ -37,6 +37,12 @@ $bootstrapBreakpoints: (
     }
 }
 
+@mixin xxl {
+    @media screen and (min-width: map-get($bootstrapBreakpoints, "xxl")) {
+        @content;
+    }
+}
+
 // Custom breakpoints
 @mixin breakpoint($bp: 0) {
     @media screen and (min-width: $bp) {
@@ -44,7 +50,7 @@ $bootstrapBreakpoints: (
     }
 }
 
-// Reverse breakpoint (less than specified breakpoint)
+// Reverse breakpoints (less than specified breakpoint)
 @mixin lessThan-lg {
     @media screen and (max-width: map-get($bootstrapBreakpoints, "lg")) {
         @content;
