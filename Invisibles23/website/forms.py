@@ -4,19 +4,14 @@ from .validators import validate_names, validate_address
 
 class MembershipForm(forms.Form):
     subscription_choices = [
-        ("support", "Soutien - CHF 84/année ou CHF 7.70/mois"),
-        ("normal", "Normal - CHF 50/année ou CHF 4.50/mois"),
-        ("reduced", "Réduit - CHF 25/année ou CHF 2.50/mois"),
+        ("support", "Soutien - CHF/EUR 84 par année (CHF/EUR 7.70 par mois)"),
+        ("normal", "Normal - CHF/EUR 50 par année (CHF/EUR 4.50 par mois)"),
+        ("reduced", "Réduit - CHF/EUR 25 par année (CHF/EUR 2.50 par mois)"),
     ]
     frequency_choices = [
         ("yearly", "Annuellement"),
         ("monthly", "Mensuellement"),
     ]
-    # discount = forms.BooleanField(
-    #     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-    #     required=False,
-    #     label="Contribution annuelle réduite à CHF 45 pour les bénéficiaires de l'AVS/AI, les stagiaires/étudiants, les personnes en difficulté financière.",
-    # )
     subscription = forms.ChoiceField(
         choices=subscription_choices,
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
