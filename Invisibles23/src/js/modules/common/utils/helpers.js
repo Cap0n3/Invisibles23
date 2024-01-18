@@ -224,3 +224,38 @@ export function resetRecaptchaV2(formObject) {
     grecaptcha.reset(container);
     container.style.display = "none";
 }
+
+
+/**
+ * Helper function to create just-validate rules and make code drier.
+ * 
+ * @param {String} rule - The rule to create (required, minLength, maxLength, customRegexp, integer, email)
+ * @param {String} value - The parameter of the rule for minLength, maxLength or customRegexp (optional)
+ * @param {String} customMessage - The custom message to display if the rule is not respected (optional)
+ *
+ * @returns {Object} - The rule object to pass to just-validate
+ */ 
+export function createJustValidateRule(rule, value="", customMessage="") {
+    switch(rule) {
+        case "required":
+            return { rule: 'required', errorMessage: customMessage || "Ce champ est obligatoire" }
+            break;
+        case "minLength":
+            return { rule: 'minLength', value: value, errorMessage: customMessage || `Ce champ doit contenir au minimum ${value} caractères` }
+            break;
+        case "maxLength":
+            return { rule: 'maxLength', value: value, errorMessage: customMessage || `Ce champ doit contenir au maximum ${value} caractères` }
+            break;
+        case "customRegexp":
+            return { rule: 'customRegexp', value: value, errorMessage: customMessage || "Un caractère non autorisé a été entré" }
+            break;
+        case "integer":
+            return { rule: 'integer', errorMessage: customMessage || "Ce champ doit contenir un nombre entier" }
+            break;
+        case "email":
+            return { rule: 'email', errorMessage: customMessage || "Veuillez entrer une adresse email valide" }
+            break;
+        default:
+            console.error("Error: no rule found");
+    }
+}

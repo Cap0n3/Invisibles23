@@ -2,10 +2,12 @@ import JustValidate from 'just-validate';
 import emailjs, { send } from '@emailjs/browser';
 import { displayMessage } from './utils/helpers';
 import { getAPISecrets, sendEmail } from './utils/api';
-import { renderRecaptchaV2, resetRecaptchaV2 } from './utils/helpers';
+import { renderRecaptchaV2, resetRecaptchaV2, createJustValidateRule } from './utils/helpers';
 
 const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
+const zipcodeRegex = /^-[0-9]\w\s?$/;
+const birthdateRegex = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/;
 
 /**
  * Validate a website forms with JustValidate
@@ -27,63 +29,36 @@ export function formValidation(formID) {
     inputs.forEach((input) => {
         const inputType = input.getAttribute('type');
         const inputID = input.getAttribute('id');
+        const inputName = input.getAttribute('name');
         const isTextarea = (input.nodeName === 'TEXTAREA');
+        const isRequired = input.hasAttribute('required');
         const rules = [];
 
         if (inputType === 'text' || isTextarea) {
             rules.push(
-                {
-                    rule: 'required',
-                    errorMessage: "Ce champ est obligatoire",
-                },
-                {
-                    rule: 'minLength',
-                    value: 2,
-                    errorMessage: "Ce champ doit contenir au moins 2 caractères",
-                },
-                {
-                    rule: 'maxLength',
-                    value: isTextarea ? 10000 : 50,
-                    errorMessage: `Ce champ ne peut pas contenir plus de ${isTextarea ? 10000 : 50} caractères`,
-                },
-                {
-                    rule: 'customRegexp',
-                    value: isTextarea ? messageRegex : nameRegex,
-                    errorMessage: "Un caractère invalide a été détecté",
-                }
+                isRequired ? createJustValidateRule("required") : null,
+                createJustValidateRule("minLength", 2),
+                createJustValidateRule("maxLength", isTextarea ? 10000 : 50),
+                inputName === 'zipcode' ? 
+                createJustValidateRule("customRegexp", zipcodeRegex, "Le code postal entré n'est pas valide") :
+                createJustValidateRule("customRegexp", isTextarea ? messageRegex : nameRegex)
             );
         } else if (inputType === 'number') {
+            if (isRequired) {
+                rules.push(
+                    createJustValidateRule("required")
+                );
+            }
             rules.push(
-                {
-                    rule: 'required',
-                    errorMessage: "Ce champ est obligatoire",
-                },
-                {
-                    rule: 'minLength',
-                    value: 3,
-                    errorMessage: "Ce champ doit contenir au moins 3 chiffres",
-                },
-                {
-                    rule: 'maxLength',
-                    value: 20,
-                    errorMessage: "Ce champ ne peut pas contenir plus de 20 chiffres",
-                },
-                {
-                    rule: 'integer',
-                    errorMessage: "Ce champ doit contenir un nombre entier",
-                }
+                createJustValidateRule("minLength", 3),
+                createJustValidateRule("maxLength", 20),
+                createJustValidateRule("integer")
             );
             
         } else if (inputType === 'email') {
             rules.push(
-                {
-                    rule: 'required',
-                    errorMessage: "Ce champ est obligatoire",
-                },
-                {
-                    rule: 'email',
-                    errorMessage: "Veuillez saisir une adresse email valide",
-                }
+                createJustValidateRule("required"),
+                createJustValidateRule("email")
             );
         } else if (inputType === 'radio') {
             rules.push(
@@ -92,19 +67,23 @@ export function formValidation(formID) {
                     errorMessage: "Veuillez sélectionner une option",
                 }
             );
-        } else if (inputType === 'date') {
+        } 
+        else if (inputType === 'date') {
+            if (isRequired) {
+                rules.push(
+                    createJustValidateRule("required")
+                );
+            }
             rules.push(
-                {
-                    rule: 'required',
-                    errorMessage: "Ce champ est obligatoire",
-                }
-            );
+                createJustValidateRule("customRegexp", birthdateRegex, "Veuillez entrer une date valide (JJ/MM/AAAA)")
+            )
         }
         
         if(inputType !== 'hidden' && inputType !== 'submit') {
             try {
                 validator.addField(`#${inputID}`, rules);
             } catch (error) {
+                console.error("Error adding field to validator, check the input ID");
                 console.log(input)
                 console.log(rules);
                 console.log(error);
