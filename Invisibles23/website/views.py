@@ -241,7 +241,7 @@ class MembershipView(View):
                 "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
             )
         else:
-            logger.error("Invalid subscription or frequency")
+            logger.error(f"Invalid subscription or frequency: {subscription}, {frequency}")
             raise ValueError("Invalid subscription or frequency")
 
         return _lookup_key

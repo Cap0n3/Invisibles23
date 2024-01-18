@@ -214,7 +214,7 @@ class StripeWebhook(View):
             )
 
             # Sending invoice to owner
-            logger.info(f"Sending invoice to owner at {settings.DEFAULT_FROM_EMAIL} ...")
+            logger.info(f"Sending invoice to owner at {settings.OWNER_EMAIL} ...")
 
             sendEmail(
                 settings.OWNER_EMAIL,
