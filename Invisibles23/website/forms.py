@@ -41,7 +41,7 @@ class MembershipForm(forms.Form):
         widget=forms.DateInput(
             attrs={"type": "date", "class": "form-control normal-input"}
         ),
-        required=True,
+        required=False,
     )
     address = forms.CharField(
         max_length=100,

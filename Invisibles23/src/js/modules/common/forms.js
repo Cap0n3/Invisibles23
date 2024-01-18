@@ -6,8 +6,10 @@ import { renderRecaptchaV2, resetRecaptchaV2, createJustValidateRule } from './u
 
 const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
-const zipcodeRegex = /^-[0-9]\w\s?$/;
-const birthdateRegex = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/;
+const zipcodeRegex = /^[a-zA-Z0-9]{1,}\s?-?[a-zA-Z0-9]{0,}$/;
+// The displayed date is formatted based on the locale of the user's browser, 
+// but the parsed value is always formatted yyyy-mm-dd.
+const birthdateRegex = /^\d{4}-\d{1,2}-\d{1,2}$/;
 
 /**
  * Validate a website forms with JustValidate
@@ -34,21 +36,19 @@ export function formValidation(formID) {
         const isRequired = input.hasAttribute('required');
         const rules = [];
 
+        if(isRequired) {
+            rules.push(createJustValidateRule("required"));
+        }
+
         if (inputType === 'text' || isTextarea) {
             rules.push(
-                isRequired ? createJustValidateRule("required") : null,
                 createJustValidateRule("minLength", 2),
                 createJustValidateRule("maxLength", isTextarea ? 10000 : 50),
-                inputName === 'zipcode' ? 
+                inputName === 'zip_code' ? 
                 createJustValidateRule("customRegexp", zipcodeRegex, "Le code postal entré n'est pas valide") :
                 createJustValidateRule("customRegexp", isTextarea ? messageRegex : nameRegex)
             );
         } else if (inputType === 'number') {
-            if (isRequired) {
-                rules.push(
-                    createJustValidateRule("required")
-                );
-            }
             rules.push(
                 createJustValidateRule("minLength", 3),
                 createJustValidateRule("maxLength", 20),
@@ -57,28 +57,16 @@ export function formValidation(formID) {
             
         } else if (inputType === 'email') {
             rules.push(
-                createJustValidateRule("required"),
                 createJustValidateRule("email")
             );
-        } else if (inputType === 'radio') {
-            rules.push(
-                {
-                    rule: 'required',
-                    errorMessage: "Veuillez sélectionner une option",
-                }
-            );
-        } 
+        }
         else if (inputType === 'date') {
-            if (isRequired) {
-                rules.push(
-                    createJustValidateRule("required")
-                );
-            }
             rules.push(
                 createJustValidateRule("customRegexp", birthdateRegex, "Veuillez entrer une date valide (JJ/MM/AAAA)")
             )
         }
         
+        // Add field to validator if it's not a hidden or submit input
         if(inputType !== 'hidden' && inputType !== 'submit') {
             try {
                 validator.addField(`#${inputID}`, rules);
