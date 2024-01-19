@@ -247,17 +247,19 @@ class StripeWebhook(View):
                 },
             )
 
+            # === FIX 3D SECURE BEFORE RESENDING CHECKOUT LINK === #
+
             # Resend checkout link to member
-            sendEmail(
-                data["object"]["customer_email"],
-                "Invitation à reprendre le paiement",
-                "payment_failed_email.html",
-                {
-                    "name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
-                    "email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
-                    "checkout_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
-                },
-            )
+            # sendEmail(
+            #     data["object"]["customer_email"],
+            #     "Invitation à reprendre le paiement",
+            #     "payment_failed_email.html",
+            #     {
+            #         "name": data["object"]["customer_name"] if data["object"]["customer_name"] else None,
+            #         "email": data["object"]["customer_email"] if data["object"]["customer_email"] else None,
+            #         "checkout_url": data["object"]["hosted_invoice_url"] if data["object"]["hosted_invoice_url"] else None,
+            #     },
+            # )
 
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
