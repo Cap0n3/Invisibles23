@@ -36,10 +36,12 @@ export function formValidation(formID) {
         const isRequired = input.hasAttribute('required');
         const rules = [];
 
+        // Checkk input attributes and add required rule
         if(isRequired) {
             rules.push(createJustValidateRule("required"));
         }
 
+        // Then add other rules based on input type
         if (inputType === 'text' || isTextarea) {
             rules.push(
                 createJustValidateRule("minLength", 2),
@@ -154,70 +156,3 @@ async function handleSubmit(formObject, token) {
         toggleSpinner(false);
     }
 }
-
-/**
- * Send email with EmailJS
- * 
- * @param {*} data - Object containing the data to send
- * @param {*} test_error - Boolean to simulate an error (for testing purposes)
- * @param {*} error_type - String to specify the type of error to simulate (emailjs, fetch or left empty string for default)
- */
-// async function sendEmail(data, test_error=false, error_type="") {
-//     console.log("Sending email...");
-    
-//     // Define env variables
-//     let serviceId, templateId, userId;
-
-//     // get sensitive data from .env file
-//     try {
-//         //const sensitiveData = await fetchSensitiveData();
-//         const sensitiveData = await getAPISecrets();
-
-//         serviceId = sensitiveData.emailjs_service_id;
-//         templateId = sensitiveData.emailjs_template_id;
-//         userId = sensitiveData.emailjs_user_id;
-//     } catch (error) {
-//         throw new Error('Error getting sensitive data from server ', error);
-//     }
-
-//     // Simulate an error (for testing purposes), create switch on error_type
-//     if(test_error) {
-//         //console.error("Simulating an error for testing purposes");
-//         switch(error_type) {
-//             case "emailjs":
-//                 // Mess with EmailJS service ID
-//                 console.log("Simulating an error with EmailJS service ID");
-//                 serviceId = "wrong_service_id_forTesting";
-//                 break;
-//             case "fetch":
-//                 throw new Error('Error getting sensitive data from server ', error);
-//                 break;
-//             default:
-//                 throw new Error('Error sending email: ', error);
-//         }
-//     }
-
-//     // Send email with EmailJS
-//     try {
-//         const response = await emailjs.send(
-//             serviceId, 
-//             templateId, {
-//                 to_email: "association@lesinvisibles.ch",
-//                 from_email: data.email,
-//                 subject: "Les Invisibles - Nouveau message",
-//                 first_name: data.first_name,
-//                 last_name: data.last_name,
-//                 email: data.email,
-//                 message: data.message,
-//                 "g-recaptcha-response": data.recaptcha_token
-//             }, 
-//             userId
-//         );
-//         console.log('SUCCESS!', response.status, response.text);
-//     }
-//     catch(error) {
-//         console.log(error);
-//         throw error;
-//     }
-
-// }
