@@ -24,8 +24,8 @@ def validate_address(value):
 
     if value.isdigit():
         raise ValidationError("L'adresse ne peut pas être juste un nombre")
-    elif len(value) < 5 and len(value) > 100:
-        raise ValidationError("L'adresse doit contenir entre 5 et 50 caractères")
+    elif len(value) < 5 or len(value) > 100:
+        raise ValidationError("L'adresse doit contenir entre 5 et 100 caractères")
     elif match:
         # Get the special characters in the string
         special_characters = [char for char in match if len(match) > 0]
@@ -34,3 +34,11 @@ def validate_address(value):
                 ", ".join(special_characters)
             )
         )
+
+def validate_zipcode(value):
+    match = re.search("^[a-zA-Z0-9]{2,}\s?-?[a-zA-Z0-9]{0,}$", value)
+
+    if not match:
+        raise ValidationError("Le code postal n'est pas valide.")
+    elif len(value) < 2 or len(value) > 50:
+        raise ValidationError("Le code postal doit contenir entre 2 et 50 caractères")

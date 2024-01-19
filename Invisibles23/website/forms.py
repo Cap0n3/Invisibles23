@@ -1,5 +1,5 @@
 from django import forms
-from .validators import validate_names, validate_address
+from .validators import validate_names, validate_address, validate_zipcode
 
 
 class MembershipForm(forms.Form):
@@ -21,6 +21,7 @@ class MembershipForm(forms.Form):
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
     fname = forms.CharField(
+        min_length=2,
         max_length=100,
         widget=forms.TextInput(
             attrs={"class": "form-control normal-input", "placeholder": "Prénom"}
@@ -29,6 +30,7 @@ class MembershipForm(forms.Form):
         required=True,
     )
     lname = forms.CharField(
+        min_length=2,
         max_length=100,
         widget=forms.TextInput(
             attrs={"class": "form-control normal-input", "placeholder": "Nom"}
@@ -44,6 +46,7 @@ class MembershipForm(forms.Form):
         required=False,
     )
     address = forms.CharField(
+        min_length=2,
         max_length=100,
         widget=forms.TextInput(
             attrs={"class": "form-control normal-input", "placeholder": "Adresse"}
@@ -52,17 +55,21 @@ class MembershipForm(forms.Form):
         required=True,
     )
     zip_code = forms.CharField(
+        min_length=2,
         max_length=100,
         widget=forms.TextInput(
             attrs={"class": "form-control normal-input", "placeholder": "Code postal"}
         ),
+        validators=[validate_zipcode],
         required=True,
     )
     city = forms.CharField(
+        min_length=2,
         max_length=100,
         widget=forms.TextInput(
             attrs={"class": "form-control normal-input", "placeholder": "Ville"}
         ),
+        validators=[validate_names],
         required=True,
     )
     email = forms.EmailField(

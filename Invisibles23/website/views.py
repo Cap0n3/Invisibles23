@@ -353,7 +353,6 @@ class MembershipView(View):
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
             
         else:
-            logger.error("Form is not valid")
             error_data = form.errors.as_data()
 
             # convert error_data to a dict and message to a string
@@ -361,8 +360,12 @@ class MembershipView(View):
             for key, value in error_data.items():
                 error_dict[key] = str(value[0].message)
 
-            # Create error_ul from error_dict
-            error_ul = "<ul><li>" + "</li><li>".join(error_dict.values()) + "</li></ul>"
+            # Log error
+            logger.error(f"Form is not valid ! Error dict: {error_dict}")
+            
+            # Create error_ul from error_dict to display in the template
+            errors_list = [f"<strong>{key}</strong> : {val}" for (key,val) in error_dict.items()]
+            error_ul = "<ul><li>" + "</li><li>".join(errors_list) + "</li></ul>"
 
             # pass error_ul to the template as html
             error_context = {

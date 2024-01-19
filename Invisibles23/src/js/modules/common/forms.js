@@ -4,9 +4,10 @@ import { displayMessage } from './utils/helpers';
 import { getAPISecrets, sendEmail } from './utils/api';
 import { renderRecaptchaV2, resetRecaptchaV2, createJustValidateRule } from './utils/helpers';
 
-const nameRegex = /^[^#+±"*/()=?$£!%_;:<>]+$/;
+const nameRegex = /^[^#+±"*/()=?$£!%_;:,<>\d]+$/;
+const addressRegex = /^[^#+±"*/()=?$£!%_;<>]+$/;
 const messageRegex = /^[^\[\]{}<>]+$/;
-const zipcodeRegex = /^[a-zA-Z0-9]{1,}\s?-?[a-zA-Z0-9]{0,}$/;
+const zipcodeRegex = /^[a-zA-Z0-9]{2,}\s?-?[a-zA-Z0-9]{0,}$/;
 // The displayed date is formatted based on the locale of the user's browser, 
 // but the parsed value is always formatted yyyy-mm-dd.
 const birthdateRegex = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -44,11 +45,11 @@ export function formValidation(formID) {
         // Then add other rules based on input type
         if (inputType === 'text' || isTextarea) {
             rules.push(
-                createJustValidateRule("minLength", 2),
-                createJustValidateRule("maxLength", isTextarea ? 10000 : 50),
+                createJustValidateRule("minLength", inputName === 'address' ? 5 : 2),
+                createJustValidateRule("maxLength", isTextarea ? 10000 : (inputName === 'address' ? 100 : 50)),
                 inputName === 'zip_code' ? 
                 createJustValidateRule("customRegexp", zipcodeRegex, "Le code postal entré n'est pas valide") :
-                createJustValidateRule("customRegexp", isTextarea ? messageRegex : nameRegex)
+                createJustValidateRule("customRegexp", isTextarea ? messageRegex : (inputName === 'address' ? addressRegex : nameRegex))
             );
         } else if (inputType === 'number') {
             rules.push(
