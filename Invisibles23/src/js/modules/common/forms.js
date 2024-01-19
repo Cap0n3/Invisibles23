@@ -36,7 +36,7 @@ export function formValidation(formID) {
         const isRequired = input.hasAttribute('required');
         const rules = [];
 
-        // Checkk input attributes and add required rule
+        // Check input attributes and add required rule
         if(isRequired) {
             rules.push(createJustValidateRule("required"));
         }
