@@ -266,6 +266,9 @@ class MembershipView(View):
         domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
         stripe.api_key = env("STRIPE_API_TOKEN")
         logger.debug(f"Request data: {request.POST}")
+        
+        if settings.DEBUG:
+            logger.debug("||====== DEBUG MODE IS ON ! ======||")
 
         if form.is_valid():
             logger.info("Membership form is valid")

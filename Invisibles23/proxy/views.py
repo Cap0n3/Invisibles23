@@ -34,6 +34,7 @@ class GetAPISecrets(View):
 
         return JsonResponse(data)
 
+
 class AushaProxy(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     ausha_api_key = env("AUSHA_API_TOKEN")
@@ -161,7 +162,7 @@ class StripeWebhook(View):
 
             # Send email to owner
             sendEmail(
-                settings.OWNER_EMAIL,
+                settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL,
                 "Un nouveau membre a rejoint l'association Les Invisibles",
                 "adhesion_notification.html",
                 {
@@ -217,7 +218,7 @@ class StripeWebhook(View):
             logger.info(f"Sending invoice to owner at {settings.OWNER_EMAIL} ...")
 
             sendEmail(
-                settings.OWNER_EMAIL,
+                settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL,
                 "Reçu de paiement adhésion",
                 "invoice_email_accounting.html",
                 {
@@ -235,7 +236,7 @@ class StripeWebhook(View):
 
             # Send email to owner for payment failed
             sendEmail(
-                settings.OWNER_EMAIL,
+                settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL,
                 "Erreur lors du paiement d'un abonnement",
                 "payment_failed_notification.html",
                 {
@@ -266,6 +267,7 @@ class StripeWebhook(View):
 
         return HttpResponse(status=200)
     
+
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     logger.info("EmailSender initialized ...")
