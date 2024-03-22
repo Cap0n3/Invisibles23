@@ -58,3 +58,28 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}):
         server.starttls()  # Enable encryption
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, receiver_email, message.as_string())
+
+
+def find_key_in_dict(d, target):
+    """
+    Recursively search for a key in a nested dictionary.
+
+    Param
+    ------
+    d: dict
+        The dictionary to search in
+    target: str
+        The key to search for, like "SECRET_KEY"
+
+    Return
+    ------
+    The value of the key if found, None otherwise
+    """
+    if target in d:
+        return d[target]
+    for key, value in d.items():
+        if isinstance(value, dict):
+            result = find_key_in_dict(value, target)
+            if result is not None:
+                return result
+    return None

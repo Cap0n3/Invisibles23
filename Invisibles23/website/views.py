@@ -28,7 +28,6 @@ from .filters import (
 )
 from django.http import JsonResponse
 import environ
-import requests
 from django.middleware.csrf import get_token
 from django.conf import settings
 from django.shortcuts import redirect
@@ -321,6 +320,8 @@ class MembershipView(View):
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
 
+                if settings.DEBUG: logger.debug(f"Prices list: {prices}")
+
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
                 checkout_session = stripe.checkout.Session.create(
@@ -348,11 +349,12 @@ class MembershipView(View):
                 )
             
                 logger.info("Session created successfully ... redirecting to checkout")
-                logger.debug(f"Session url: {checkout_session['url']}")
+                if settings.DEBUG: logger.debug(f"Session url: {checkout_session['url']}")
+
                 return redirect(checkout_session["url"], code=303)
 
             except Exception as error:
-                logger.error(f"An exception occurred: {error}")
+                logger.error(f"(MembershipView) -> An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
             
         else:
