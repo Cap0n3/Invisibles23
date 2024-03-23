@@ -1,6 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta name="description" content="Payment failed email">
+    <meta name="keywords" content="email, template, payment failed">
+    <meta name="author" content="Les Invisibles">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
     <title>Problème de paiement lors d'un checkout</title>
     <style>
         table {
@@ -10,12 +15,15 @@
             border: 1px solid black;
             padding: 5px;
         }
+        th {
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <p><strong>Objet : </strong>Problème de paiement lors d'un checkout sur le site lesinvisibles.ch.</p>
     <p>Chère Tamara,</p>
-    <p>Il semble qu'il y a eu un problème lors du paiement de la cotisation sur le site <a href="http://www.lesinvisibles.ch">lesinvisibles.ch</a></p>
+    <p>Il semble qu'il y a eu un problème lors du paiement de la cotisation sur le site <a href="https://www.lesinvisibles.ch">lesinvisibles.ch</a></p>
     <p>Il est possible que :</p>
     <ul>
         <li>La carte bancaire du membre ait été refusée durant le checkout pour une nouvelle adhésion (ex: carte de crédit périmée ou bloquée).</li>
@@ -24,22 +32,22 @@
     </ul>
     <p>Le membre en question a reçu un e-mail l'informant de l'erreur et il sera prié de réessayer le réglement. Pour pouvoir suivre l'état du paiement, tu peux te connecter sur le tableau de bord de <a href="https://stripe.com/">Stripe</a> avec tes identifiants.</p> 
     <p>Voici les informations concernant le membre et son abonnement :</p>
-    <table style="border: 1px solid black;">
+    <table class="bordered-table">
         <tr>
-            <th align="left" style="border: 1px solid black; padding: 5px;">Nom</th>
-            <td style="border: 1px solid black; padding: 5px;">{name}</td>
+            <th>Nom</th>
+            <td>{name}</td>
         </tr>
         <tr>
-            <th align="left" style="border: 1px solid black; padding: 5px;">Adresse e-mail</th>
-            <td style="border: 1px solid black; padding: 5px;">{email}</td>
+            <th>Adresse e-mail</th>
+            <td>{email}</td>
         </tr>
         <tr>
-            <th align="left" style="border: 1px solid black; padding: 5px;">ID Client</th>
-            <td style="border: 1px solid black; padding: 5px;">{customer_id}</td>
+            <th>ID Client</th>
+            <td>{customer_id}</td>
         </tr>
         <tr>
-            <th align="left" style="border: 1px solid black; padding: 5px;">Raison de l'échec du paiement</th>
-            <td style="border: 1px solid black; padding: 5px;">{message}</td>
+            <th>Raison de l'échec du paiement</th>
+            <td>{message}</td>
         </tr>
     </table>
     <p><i>Cet e-mail a été envoyé automatiquement par le système de gestion des adhésions de l'association "Les Invisibles".</i></p>
