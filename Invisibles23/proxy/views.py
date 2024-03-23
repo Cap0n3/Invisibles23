@@ -140,7 +140,7 @@ class StripeWebhook(View):
             logger.error("Invalid signature")
             return HttpResponse(status=403)
 
-        # Handle events
+        # === EVENT HANDLING === #
         if event["type"] == "checkout.session.completed":
             logger.info("[EVENT] Checkout session completed event initiated ...")
 
