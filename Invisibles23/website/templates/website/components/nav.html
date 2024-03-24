@@ -89,6 +89,7 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- ASSOCIATION DROPDOWN -->
                     <li class="nav-item dropdown px-4">
                         <a class="nav-link {% if url_name == 'association' %}active{% endif %} dropdown-toggle"
                            href="#"
@@ -102,11 +103,11 @@
                             <li>
                                 <a class="dropdown-item py-2" href={% url 'membership' %}>Devenir membre</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item py-2" href={% url 'events' %}>Rendez-vous</a>
+                            </li>
                         </ul>
                     </li>
-                    {% comment %} <li class="nav-item px-4">
-                        <a class="nav-link {% if url_name == 'association' %}active{% endif %}" href={% url 'association' %}>Association</a>
-                    </li> {% endcomment %}
                 </ul>
             </div>
         </div>
