@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
-from django.urls import reverse
 from .forms import MembershipForm
 from datetime import date
 from .models import (
@@ -31,7 +30,6 @@ import environ
 from django.middleware.csrf import get_token
 from django.conf import settings
 from django.shortcuts import redirect
-
 import stripe
 
 # Initialise env vars
