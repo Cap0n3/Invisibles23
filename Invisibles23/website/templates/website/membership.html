@@ -5,10 +5,21 @@
     {% include "website/components/page-header.html" with headerImgID="membership-header" headerTitle="Devenir membre" %}
     <!--CONTENT-->
     {% comment %} {% include "website/components/no-content.html" with title="En construction" message="Cette section est en construction, on vous tient au courant dès que c'est prêt ! C'est promis :-)" bg="bg-light-beige" %} {% endcomment %}
+    <!--JOIN-->
     {% for section in sections_content %}
-        {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
+        {% if section.name_ID == "join_association" %}
+            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+        {% endif %}
+    {% endfor %}
+    <!--BENEFITS-->
+    {% for section in sections_content %}
+        {% if section.name_ID == "benefits" %}
             {% include "website/components/section.html" with data=section bg="bg-light-green" %}
-        {% else %}
+        {% endif %}
+    {% endfor %}
+    <!--DONATIONS-->
+    {% for section in sections_content %}
+        {% if section.name_ID == "donations" %}
             {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
