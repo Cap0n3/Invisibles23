@@ -1,0 +1,57 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Webpack Server",
+			"type": "shell",
+			"command": "npm run build",
+			"options": {
+				"cwd": "${workspaceFolder}/Invisibles23"
+			},
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Gulp Server",
+			"type": "shell",
+			"command": "gulp",
+			"options": {
+				"cwd": "${workspaceFolder}/Invisibles23"
+			},
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Django Server",
+			"type": "shell",
+			"command": "python manage.py runserver",
+			"options": {
+				"cwd": "${workspaceFolder}/Invisibles23"
+			},
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Start All Servers",
+			"dependsOn": [
+				"Webpack Server",
+				"Gulp Server",
+				"Django Server"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"group": "build"
+		}
+	]
+}
