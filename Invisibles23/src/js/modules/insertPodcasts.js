@@ -9,7 +9,6 @@ import {getAushaPodcasts} from './common/utils/api.js';
  * @returns {HTMLDivElement}
  */
 export function homepagePodcasts() {
-    console.log("Homepage Podcasts");
     const spinners = document.querySelectorAll('.load-spinner');
     const noPodcastsError = document.querySelectorAll('.no-podcast-error');
 
