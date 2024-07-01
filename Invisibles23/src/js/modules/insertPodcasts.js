@@ -9,8 +9,11 @@ import {getAushaPodcasts} from './common/utils/api.js';
  * @returns {HTMLDivElement}
  */
 export function homepagePodcasts() {
-    // Show the spinner
+    console.log("Homepage Podcasts");
     const spinners = document.querySelectorAll('.load-spinner');
+    const noPodcastsError = document.querySelectorAll('.no-podcast-error');
+
+    // Show spinners while fetching the podcasts
     spinners.forEach((spinner) => {
         spinner.classList.remove('d-none');
     });
@@ -60,6 +63,10 @@ export function homepagePodcasts() {
             spinners.forEach((spinner) => {
                 spinner.classList.add('d-none');
             });
+            // Show an error message
+            noPodcastsError.forEach((errorContainer) => {
+                errorContainer.classList.remove('d-none');
+            })
             // Handle the error
             console.error('Error retrieving podcasts:', error);
         });
@@ -70,8 +77,10 @@ export function homepagePodcasts() {
  * @returns {HTMLDivElement}
  */
 export function podcastsPage() {
-    // Show the spinner
     const spinner = document.getElementById('podcast-load-spin');
+    const noPodcastsError = document.querySelectorAll('.no-podcast-error');
+
+    // Show the spinner while fetching the podcasts
     spinner.classList.remove('d-none');
     
     // Get all the podcasts from the API
@@ -173,6 +182,10 @@ export function podcastsPage() {
         .catch(error => {
             // Hide the spinner
             spinner.classList.add('d-none');
+            // Show an error message
+            noPodcastsError.forEach((errorContainer) => {
+                errorContainer.classList.remove('d-none');
+            })
             // Handle the error
             console.error('Error retrieving podcasts:', error);
         });   

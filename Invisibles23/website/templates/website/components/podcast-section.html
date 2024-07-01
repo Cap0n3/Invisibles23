@@ -4,12 +4,24 @@
     <div class="load-spinner d-none spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
+    <!--Error message (if no podcast)-->
+    {% include "website/components/no-podcasts-error.html" %}
     <div class="row">
-        <div id="PodCarousel-large" class="carousel slide d-none d-lg-block pt-2 px-lg-4" data-bs="carousel">
+        <div id="PodCarousel-large"
+             class="carousel slide d-none d-lg-block pt-2 px-lg-4"
+             data-bs="carousel">
             <!-- Indicators -->
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#PodCarousel-large" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#PodCarousel-large" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-large"
+                        data-bs-slide-to="0"
+                        class="active"
+                        aria-current="true"
+                        aria-label="Slide 1"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-large"
+                        data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -39,22 +51,40 @@
         </div>
     </div>
 </section>
-
 <!-- PODCAST SECTION FOR MEDIUM/SMALL SCREEN -->
-<section id="mobile-section" class="d-lg-none container-fluid text-center pt-5 px-5 {{ bg }}">
+<section id="mobile-section"
+         class="d-lg-none container-fluid text-center pt-5 px-5 {{ bg }}">
     <!--Spinner-->
     <div class="load-spinner d-none spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
+    <!--Error message (if no podcast)-->
+    {% include "website/components/no-podcasts-error.html" %}
     <div class="row">
         <!-- SLIDER FOR MEDIUM/SMALL SCREEN -->
-        <div id="PodCarousel-small" class="carousel slide d-lg-none pb-4" data-bs="carousel">
+        <div id="PodCarousel-small"
+             class="carousel slide d-lg-none pb-4"
+             data-bs="carousel">
             <!-- Indicators -->
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                <button type="button" data-bs-target="#PodCarousel-small" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-small"
+                        data-bs-slide-to="0"
+                        class="active"
+                        aria-current="true"
+                        aria-label="Slide 1"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-small"
+                        data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-small"
+                        data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+                <button type="button"
+                        data-bs-target="#PodCarousel-small"
+                        data-bs-slide-to="3"
+                        aria-label="Slide 4"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
