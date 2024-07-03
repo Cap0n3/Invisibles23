@@ -333,19 +333,27 @@ class MembershipView(View):
                     customer_email=email,
                     subscription_data={
                         "metadata": {
-                            "Nom": f"{first_name} {last_name}",
-                            "Anniversaire": birthday,
-                            "adresse": address,
-                            "CP": zip_code,
-                            "Ville": city,
-                            "Email": email,
+                            "name": f"{first_name} {last_name}",
+                            "birthday": birthday,
+                            "address": address,
+                            "zip_code": zip_code,
+                            "city": city,
+                            "customer_email": email,
                         },
+                    },
+                    metadata={
+                        "name": f"{first_name} {last_name}",
+                        "birthday": birthday,
+                        "address": address,
+                        "zip_code": zip_code,
+                        "city": city,
+                        "customer_email": email,
                     },
                     mode="subscription",
                     success_url=domain + "/success/",
                     cancel_url=domain + "/membership/",
                 )
-            
+
                 logger.info("Session created successfully ... redirecting to checkout")
                 if settings.DEBUG: logger.debug(f"Session url: {checkout_session['url']}")
 

@@ -123,6 +123,7 @@ class StripeWebhook(View):
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         stripe_secret = env("STRIPE_WEBHOOK_SECRET")
+        stripe.api_key = env("STRIPE_API_TOKEN")
         event = None
         owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
 
@@ -153,6 +154,7 @@ class StripeWebhook(View):
             member_email = find_key_in_dict(data["object"], "customer_email")
             member_country = find_key_in_dict(data["object"], "country")
             invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
+            metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
             plan = data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None
             
             # Lgging the invoice paid event
@@ -163,6 +165,22 @@ class StripeWebhook(View):
             
             # Sending invoice to member
             logger.info(f"(StripeWebhook) Sending welcome & invoice to member at {member_email} ...")
+            
+            # Update customer with metadata
+            logger.info("Updating customer metadata ...")
+            if settings.DEBUG: logger.debug(f"Metadata for customer: {data}")
+            stripe.Customer.modify(
+                customer_id,
+                metadata={
+                    "name": metadata["name"], 
+                    "birthday": metadata["birthday"],
+                    "customer_email": metadata["customer_email"],
+                    "address": metadata["address"],
+                    "zip_code": metadata["zip_code"],
+                    "city": metadata["city"],
+                    "country": member_country
+                },
+            )
 
             sendEmail(
                 member_email, 
@@ -250,6 +268,8 @@ class StripeWebhook(View):
                     "message": message,
                 },
             )
+        elif event["type"] == "customer.created":
+            if settings.DEBUG: logger.debug(f"Event data for customer created : {data['object']}")
 
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
