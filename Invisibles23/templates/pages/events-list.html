@@ -2,7 +2,7 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="events-header" headerTitle="Rendez-vous" %}
+    {% include "pages/components/page-header.html" with headerImgID="events-header" headerTitle="Rendez-vous" %}
     <!--CONTENT-->
     <section class="container-fluid text-center p-5 bg-light-beige">
         <div class="row p-lg-3">
@@ -15,7 +15,7 @@
     </section>
     <section class="container-fluid d-flex align-items-center flex-column p-5 bg-light-green">
         {% if events_content|length == 0 %}
-            {% include "website/components/no-content.html" with title="Rien de prévu" message="Il n'y a pas de rendez-vous à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-green" %}
+            {% include "pages/components/no-content.html" with title="Rien de prévu" message="Il n'y a pas de rendez-vous à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-green" %}
         {% endif %}
         {% for event in events_content %}
             <div class="event-cards">

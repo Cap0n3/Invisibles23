@@ -3,28 +3,28 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HERO HEADER-->
-    {% include "website/components/hero-header.html" %}
+    {% include "pages/components/hero-header.html" %}
     <!--PODCAST CARDS-->
-    {% include "website/components/podcast-section.html" with bg="bg-light-green" %}
+    {% include "pages/components/podcast-section.html" with bg="bg-light-green" %}
     <!--SECTION ABOUT-->
     {% for section in sections_content %}
         {% if section.name_ID == "About" %}
-            {% include "website/components/about-section.html" with data=section bg="bg-light-beige" %}
+            {% include "pages/components/about-section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - JOIN ASSOCIATION -->
-    {% include "website/components/c2a-section.html" with c2aType="join" bg="bg-c2a-men1" %} 
+    {% include "pages/components/c2a-section.html" with c2aType="join" bg="bg-c2a-men1" %} 
     <!--CALL TO ACTION - NEWSLETTER-->
-    {% include "website/components/c2a-section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
+    {% include "pages/components/c2a-section.html" with c2aType="newsletter" bg="bg-c2a-woman1" %}
      <!--SECTION BOOK-->
     {% for section in sections_content %}
         {% if section.name_ID == "Book" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--CALL TO ACTION - MEETINGS-->
-    {% include "website/components/c2a-section.html" with c2aType="meetings" bg="bg-c2a-hands" %}
+    {% include "pages/components/c2a-section.html" with c2aType="meetings" bg="bg-c2a-hands" %}
     <!--CONTACT SECTION-->
-    {% include "website/components/contact-section.html" with data=contact_content formID="contactForm" bg="bg-light-beige" %}
+    {% include "pages/components/contact-section.html" with data=contact_content formID="contactForm" bg="bg-light-beige" %}
     
 {% endblock content %}

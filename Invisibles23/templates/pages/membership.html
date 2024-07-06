@@ -2,27 +2,27 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="membership-header" headerTitle="Devenir membre" %}
+    {% include "pages/components/page-header.html" with headerImgID="membership-header" headerTitle="Devenir membre" %}
     <!--CONTENT-->
-    {% comment %} {% include "website/components/no-content.html" with title="En construction" message="Cette section est en construction, on vous tient au courant dès que c'est prêt ! C'est promis :-)" bg="bg-light-beige" %} {% endcomment %}
+    {% comment %} {% include "pages/components/no-content.html" with title="En construction" message="Cette section est en construction, on vous tient au courant dès que c'est prêt ! C'est promis :-)" bg="bg-light-beige" %} {% endcomment %}
     <!--JOIN-->
     {% for section in sections_content %}
         {% if section.name_ID == "join_association" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--BENEFITS-->
     {% for section in sections_content %}
         {% if section.name_ID == "benefits" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--DONATIONS-->
     {% for section in sections_content %}
         {% if section.name_ID == "donations" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--FORM-->
-    {% include "website/components/membership-form.html" with bg="bg-light-green" %}
+    {% include "pages/components/membership-form.html" with bg="bg-light-green" %}
 {% endblock content %}

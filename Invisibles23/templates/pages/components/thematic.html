@@ -1,13 +1,13 @@
 {% block content %}
     <!--CONTENT-->
     {% if sections_content|length == 0 %}
-        {% include "website/components/no-content.html" with title="Oups ..." message="Il n'y a pas de contenu à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-beige" %}
+        {% include "pages/components/no-content.html" with title="Oups ..." message="Il n'y a pas de contenu à afficher pour le moment. Revenez plus tard, je suis sûr que vous trouverez votre bonheur !" bg="bg-light-beige" %}
     {% else %}
         {% for section in sections_content %}
             {% if forloop.counter is not None and forloop.counter|divisibleby:2 %}
-                {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+                {% include "pages/components/section.html" with data=section bg="bg-light-green" %}
             {% else %}
-                {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+                {% include "pages/components/section.html" with data=section bg="bg-light-beige" %}
             {% endif %}
         {% endfor %}
     {% endif %}

@@ -2,19 +2,19 @@
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
-    {% include "website/components/page-header.html" with headerImgID="about-header" headerTitle="à propos" %}
+    {% include "pages/components/page-header.html" with headerImgID="about-header" headerTitle="à propos" %}
     <!--SECTION BIO-->
     {% for section in sections_content %}
         {% if section.name_ID == "Bio" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-beige" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-beige" %}
         {% endif %}
     {% endfor %}
     <!--SECTION FOCUS-->
     {% for section in sections_content %}
         {% if section.name_ID == "Focus" %}
-            {% include "website/components/section.html" with data=section bg="bg-light-green" %}
+            {% include "pages/components/section.html" with data=section bg="bg-light-green" %}
         {% endif %}
     {% endfor %}
     <!--VIDEOS CAROUSEL-->
-    {% include "website/components/videos-section.html" with bg="bg-light-beige" %}
+    {% include "pages/components/videos-section.html" with bg="bg-light-beige" %}
 {% endblock content %}

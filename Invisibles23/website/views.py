@@ -62,7 +62,7 @@ class BaseRessourcesView(View):
     Base class for the ressources views
     """
 
-    template_name = "website/ressources.html"
+    template_name = "pages/ressources.html"
     filter_class = None
 
     def get_queryset(self):
@@ -83,7 +83,7 @@ class BaseRessourcesView(View):
 
 # == Views == #
 class HomeView(View):
-    template_name = "website/home.html"
+    template_name = "pages/home.html"
     # queryset = HomeSections.objects.all()
     # contact_query = ContactSection.objects.first() # For the contact form
 
@@ -100,7 +100,7 @@ class HomeView(View):
 
 
 class AboutView(View):
-    template_name = "website/about.html"
+    template_name = "pages/about.html"
 
     def get_queryset(self):
         # return About section and all videos queryset
@@ -115,22 +115,22 @@ class AboutView(View):
 
 
 class ChronicTabView(BaseThematicView):
-    template_name = "website/chronic.html"
+    template_name = "pages/chronic.html"
     model = ChronicTabSections  # Model to query
 
 
 class InvisibleTabView(BaseThematicView):
-    template_name = "website/invisible.html"
+    template_name = "pages/invisible.html"
     model = InvsibleTabSections  # Model to query
 
 
 class MiscarriageTabView(BaseThematicView):
-    template_name = "website/miscarriage.html"
+    template_name = "pages/miscarriage.html"
     model = MiscarriageTabSections  # Model to query
 
 
 class PodcastsView(View):
-    template_name = "website/podcasts.html"
+    template_name = "pages/podcasts.html"
 
     def get(self, request):
         return render(request, self.template_name, {})
@@ -152,7 +152,7 @@ class FinancialRessourcesView(BaseRessourcesView):
 
 
 class AssociationView(View):
-    template_name = "website/association.html"
+    template_name = "pages/association.html"
 
     def get_queryset(self):
         return {
@@ -165,7 +165,7 @@ class AssociationView(View):
 
 
 class EventListView(View):
-    template_name = "website/events-list.html"
+    template_name = "pages/events-list.html"
     queryset = Event.objects.all()
 
     def get_queryset(self):
@@ -182,7 +182,7 @@ class EventListView(View):
 
 
 class EventDetailView(View):
-    template_name = "website/event-detail.html"
+    template_name = "pages/event-detail.html"
 
     def get(self, request, pk):
         event = Event.objects.get(pk=pk)
@@ -193,7 +193,7 @@ class EventDetailView(View):
 
 
 class ContactView(View):
-    template_name = "website/contact.html"
+    template_name = "pages/contact.html"
     
     def get_queryset(self):
         # return Home section and contact section queryset
@@ -207,7 +207,7 @@ class ContactView(View):
 
 
 class MembershipView(View):
-    template_name = "website/membership.html"
+    template_name = "pages/membership.html"
     form_class = MembershipForm()
     initial_form_state = {"subscription": "normal", "frequency": "yearly"} # Default state of radio buttons
 
@@ -389,7 +389,7 @@ class MembershipView(View):
 
 
 class DonationView(View):
-    template_name = "website/donation.html"
+    template_name = "pages/donation.html"
 
     def get_queryset(self):
         # Text for the donation adhesion
@@ -403,7 +403,7 @@ class DonationView(View):
 
 
 class StatusView(View):
-    template_name = "website/status.html"
+    template_name = "pages/status.html"
 
     def get_queryset(self):
         # return Home section and contact section queryset
@@ -417,7 +417,7 @@ class StatusView(View):
 
 
 class SuccessView(View):
-    template_name = "website/success.html"
+    template_name = "pages/success.html"
 
     def get(self, request):
         logger.info("Payment successful ... redirecting to success page")
