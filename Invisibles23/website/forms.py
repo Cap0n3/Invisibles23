@@ -80,3 +80,6 @@ class MembershipForm(forms.Form):
         required=True,
     )
 
+
+class EventRegistrationForm(forms.Form):
+    pass
