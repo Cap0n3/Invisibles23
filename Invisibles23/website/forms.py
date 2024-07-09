@@ -82,4 +82,44 @@ class MembershipForm(forms.Form):
 
 
 class EventRegistrationForm(forms.Form):
-    pass
+    membership = ["Membre", "Non-membre"]
+    plan_choices = ["Soutien", "Normal", "Réduit"]
+    membership = forms.ChoiceField(
+        choices=membership,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    plan = forms.ChoiceField(
+        choices=plan_choices,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    fname = forms.CharField(
+        min_length=2,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Prénom"}
+        ),
+        validators=[validate_names],
+        required=True,
+    )
+    lname = forms.CharField(
+        min_length=2,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Nom"}
+        ),
+        validators=[validate_names],
+        required=True,
+    )
+    email = forms.EmailField(
+        max_length=100,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Email"}
+        ),
+        required=True,
+    )
+    # Hidden input to store the event date
+    event = forms.DateField(
+        widget=forms.HiddenInput(),
+        required=False,
+    )
+    
