@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
-from .forms import MembershipForm
+from .forms import MembershipForm, EventRegistrationForm
 from datetime import date
 from .models import (
     HomeSections,
@@ -197,10 +197,16 @@ class EventRegistrationView(View):
 
     def get(self, request, pk):
         event = Event.objects.get(pk=pk)
+        form = EventRegistrationForm(initial={"event": event.date})
         context = {
+            "form": form,
             "event": event,
         }
         return render(request, self.template_name, context)
+    
+    def post(self, request, pk):
+        event = Event.objects.get(pk=pk)
+        form = EventRegistrationForm(request.POST)
 
 class ContactView(View):
     template_name = "pages/contact.html"
