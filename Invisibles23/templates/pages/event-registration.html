@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+<!--Unique code from the page-->
+{% block content %}
+    <!--HEADER-->
+    {% include "pages/components/page-header.html" with headerImgID="events-header" headerTitle="S'inscrire" %}
+    <!--CONTENT-->
+    <section class="normal-section container-fluid text-center p-5 bg-light-beige">
+        <h2 class="d-lg-none mb-5 text-uppercase">{{ event.title }}</h2>
+        <div class="row p-lg-3">
+            {% if event.address or event.link %}
+                <ul class="list-group list-group-flush text-start text-break mb-5">
+                    <li class="list-group-item">
+                        <small class="text-body-secondary"><b>Heure :</b> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-body-secondary"><b>Date :</b> {{ event.date|date:"d/m/Y" }}</small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-body-secondary"><b>Adresse :</b> {{ event.address }}</small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-body-secondary"><b>Lien :</b> <a href="{{ event.link }}" target="_blank">{{ event.link }}</a></small>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </section>
+    <!--FORM-->
+    {% include "pages/components/forms/event-registration-form.html" with bg="bg-light-green" %}
+{% endblock content %}

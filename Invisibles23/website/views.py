@@ -192,6 +192,16 @@ class EventDetailView(View):
         return render(request, self.template_name, context)
 
 
+class EventRegistrationView(View):
+    template_name = "pages/event-registration.html"
+
+    def get(self, request, pk):
+        event = Event.objects.get(pk=pk)
+        context = {
+            "event": event,
+        }
+        return render(request, self.template_name, context)
+
 class ContactView(View):
     template_name = "pages/contact.html"
     

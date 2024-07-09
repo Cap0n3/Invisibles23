@@ -26,6 +26,7 @@ urlpatterns = [
     ),
     path("rendez-vous/", views.EventListView.as_view(), name="events"),
     path("rendez-vous/<int:pk>/", views.EventDetailView.as_view(), name="event-detail"),
+    path("rendez-vous/<int:pk>/inscription/", views.EventRegistrationView.as_view(), name="event-registration"),
     path("membership/", views.MembershipView.as_view(), name="membership"),
     path('dons/', views.DonationView.as_view(), name='donation'),
     path("status/", views.StatusView.as_view(), name="status"),

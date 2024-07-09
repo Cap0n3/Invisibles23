@@ -1,0 +1,85 @@
+<section class="normal-section container-fluid text-center p-5 {{ bg }}">
+    <div class="row">
+        <!--FORM-->
+        <div class="container text-md-start col-md-7 px-md-5">
+            {% if error_messages %}
+                <div class="alert alert-warning mb-5" role="alert">
+                    <p>Une erreur est survenue lors de l'envoi du formulaire :</p>
+                    {{ error_messages | safe }}
+                </div>
+            {% endif %}
+            <form method="post" id="membershipForm" class="form d-flex flex-column px-4" novalidate>
+                {% csrf_token %}
+                <div class="mb-4">
+                    {% for radio in form.subscription %}
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                {{ radio.tag }}
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                <div class="my-4">
+                    <h5 class="text-uppercase mb-5">Fréquence de réglement</h5>
+                    {% for radio in form.frequency %}
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                {{ radio.tag }}
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                <div class="my-4">
+                    <h5 class="text-uppercase mb-5">Mes coordonées</h5>
+                    <div class="my-4">
+                        {{ form.fname }}
+                    </div>
+                    <div class="my-4">
+                        {{ form.lname }}
+                    </div>
+                    <div class="my-4">
+                        <label for="{{ form.birthday.id_for_label }}" class="mb-4">
+                            {{ form.birthday.label }} :
+                        </label>
+                        {{ form.birthday }}
+                    </div>
+                </div>
+                <hr>
+                <div class="my-4">
+                    <h5 class="text-uppercase mb-5">Mon adresse</h5>
+                    <div class="text-start my-4">
+                        {{ form.address }}
+                    </div>
+                    <div class="text-start my-4">
+                        {{ form.zip_code }}
+                    </div>
+                    <div class="text-start my-4">
+                        {{ form.city }}  
+                    </div>
+                    <div class="text-start my-4">
+                        {{ form.email }}
+                    </div>
+                </div>
+                <hr>
+                <div class="text-start my-4">
+                    <button type="submit" class="btn btn-primary">Devenir membre</button>
+                </div>
+            </form>
+        </div>
+        <!--HELP ASIDE-->
+        <div class="container col-md-5 px-md-5 ">
+            <div class="card mb-3" id="assistance-card">
+                <div class="card-header">Avez-vous une question ?</div>
+                <div class="card-body">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    <p class="card-text">En cas de doute n'hésitez pas à me contacter, je me ferai une joie de vous guider et de répondre à vos questions.</p>
+                    <a href={% url 'contact' %} class="btn btn-primary" target="_blank">Contactez-moi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
