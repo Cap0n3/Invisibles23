@@ -41,6 +41,10 @@ async function initialize() {
     else if (currentPage === '/membership/') {
         formValidation("#membershipForm"); // Initialize the membership form
     }
+    // if current page is /rendez-vous/<int:pk>/inscription/
+    else if (/rendez-vous\/[0-9]+\/inscription/.test(currentPage)) {
+        formValidation("#eventRegistrationForm"); // Initialize the event form
+    }
     
     // Initialize bootstrap popovers (to remove if not used)
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')

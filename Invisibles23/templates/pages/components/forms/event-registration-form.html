@@ -8,10 +8,11 @@
                     {{ error_messages | safe }}
                 </div>
             {% endif %}
-            <form method="post" id="membershipForm" class="form d-flex flex-column px-4" novalidate>
+            <form method="post" id="eventRegistrationForm" class="form d-flex flex-column px-4" novalidate>
                 {% csrf_token %}
                 <div class="mb-4">
-                    {% for radio in form.subscription %}
+                    <h5 class="text-uppercase mb-5">Êtes-vous membre de l'association ?</h5>
+                    {% for radio in form.membership %}
                         <div class="form-check">
                             <label class="form-check-label">
                                 {{ radio.tag }}
@@ -22,8 +23,8 @@
                 </div>
                 <hr>
                 <div class="my-4">
-                    <h5 class="text-uppercase mb-5">Fréquence de réglement</h5>
-                    {% for radio in form.frequency %}
+                    <h5 class="text-uppercase mb-5">Tarifs</h5>
+                    {% for radio in form.plan %}
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
                                 {{ radio.tag }}
@@ -41,11 +42,11 @@
                     <div class="my-4">
                         {{ form.lname }}
                     </div>
-                    <div class="my-4">
-                        <label for="{{ form.birthday.id_for_label }}" class="mb-4">
-                            {{ form.birthday.label }} :
-                        </label>
-                        {{ form.birthday }}
+                    <div class="text-start my-4">
+                        {{ form.email }}
+                    </div>
+                    <div class="text-start my-4">
+                        {{ form.phone }}
                     </div>
                 </div>
                 <hr>
@@ -60,13 +61,10 @@
                     <div class="text-start my-4">
                         {{ form.city }}  
                     </div>
-                    <div class="text-start my-4">
-                        {{ form.email }}
-                    </div>
                 </div>
-                <hr>
+                {{ form.event }}
                 <div class="text-start my-4">
-                    <button type="submit" class="btn btn-primary">Devenir membre</button>
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
                 </div>
             </form>
         </div>
