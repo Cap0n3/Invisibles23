@@ -223,11 +223,23 @@ class EventRegistrationView(View):
             zip_code = form.cleaned_data["zip_code"]
             city = form.cleaned_data["city"]
             email = form.cleaned_data["email"]
-            phone = form.cleaned_data["phone"]
+            #phone = form.cleaned_data["phone"]
             event = Event.objects.get(pk=pk)
             
             # Create lookup key based on the plan
             lookup_key = f"event-registration-{plan}"
+            
+            try:
+                # Get prices from Stripe
+                logger.info("Getting prices from Stripe ...")
+                prices = stripe.Price.list(
+                    lookup_keys=[lookup_key], expand=["data.product"]
+                )
+                print(prices)
+                return render(request, self.template_name, {"form": form})
+            except Exception as error:
+                logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
+                return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
 
 
 
