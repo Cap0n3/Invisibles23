@@ -88,13 +88,18 @@ class EventRegistrationForm(forms.Form):
         ("normal", "Normal - CHF/EUR 20 par année (CHF/EUR 25 pour les non-membres)"),
         ("support", "Soutien - CHF/EUR 25 par année (CHF/EUR 30 pour les non-membres)"),
     ]
-    membership = forms.ChoiceField(
+    membership_status = forms.ChoiceField(
         choices=membership_choices,
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        # Define the initial value of the radio button
+        initial="isNotMember",
+        required=True,
     )
     plan = forms.ChoiceField(
         choices=plan_choices,
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        initial="normal",
+        required=True,
     )
     fname = forms.CharField(
         min_length=2,
@@ -121,14 +126,15 @@ class EventRegistrationForm(forms.Form):
         ),
         required=True,
     )
-    phone = forms.CharField(
-        min_length=2,
-        max_length=100,
-        widget=forms.TextInput(
-            attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
-        ),
-        required=True,
-    )
+    # TO IMPLEMENT (NEED CREATE CUSTOM INPUT FIELD WITH PHONE)
+    # phone = forms.CharField(
+    #     min_length=2,
+    #     max_length=100,
+    #     widget=forms.TextInput(
+    #         attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
+    #     ),
+    #     required=True,
+    # )
     address = forms.CharField(
         min_length=2,
         max_length=100,
@@ -156,9 +162,6 @@ class EventRegistrationForm(forms.Form):
         validators=[validate_names],
         required=True,
     )
-    # Hidden input to store the event date
-    event = forms.DateField(
-        widget=forms.HiddenInput(),
-        required=False,
-    )
+    # Hidden input to store the event pk
+    event = forms.IntegerField(widget=forms.HiddenInput(), required=True)
     

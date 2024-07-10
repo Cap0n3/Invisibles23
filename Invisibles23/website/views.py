@@ -197,7 +197,7 @@ class EventRegistrationView(View):
 
     def get(self, request, pk):
         event = Event.objects.get(pk=pk)
-        form = EventRegistrationForm(initial={"event": event.date})
+        form = EventRegistrationForm(initial={"event": event.pk})
         context = {
             "form": form,
             "event": event,
@@ -205,8 +205,31 @@ class EventRegistrationView(View):
         return render(request, self.template_name, context)
     
     def post(self, request, pk):
-        event = Event.objects.get(pk=pk)
         form = EventRegistrationForm(request.POST)
+        domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        stripe.api_key = env("STRIPE_API_TOKEN")
+        logger.debug(f"Request data: {request.POST}")
+        
+        if settings.DEBUG:
+            logger.debug("||====== DEBUG MODE IS ON ! ======||")
+            
+        if form.is_valid():
+            logger.info("Event registration form is valid")
+            membership_status = form.cleaned_data["membership_status"]
+            plan = form.cleaned_data["plan"]
+            first_name = form.cleaned_data["fname"]
+            last_name = form.cleaned_data["lname"]
+            address = form.cleaned_data["address"]
+            zip_code = form.cleaned_data["zip_code"]
+            city = form.cleaned_data["city"]
+            email = form.cleaned_data["email"]
+            phone = form.cleaned_data["phone"]
+            event = Event.objects.get(pk=pk)
+            
+            # Create lookup key based on the plan
+            lookup_key = f"event-registration-{plan}"
+
+
 
 class ContactView(View):
     template_name = "pages/contact.html"

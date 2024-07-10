@@ -12,7 +12,7 @@
                 {% csrf_token %}
                 <div class="mb-4">
                     <h5 class="text-uppercase mb-5">Êtes-vous membre de l'association ?</h5>
-                    {% for radio in form.membership %}
+                    {% for radio in form.membership_status %}
                         <div class="form-check">
                             <label class="form-check-label">
                                 {{ radio.tag }}
@@ -45,9 +45,9 @@
                     <div class="text-start my-4">
                         {{ form.email }}
                     </div>
-                    <div class="text-start my-4">
+                    {% comment %} <div class="text-start my-4">
                         {{ form.phone }}
-                    </div>
+                    </div> {% endcomment %}
                 </div>
                 <hr>
                 <div class="my-4">

@@ -42,3 +42,14 @@ def validate_zipcode(value):
         raise ValidationError("Le code postal n'est pas valide.")
     elif len(value) < 2 or len(value) > 50:
         raise ValidationError("Le code postal doit contenir entre 2 et 50 caractères")
+    
+# TO TEST   
+def validate_phone(value):
+    match = re.search(r"^[0-9]{10}$", value)
+
+    if not match:
+        raise ValidationError("Le numéro de téléphone n'est pas valide.")
+    elif len(value) < 10 or len(value) > 10:
+        raise ValidationError("Le numéro de téléphone doit contenir 10 chiffres.")
+    elif not value.isdigit():
+        raise ValidationError("Le numéro de téléphone ne doit contenir que des chiffres.")
