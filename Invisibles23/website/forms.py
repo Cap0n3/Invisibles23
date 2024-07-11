@@ -162,6 +162,6 @@ class EventRegistrationForm(forms.Form):
         validators=[validate_names],
         required=True,
     )
-    # Hidden input to store the event pk
-    event = forms.IntegerField(widget=forms.HiddenInput(), required=True)
+    # Hidden input to store the event pk (NO NEED FOR THIS, CAN BE DONE WITH URL PARAMETER)
+    # event = forms.IntegerField(widget=forms.HiddenInput(), required=True)
     

@@ -223,8 +223,27 @@ class EventRegistrationView(View):
             zip_code = form.cleaned_data["zip_code"]
             city = form.cleaned_data["city"]
             email = form.cleaned_data["email"]
-            #phone = form.cleaned_data["phone"]
-            event = Event.objects.get(pk=pk)
+            
+            # Get the event
+            try:
+                event = Event.objects.get(pk=pk)
+            except Event.DoesNotExist:
+                logger.error(f"Event with ID {pk} does not exist")
+                return render(request, self.template_name, {"form": form, "error_messages": "L'événement n'existe pas."})
+            
+            # Create metadata for the checkout session
+            metadata = {
+                "event": f"{event.date} - {event.title} ({event.id})",
+                "event_description": event.short_description,
+                "name": f"{first_name} {last_name}",
+                "membership_status": membership_status,
+                "address": address,
+                "zip_code": zip_code,
+                "city": city,
+                "customer_email": email,
+            }
+            
+            if settings.DEBUG: logger.debug(f"Metadata: {metadata}")
             
             # Create lookup key based on the plan
             lookup_key = f"event-registration-{plan}"
@@ -235,8 +254,32 @@ class EventRegistrationView(View):
                 prices = stripe.Price.list(
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
-                print(prices)
-                return render(request, self.template_name, {"form": form})
+                
+                if settings.DEBUG: logger.debug(f"Prices list: {prices}")
+                                
+                # Create checkout session to redirect to Stripe
+                logger.info("Creating checkout session ...")
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            "price": prices.data[0].id,
+                            "quantity": 1,
+                        },
+                    ],
+                    currency="chf",
+                    customer_email=email,
+                    metadata=metadata,
+                    mode="payment",
+                    success_url=domain + "/success/",
+                    cancel_url=domain + "/rendez-vous/",
+                )
+
+                logger.info("Session created successfully ... redirecting to checkout")
+                
+                if settings.DEBUG: logger.debug(f"Session url: {checkout_session['url']}")
+
+                return redirect(checkout_session["url"], code=303)
+                
             except Exception as error:
                 logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
