@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
 from .forms import MembershipForm, EventRegistrationForm
+from .utils.view_helpers import createFormErrorContext
 from datetime import date
 from .models import (
     HomeSections,
@@ -288,29 +289,8 @@ class EventRegistrationView(View):
                 logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
         else:
-            error_data = form.errors.as_data()
-
-            # convert error_data to a dict and message to a string
-            error_dict = {}
-            for key, value in error_data.items():
-                error_dict[key] = str(value[0].message)
-
-            # Log error
-            logger.error(f"Form is not valid ! Error dict: {error_dict}")
-            
-            # Create error_ul from error_dict to display in the template
-            errors_list = [f"<strong>{key}</strong> : {val}" for (key,val) in error_dict.items()]
-            error_ul = "<ul><li>" + "</li><li>".join(errors_list) + "</li></ul>"
-
-            # pass error_ul to the template as html
-            error_context = {
-                "form": form,
-                "error_inputs": error_dict.keys(),
-                "error_messages": error_ul,
-            }
-
+            error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)
-
 
 
 class ContactView(View):
@@ -485,27 +465,7 @@ class MembershipView(View):
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
             
         else:
-            error_data = form.errors.as_data()
-
-            # convert error_data to a dict and message to a string
-            error_dict = {}
-            for key, value in error_data.items():
-                error_dict[key] = str(value[0].message)
-
-            # Log error
-            logger.error(f"Form is not valid ! Error dict: {error_dict}")
-            
-            # Create error_ul from error_dict to display in the template
-            errors_list = [f"<strong>{key}</strong> : {val}" for (key,val) in error_dict.items()]
-            error_ul = "<ul><li>" + "</li><li>".join(errors_list) + "</li></ul>"
-
-            # pass error_ul to the template as html
-            error_context = {
-                "form": form,
-                "error_inputs": error_dict.keys(),
-                "error_messages": error_ul,
-            }
-
+            error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)
 
 
@@ -543,6 +503,11 @@ class SuccessView(View):
     def get(self, request):
         logger.info("Payment successful ... redirecting to success page")
         return render(request, self.template_name, {})
+
+
+class Custom404View(View):
+    def get(self, request, exception=None):
+        return render(request, "pages/404.html", status=404)
 
 
 def get_sensitive_info(request):

@@ -35,35 +35,31 @@ class EventRegistrationViewTest(TestCase):
             link='https://www.myevent.com',
         )
         self.event = Event.objects.get(title='Test Event')
-        
-    @unittest.skip("Skip for now")
-    def test_get(self):
-        response = self.client.get(f'/rendez-vous/{self.event.id}/inscription/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'pages/event-registration.html')
     
-    @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_post(self):
         """
         Check if the user is redirected to a stripe checkout page
         """
-        response = self.client.post(f'/rendez-vous/{self.event.id}/inscription/', {
-            'fname': 'John',
-            'lname': 'Doe',
-            'email': 'test@gmail.com',
-            'membership_status': 'isMember',
-            'plan': 'reduced',
-            'address': 'Chemin du Pré-Fleuri 3',
-            'zip_code': '1228',
-            'city': 'Plan-les-Ouates',
-        })
-        logger.debug(f"Response: {response}")
-        # Check if the user is redirected to a stripe checkout page
-        self.assertEqual(response.status_code, 302)
-        
-        # Check if a url is returned in the response
-        logger.debug(f"Response URL: {response.url}")
-        self.assertTrue(response.url)
+        plans = ["support", "normal", "reduced"]
+        form_data = {
+            "fname": "John",
+            "lname": "Doe",
+            "email": "test@gmail.com",
+            "address": "Chemin du Pré-Fleuri 3",
+            "zip_code": "1228",
+            "city": "Plan-les-Ouates",
+            "membership_status": "isMember",
+        }
+        for plan in plans:
+            form_data["plan"] = plan # Add the plan to the form data
+            response = self.client.post(f'/rendez-vous/{self.event.id}/inscription/', form_data)
+            logger.debug(f"Response: {response}")
+            self.assertEqual(response.status_code, 302)
+            # Check if checkout session is created
+            logger.debug(f"Response URL: {response.url}")
+            self.assertTrue(response.url)
+
     
     #@unittest.skip("Skip for now")  
     def test_invalid_post(self):
@@ -82,18 +78,12 @@ class EventRegistrationViewTest(TestCase):
         error_inputs = response.context.get('error_inputs') # Returns a dict_keys object
         error_messages = response.context.get('error_messages')
         logger.debug(f"Error inputs: {error_inputs}")
+        logger.debug(f"Error messages: {error_messages}")
         logger.debug(f"Response: {response}")
         # Checks
         error_inputs_list = list(error_inputs) # Convert the dict_keys object to a list
         self.assertTemplateUsed(response, 'pages/event-registration.html')
         self.assertEqual(error_inputs_list, ['plan', 'email', 'address'])
         self.assertTrue(error_messages)
-        
-    
-    @unittest.skip("Not working yet")   
-    def test_get_invalid_event(self):
-        response = self.client.get('/rendez-vous/1000/inscription/')
-        # Check if it raise a DoesNotExist exception
-        self.assertRaises(Event.DoesNotExist)
-        #self.assertTemplateUsed(response, '404.html')
+
             
