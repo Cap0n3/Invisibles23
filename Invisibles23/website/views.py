@@ -272,6 +272,7 @@ class EventRegistrationView(View):
                         },
                     ],
                     currency="chf",
+                    allow_promotion_codes=True,
                     customer_email=email,
                     metadata=metadata,
                     mode="payment",
