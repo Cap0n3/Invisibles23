@@ -39,6 +39,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
+
 if DEBUG:
     logger.warning("DEBUG mode is ON ! Do not use in production !")
 else:

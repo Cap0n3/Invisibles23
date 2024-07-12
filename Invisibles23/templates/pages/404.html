@@ -4,11 +4,15 @@
     <!--HEADER-->
     {% include "pages/components/page-header.html" with headerImgID="membership-header" headerTitle="Erreur 404" %}
     <!--CONTENT-->
-    <div class="col-12 px-lg-5">
-        <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">Une erreur est survenue</h2>
-        <div class="section-text mt-5 mt-lg-0 text-lg-start">
-            <p>La page que vous cherchez n'existe pas ou a été déplacée. Vous pouvez retourner à la page d'accueil en cliquant sur le bouton ci-dessous.</p>
-            <a href="{% url 'home' %}" class="btn btn-primary">Retour à l'accueil</a>
+    <section class="normal-section container-fluid text-center p-5 bg-light-beige">
+        <div class="row p-lg-3">
+            <div class="col-12 px-lg-5">
+                <h2 class="d-none d-lg-block mb-5 text-center text-uppercase">Oups ... une erreur est survenue</h2>
+                <div class="section-text mt-5 mt-lg-0 text-center">
+                    <p>La page que vous cherchez n'existe pas ou a été déplacée. Vous pouvez retourner à la page d'accueil en cliquant sur le bouton ci-dessous.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary mt-5">Accueil</a>
+                </div>
+            </div>
         </div>
-    </div>    
+    </section>   
 {% endblock content %}
