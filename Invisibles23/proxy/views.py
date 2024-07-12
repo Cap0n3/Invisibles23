@@ -116,6 +116,9 @@ class MailchimpProxy(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class StripeWebhook(View):
+    """
+    Stripe webhook handler for membership subscription payments.
+    """
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
@@ -132,6 +135,7 @@ class StripeWebhook(View):
                 json.loads(payload), stripe_secret
             )
             data = event["data"]
+            if settings.DEBUG: logger.debug(f"Event data: {data}")
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -157,7 +161,7 @@ class StripeWebhook(View):
             metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
             plan = data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None
             
-            # Lgging the invoice paid event
+            # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_id}")
             logger.info(f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}")
             logger.info(f"Invoice URL: {invoice_url}")
@@ -276,6 +280,63 @@ class StripeWebhook(View):
 
         return HttpResponse(status=200)
     
+
+@method_decorator(csrf_exempt, name="dispatch")
+class StipeEventRegistrationWebhook(View):
+    """
+    Stripe webhook handler for event registration payments.
+    """
+    http_method_names = ["post"]  # Only POST requests are allowed
+    
+    def post(self, request):
+        logger.info("Stripe webhook initiated ...")
+        payload = request.body
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+        stripe_secret = env("STRIPE_WEBHOOK_SECRET")
+        stripe.api_key = env("STRIPE_API_TOKEN")
+        event = None
+        owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
+        
+        try:
+            event = stripe.Event.construct_from(
+                json.loads(payload), stripe_secret
+            )
+            data = event["data"]
+            if settings.DEBUG: 
+                logger.debug(f"Event type: {event['type']}")
+                logger.debug(f"Event data: {data}")
+        except ValueError as e:
+            # Invalid payload
+            logger.error("Invalid payload")
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            logger.error("Invalid signature")
+            return HttpResponse(status=403)
+        
+        # === EVENT HANDLING === #
+        if event["type"] == "checkout.session.completed":
+            logger.info("[EVENT] Checkout session completed event initiated ...")
+        
+        elif event["type"] == "invoice.paid":
+            logger.info("[EVENT] Invoice paid event initiated ...")
+            
+            # Get information about the invoice
+            customer_id = find_key_in_dict(data["object"], "customer")
+            member_name = find_key_in_dict(data["object"], "customer_name")
+            member_email = find_key_in_dict(data["object"], "customer_email")
+            member_country = find_key_in_dict(data["object"], "country")
+            invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
+            metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
+            
+            # Logging the invoice paid event
+            logger.info(f"Invoice paid for: customer ID {customer_id}")
+            logger.info(f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}")
+            logger.info(f"Invoice URL: {invoice_url}")
+            logger.info(f"Metadata for customer: {metadata}")
+            if settings.DEBUG: logger.debug(f"Event data for invoice paid: {data}")
+            
+        return HttpResponse(status=200)
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
