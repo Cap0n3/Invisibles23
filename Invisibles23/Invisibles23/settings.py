@@ -39,7 +39,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-if DEBUG: 
+if DEBUG:
     logger.warning("DEBUG mode is ON ! Do not use in production !")
 else:
     logger.info("DEBUG mode is OFF")
@@ -104,6 +104,9 @@ DATABASES = {
         "PASSWORD": env("DATABASE_PASS"),
         "HOST": env("DATABASE_HOST"),
         "PORT": env("DATABASE_PORT"),
+        "TEST": {
+            "NAME": "invisible_test_db",
+        },
     }
 }
 

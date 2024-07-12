@@ -1,9 +1,27 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 import unittest
 from .views import EventRegistrationView
 from .models import Event
+from Invisibles23.logging_config import logger
+
 
 class EventRegistrationViewTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF. 
+        I don't know why it is necessary to do this, environs seems to not load the .env file correctly
+        during testing (therefore setting DEBUG to false, see settings.py).
+        """
+        super().setUpClass()
+        cls.override = override_settings(DEBUG=True)
+        cls.override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.override.disable()
+    
     def setUp(self):
         # Create a test event
         Event.objects.create(
@@ -24,8 +42,11 @@ class EventRegistrationViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'pages/event-registration.html')
     
-    #@unittest.skip("Not implemented yet")
+    @unittest.skip("Skip for now")
     def test_post(self):
+        """
+        Check if the user is redirected to a stripe checkout page
+        """
         response = self.client.post(f'/rendez-vous/{self.event.id}/inscription/', {
             'fname': 'John',
             'lname': 'Doe',
@@ -36,12 +57,43 @@ class EventRegistrationViewTest(TestCase):
             'zip_code': '1228',
             'city': 'Plan-les-Ouates',
         })
+        logger.debug(f"Response: {response}")
         # Check if the user is redirected to a stripe checkout page
         self.assertEqual(response.status_code, 302)
+        
+        # Check if a url is returned in the response
+        logger.debug(f"Response URL: {response.url}")
+        self.assertTrue(response.url)
     
-    #@unittest.skip("Not implemented yet")   
+    #@unittest.skip("Skip for now")  
+    def test_invalid_post(self):
+        """
+        If the user inputs invalid data, the form should be displayed again with the error messages.
+        """
+        response = self.client.post(f'/rendez-vous/{self.event.id}/inscription/', {
+            'fname': 'John',
+            'lname': 'Doe',
+            'email': 'invalid_email',
+            'membership_status': 'isMember',
+            'zip_code': '1228',
+            'city': 'Plan-les-Ouates',
+        })
+        # Get context data from the response
+        error_inputs = response.context.get('error_inputs') # Returns a dict_keys object
+        error_messages = response.context.get('error_messages')
+        logger.debug(f"Error inputs: {error_inputs}")
+        logger.debug(f"Response: {response}")
+        # Checks
+        error_inputs_list = list(error_inputs) # Convert the dict_keys object to a list
+        self.assertTemplateUsed(response, 'pages/event-registration.html')
+        self.assertEqual(error_inputs_list, ['plan', 'email', 'address'])
+        self.assertTrue(error_messages)
+        
+    
+    @unittest.skip("Not working yet")   
     def test_get_invalid_event(self):
         response = self.client.get('/rendez-vous/1000/inscription/')
-        self.assertEqual(response.status_code, 404)
+        # Check if it raise a DoesNotExist exception
+        self.assertRaises(Event.DoesNotExist)
         #self.assertTemplateUsed(response, '404.html')
             

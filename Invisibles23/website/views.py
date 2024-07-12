@@ -208,10 +208,11 @@ class EventRegistrationView(View):
         form = EventRegistrationForm(request.POST)
         domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
         stripe.api_key = env("STRIPE_API_TOKEN")
-        logger.debug(f"Request data: {request.POST}")
         
         if settings.DEBUG:
             logger.debug("||====== DEBUG MODE IS ON ! ======||")
+            logger.debug(f"Domain: {domain}")
+            logger.debug(f"Request data: {request.POST}")
             
         if form.is_valid():
             logger.info("Event registration form is valid")
@@ -227,6 +228,7 @@ class EventRegistrationView(View):
             # Get the event
             try:
                 event = Event.objects.get(pk=pk)
+                logger.info(f"Event found: {event}")
             except Event.DoesNotExist:
                 logger.error(f"Event with ID {pk} does not exist")
                 return render(request, self.template_name, {"form": form, "error_messages": "L'événement n'existe pas."})
@@ -243,10 +245,12 @@ class EventRegistrationView(View):
                 "customer_email": email,
             }
             
-            if settings.DEBUG: logger.debug(f"Metadata: {metadata}")
-            
             # Create lookup key based on the plan
             lookup_key = f"event-registration-{plan}"
+            
+            if settings.DEBUG: 
+                logger.debug(f"Metadata: {metadata}")
+                logger.debug(f"Lookup key: {lookup_key}")
             
             try:
                 # Get prices from Stripe
@@ -283,6 +287,29 @@ class EventRegistrationView(View):
             except Exception as error:
                 logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
                 return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
+        else:
+            error_data = form.errors.as_data()
+
+            # convert error_data to a dict and message to a string
+            error_dict = {}
+            for key, value in error_data.items():
+                error_dict[key] = str(value[0].message)
+
+            # Log error
+            logger.error(f"Form is not valid ! Error dict: {error_dict}")
+            
+            # Create error_ul from error_dict to display in the template
+            errors_list = [f"<strong>{key}</strong> : {val}" for (key,val) in error_dict.items()]
+            error_ul = "<ul><li>" + "</li><li>".join(errors_list) + "</li></ul>"
+
+            # pass error_ul to the template as html
+            error_context = {
+                "form": form,
+                "error_inputs": error_dict.keys(),
+                "error_messages": error_ul,
+            }
+
+            return render(request, self.template_name, error_context)
 
 
 

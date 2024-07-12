@@ -1,4 +1,4 @@
 .PHONY: test
 test:
 	@echo "Running tests..."
-	python manage.py test website
+	python manage.py test website -v 2
