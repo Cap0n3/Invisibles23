@@ -331,7 +331,7 @@ class StipeEventRegistrationWebhook(View):
             
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_id}")
-            logger.info(f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}")
+            logger.info(f"Member name: {member_name}, email: {member_email}")
             logger.info(f"Invoice URL: {invoice_url}")
             logger.info(f"Metadata for customer: {metadata}")
             if settings.DEBUG: logger.debug(f"Event data for invoice paid: {data}")
