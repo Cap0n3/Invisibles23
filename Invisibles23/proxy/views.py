@@ -304,7 +304,7 @@ class StipeEventRegistrationWebhook(View):
             data = event["data"]
             if settings.DEBUG: 
                 logger.debug(f"Event type: {event['type']}")
-                logger.debug(f"Event data: {data}")
+                #logger.debug(f"Event data: {data}")
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -316,25 +316,19 @@ class StipeEventRegistrationWebhook(View):
         
         # === EVENT HANDLING === #
         if event["type"] == "checkout.session.completed":
-            logger.info("[EVENT] Checkout session completed event initiated ...")
-        
-        elif event["type"] == "invoice.paid":
-            logger.info("[EVENT] Invoice paid event initiated ...")
+            logger.info("[EVENT] Checkout completed event initiated ...")
             
             # Get information about the invoice
-            customer_id = find_key_in_dict(data["object"], "customer")
-            member_name = find_key_in_dict(data["object"], "customer_name")
-            member_email = find_key_in_dict(data["object"], "customer_email")
-            member_country = find_key_in_dict(data["object"], "country")
-            invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
-            metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
+            customer_name = find_key_in_dict(data["object"]["customer_details"], "name")
+            customer_email = find_key_in_dict(data["object"]["customer_details"], "email")
+            customer_country = find_key_in_dict(data["object"]["customer_details"], "country")
+            metadata = find_key_in_dict(data["object"], "metadata")
             
             # Logging the invoice paid event
-            logger.info(f"Invoice paid for: customer ID {customer_id}")
-            logger.info(f"Member name: {member_name}, email: {member_email}")
-            logger.info(f"Invoice URL: {invoice_url}")
+            logger.info(f"Invoice paid for: customer ID {customer_name}")
+            logger.info(f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}")
             logger.info(f"Metadata for customer: {metadata}")
-            if settings.DEBUG: logger.debug(f"Event data for invoice paid: {data}")
+            if settings.DEBUG: logger.debug(f"Event data for payment: {data}")
             
         return HttpResponse(status=200)
 
