@@ -254,6 +254,9 @@ class YoutubeVideos(models.Model):
 
 
 class Event(models.Model):
+    is_talk_event = models.BooleanField(
+        default=False, verbose_name="Évènement de type groupe de parole"
+    )
     title = models.CharField(max_length=100, verbose_name="Titre de l'évènement")
     short_description = models.TextField(
         max_length=300,
@@ -301,6 +304,33 @@ class Event(models.Model):
         return mark_safe(
             f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>"
         )
+
+
+class Participant(models.Model):
+    fname = models.CharField(max_length=50, verbose_name="Nom")
+    lname = models.CharField(max_length=50, verbose_name="Prénom")
+    email = models.EmailField(verbose_name="Email")
+    address = models.CharField(max_length=100, verbose_name="Adresse")
+    zip_code = models.CharField(max_length=100, verbose_name="Code postal")
+    city = models.CharField(max_length=100, verbose_name="Ville")
+    event = models.ManyToManyField(Event, verbose_name="Évènement", through="EventParticipants", related_name="participants")
+
+    class Meta:
+        verbose_name = "Participant"
+        verbose_name_plural = "Participants"
+
+    def __str__(self):
+        return self.name + " - " + self.event.title
+
+
+class EventParticipants(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = "Participation"
+        verbose_name_plural = "Participations"
+        unique_together = ('event', 'participant')
 
 
 class MembershipSection(BaseSections):

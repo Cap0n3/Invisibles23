@@ -126,15 +126,6 @@ class EventRegistrationForm(forms.Form):
         ),
         required=True,
     )
-    # TO IMPLEMENT (NEED CREATE CUSTOM INPUT FIELD WITH PHONE)
-    # phone = forms.CharField(
-    #     min_length=2,
-    #     max_length=100,
-    #     widget=forms.TextInput(
-    #         attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
-    #     ),
-    #     required=True,
-    # )
     address = forms.CharField(
         min_length=2,
         max_length=100,

@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from website.admin import custom_admin_site
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
@@ -22,7 +23,7 @@ from website.views import Custom404View
 urlpatterns = [
     path("", include("website.urls")),
     path("api/proxy/", include("proxy.urls")),
-    path("admin/", admin.site.urls),
+    path("admin/", custom_admin_site.urls),
 ]
 
 handler404 = Custom404View.as_view()

@@ -122,7 +122,7 @@ class StripeWebhook(View):
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
-        logger.info("Stripe webhook initiated ...")
+        logger.info("Stripe membership webhook initiated ...")
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         stripe_secret = env("STRIPE_WEBHOOK_SECRET")
@@ -289,7 +289,7 @@ class StipeEventRegistrationWebhook(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     
     def post(self, request):
-        logger.info("Stripe webhook initiated ...")
+        logger.info("Stripe event registration webhook initiated ...")
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
         stripe_secret = env("STRIPE_WEBHOOK_SECRET")
@@ -304,7 +304,8 @@ class StipeEventRegistrationWebhook(View):
             data = event["data"]
             if settings.DEBUG: 
                 logger.debug(f"Event type: {event['type']}")
-                #logger.debug(f"Event data: {data}")
+                logger.debug(f"Event data: {data}")
+                logger.debug(f"Payload: {payload}")
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
