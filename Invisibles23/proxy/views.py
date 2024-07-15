@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from website.models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
@@ -16,6 +17,7 @@ from .utils.helpers import sendEmail, find_key_in_dict
 # Read the .env file
 env = environ.Env()
 env.read_env("../.env")
+
 
 class GetAPISecrets(View):
     http_method_names = ["post"]  # Only POST requests are allowed
@@ -114,11 +116,13 @@ class MailchimpProxy(View):
                 status=error.status_code,
             )
 
+
 @method_decorator(csrf_exempt, name="dispatch")
 class StripeWebhook(View):
     """
     Stripe webhook handler for membership subscription payments.
     """
+
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def post(self, request):
@@ -131,11 +135,10 @@ class StripeWebhook(View):
         owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
 
         try:
-            event = stripe.Event.construct_from(
-                json.loads(payload), stripe_secret
-            )
+            event = stripe.Event.construct_from(json.loads(payload), stripe_secret)
             data = event["data"]
-            if settings.DEBUG: logger.debug(f"Event data: {data}")
+            if settings.DEBUG:
+                logger.debug(f"Event data: {data}")
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -151,7 +154,7 @@ class StripeWebhook(View):
 
         elif event["type"] == "invoice.paid":
             logger.info("[EVENT] Invoice paid event initiated ...")
-            
+
             # Get information about the invoice
             customer_id = find_key_in_dict(data["object"], "customer")
             member_name = find_key_in_dict(data["object"], "customer_name")
@@ -159,57 +162,69 @@ class StripeWebhook(View):
             member_country = find_key_in_dict(data["object"], "country")
             invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
             metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
-            plan = data["object"]["lines"]["data"][0]["description"] if data["object"]["lines"]["data"][0]["description"] else None
-            
+            plan = (
+                data["object"]["lines"]["data"][0]["description"]
+                if data["object"]["lines"]["data"][0]["description"]
+                else None
+            )
+
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_id}")
-            logger.info(f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}")
+            logger.info(
+                f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}"
+            )
             logger.info(f"Invoice URL: {invoice_url}")
-            if settings.DEBUG: logger.debug(f"Event data for invoice paid: {data}")
-            
+            if settings.DEBUG:
+                logger.debug(f"Event data for invoice paid: {data}")
+
             # Sending invoice to member
-            logger.info(f"(StripeWebhook) Sending welcome & invoice to member at {member_email} ...")
-            
+            logger.info(
+                f"(StripeWebhook) Sending welcome & invoice to member at {member_email} ..."
+            )
+
             # Update customer with metadata
             logger.info("Updating customer metadata ...")
-            if settings.DEBUG: logger.debug(f"Metadata for customer: {data}")
+            if settings.DEBUG:
+                logger.debug(f"Metadata for customer: {data}")
             stripe.Customer.modify(
                 customer_id,
                 metadata={
-                    "name": metadata["name"], 
+                    "name": metadata["name"],
                     "birthday": metadata["birthday"],
                     "customer_email": metadata["customer_email"],
                     "address": metadata["address"],
                     "zip_code": metadata["zip_code"],
                     "city": metadata["city"],
-                    "country": member_country
+                    "country": member_country,
                 },
             )
 
             sendEmail(
-                member_email, 
-                "Confirmation d'adhésion à l'association Les Invisibles", 
-                "adhesion_email.html", 
+                member_email,
+                "Confirmation d'adhésion à l'association Les Invisibles",
+                "adhesion_email.html",
                 {
                     "name": member_name,
-                }
+                },
             )
 
             sendEmail(
-                member_email, 
-                "Reçu de paiement adhésion", 
-                "invoice_email.html", 
+                member_email,
+                "Reçu de paiement adhésion",
+                "invoice_email.html",
                 {
                     "name": member_name,
                     "email": member_email,
                     "invoice_url": invoice_url,
                     "customer_id": customer_id,
                     "membership_plan": plan,
-                }
+                },
             )
 
             # Sending invoice to owner
-            logger.info(f"Sending notification and invoice to owner at {owner_email} ...")
+            logger.info(
+                f"Sending notification and invoice to owner at {owner_email} ..."
+            )
 
             sendEmail(
                 owner_email,
@@ -233,11 +248,12 @@ class StripeWebhook(View):
                     "customer_id": customer_id,
                     "membership_plan": plan,
                 },
-            )  
-   
+            )
+
         elif event["type"] == "payment_intent.payment_failed":
             logger.warning("[EVENT] Payment failed event initiated ...")
-            if settings.DEBUG: logger.debug(f"Event data for payment failed : {event['data']}")
+            if settings.DEBUG:
+                logger.debug(f"Event data for payment failed : {event['data']}")
 
             # Get information about the payment failure
             name = find_key_in_dict(data["object"], "name")
@@ -245,7 +261,9 @@ class StripeWebhook(View):
             customer_id = find_key_in_dict(data["object"], "customer")
             message = find_key_in_dict(data["object"], "message")
 
-            logger.warning(f"Payment failed for {name} with email {email} and customer ID {customer_id}")
+            logger.warning(
+                f"Payment failed for {name} with email {email} and customer ID {customer_id}"
+            )
             logger.warning(f"Payment failed message: {message}")
 
             # Send email to owner for payment failed
@@ -273,21 +291,23 @@ class StripeWebhook(View):
                 },
             )
         elif event["type"] == "customer.created":
-            if settings.DEBUG: logger.debug(f"Event data for customer created : {data['object']}")
+            if settings.DEBUG:
+                logger.debug(f"Event data for customer created : {data['object']}")
 
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
 
         return HttpResponse(status=200)
-    
+
 
 @method_decorator(csrf_exempt, name="dispatch")
 class StipeEventRegistrationWebhook(View):
     """
     Stripe webhook handler for event registration payments.
     """
+
     http_method_names = ["post"]  # Only POST requests are allowed
-    
+
     def post(self, request):
         logger.info("Stripe event registration webhook initiated ...")
         payload = request.body
@@ -296,13 +316,11 @@ class StipeEventRegistrationWebhook(View):
         stripe.api_key = env("STRIPE_API_TOKEN")
         event = None
         owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
-        
+
         try:
-            event = stripe.Event.construct_from(
-                json.loads(payload), stripe_secret
-            )
+            event = stripe.Event.construct_from(json.loads(payload), stripe_secret)
             data = event["data"]
-            if settings.DEBUG: 
+            if settings.DEBUG:
                 logger.debug(f"Event type: {event['type']}")
                 logger.debug(f"Event data: {data}")
                 logger.debug(f"Payload: {payload}")
@@ -314,24 +332,49 @@ class StipeEventRegistrationWebhook(View):
             # Invalid signature
             logger.error("Invalid signature")
             return HttpResponse(status=403)
-        
+
         # === EVENT HANDLING === #
         if event["type"] == "checkout.session.completed":
             logger.info("[EVENT] Checkout completed event initiated ...")
-            
+
             # Get information about the invoice
             customer_name = find_key_in_dict(data["object"]["customer_details"], "name")
-            customer_email = find_key_in_dict(data["object"]["customer_details"], "email")
-            customer_country = find_key_in_dict(data["object"]["customer_details"], "country")
+            customer_email = find_key_in_dict(
+                data["object"]["customer_details"], "email"
+            )
+            customer_country = find_key_in_dict(
+                data["object"]["customer_details"], "country"
+            )
             metadata = find_key_in_dict(data["object"], "metadata")
-            
+
+            # Get the meeting id (actual event)
+            meeting_id = metadata["event_id"]
+            meeting = Event.objects.get(id=meeting_id)
+
+            # Create new participant if it doesn't exist
+            participant, created = Participant.objects.get_or_create(
+                fname=metadata["fname"],
+                lname=metadata["lname"],
+                email=customer_email,
+                address=metadata["address"],
+                zip_code=metadata["zip_code"],
+                city=metadata["city"],
+            )
+
+            # Associate the participant with the event
+            EventParticipants.objects.create(event=meeting, participant=participant)
+
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_name}")
-            logger.info(f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}")
+            logger.info(
+                f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}"
+            )
             logger.info(f"Metadata for customer: {metadata}")
-            if settings.DEBUG: logger.debug(f"Event data for payment: {data}")
-            
+            if settings.DEBUG:
+                logger.debug(f"Event data for payment: {data}")
+
         return HttpResponse(status=200)
+
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
@@ -383,7 +426,7 @@ class EmailSender(View):
                 },
                 status=500,
             )
-        
+
     def verifyRecaptchaV2(self, g_recaptcha_response):
         # Build POST request
         data = {
@@ -393,6 +436,5 @@ class EmailSender(View):
         # Send request to Google
         r = requests.post("https://www.google.com/recaptcha/api/siteverify", data=data)
         result = r.json()
-        
+
         return result["success"]
-    

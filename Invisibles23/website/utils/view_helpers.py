@@ -17,7 +17,9 @@ def createFormErrorContext(form):
     logger.error(f"Form is not valid ! Error dict: {error_dict}")
 
     # Create error_ul from error_dict to display in the template
-    errors_list = [f"<strong>{key}</strong> : {val}" for (key,val) in error_dict.items()]
+    errors_list = [
+        f"<strong>{key}</strong> : {val}" for (key, val) in error_dict.items()
+    ]
     error_ul = "<ul><li>" + "</li><li>".join(errors_list) + "</li></ul>"
 
     # pass error_ul to the template as html

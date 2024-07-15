@@ -17,7 +17,7 @@ class StipeEventRegistrationWebhookTests(TestCase):
     @classmethod
     def setUpClass(cls):
         """
-        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF. 
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF.
         I don't know why it is necessary to do this, environs seems to not load the .env file correctly
         during testing (therefore setting DEBUG to false, see settings.py).
         """
@@ -29,10 +29,10 @@ class StipeEventRegistrationWebhookTests(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         cls.override.disable()
-    
+
     def setUp(self):
         self.client = Client()
-        self.url = reverse('stripe-event-webhook')
+        self.url = reverse("stripe-event-webhook")
         self.payload = {
             "id": "evt_test",
             "type": "checkout.session.completed",
@@ -42,7 +42,7 @@ class StipeEventRegistrationWebhookTests(TestCase):
                     "customer_details": {
                         "name": "John Doe",
                         "email": "john.doe@example.com",
-                        "country": "US"
+                        "country": "US",
                     },
                     "metadata": {
                         "event": "2024-07-15 - Test Event (1)",
@@ -53,24 +53,33 @@ class StipeEventRegistrationWebhookTests(TestCase):
                         "zip_code": "12345",
                         "city": "Test City",
                         "customer_email": "john.doe@example.com",
-                    }
+                    },
                 }
-            }
+            },
         }
-        self.sig_header = 't=' + str(int(time.time())) + ',v1=fake_signature,v0=fake_signature'
+        self.sig_header = (
+            "t=" + str(int(time.time())) + ",v1=fake_signature,v0=fake_signature"
+        )
 
-    @patch('stripe.Event.construct_from')
+    @patch("stripe.Event.construct_from")
     def test_webhook_checkout_session_completed(self, mock_construct_from):
         mock_event = MagicMock()
         mock_event.type = "checkout.session.completed"
         mock_event.data.object = self.payload["data"]["object"]
         # MagicMock objects do not inherently support dictionary-style item access
         # so we need to define a side_effect to return the correct value
-        mock_event.__getitem__.side_effect = lambda key: {"type": mock_event.type, "data": mock_event.data}[key]
+        mock_event.__getitem__.side_effect = lambda key: {
+            "type": mock_event.type,
+            "data": mock_event.data,
+        }[key]
         mock_construct_from.return_value = mock_event
 
-        
-        response = self.client.post(self.url, data=json.dumps(self.payload), content_type='application/json', HTTP_STRIPE_SIGNATURE=self.sig_header)
+        response = self.client.post(
+            self.url,
+            data=json.dumps(self.payload),
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE=self.sig_header,
+        )
         self.assertEqual(response.status_code, 200)
 
 
@@ -191,8 +200,8 @@ class StipeEventRegistrationWebhookTests(TestCase):
 #         "transfer_data": null,
 #         "transfer_group": null
 #     }
-# ]  
-        
+# ]
+
 # payload = {
 #     "id": "evt_3Pc5u6BpqKPTmGHq2tq5M6qU",
 #     "object": "event",

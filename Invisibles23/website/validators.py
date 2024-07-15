@@ -35,6 +35,7 @@ def validate_address(value):
             )
         )
 
+
 def validate_zipcode(value):
     match = re.search("^[a-zA-Z0-9]{2,}\s?-?[a-zA-Z0-9]{0,}$", value)
 
@@ -42,8 +43,9 @@ def validate_zipcode(value):
         raise ValidationError("Le code postal n'est pas valide.")
     elif len(value) < 2 or len(value) > 50:
         raise ValidationError("Le code postal doit contenir entre 2 et 50 caractères")
-    
-# TO TEST   
+
+
+# TO TEST
 def validate_phone(value):
     match = re.search(r"^[0-9]{10}$", value)
 
@@ -52,4 +54,6 @@ def validate_phone(value):
     elif len(value) < 10 or len(value) > 10:
         raise ValidationError("Le numéro de téléphone doit contenir 10 chiffres.")
     elif not value.isdigit():
-        raise ValidationError("Le numéro de téléphone ne doit contenir que des chiffres.")
+        raise ValidationError(
+            "Le numéro de téléphone ne doit contenir que des chiffres."
+        )

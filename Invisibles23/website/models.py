@@ -254,9 +254,7 @@ class YoutubeVideos(models.Model):
 
 
 class Event(models.Model):
-    is_talk_event = models.BooleanField(
-        default=False, verbose_name="Évènement de type groupe de parole"
-    )
+    is_talk_event = models.BooleanField(default=False, verbose_name="Groupe de parole")
     title = models.CharField(max_length=100, verbose_name="Titre de l'évènement")
     short_description = models.TextField(
         max_length=300,
@@ -274,11 +272,17 @@ class Event(models.Model):
         max_length=100, blank=True, verbose_name="Adresse de l'évènement"
     )
     link = models.URLField(blank=True)
+    participants = models.ManyToManyField(
+        "Participant",
+        through="EventParticipants",
+        related_name="events",
+        verbose_name="Participants",
+    )
 
     class Meta:
         verbose_name = "Rendez-vous"
         verbose_name_plural = "Rendez-vous"
-        ordering = ["-date"]
+        # ordering = ["-date"]
 
     def clean(self):
         """
@@ -309,28 +313,30 @@ class Event(models.Model):
 class Participant(models.Model):
     fname = models.CharField(max_length=50, verbose_name="Nom")
     lname = models.CharField(max_length=50, verbose_name="Prénom")
-    email = models.EmailField(verbose_name="Email")
+    email = models.EmailField(verbose_name="Email", unique=True)
     address = models.CharField(max_length=100, verbose_name="Adresse")
     zip_code = models.CharField(max_length=100, verbose_name="Code postal")
     city = models.CharField(max_length=100, verbose_name="Ville")
-    event = models.ManyToManyField(Event, verbose_name="Évènement", through="EventParticipants", related_name="participants")
 
     class Meta:
         verbose_name = "Participant"
         verbose_name_plural = "Participants"
 
     def __str__(self):
-        return self.name + " - " + self.event.title
+        return self.lname + " " + self.fname
 
 
 class EventParticipants(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
-    
+
     class Meta:
         verbose_name = "Participation"
         verbose_name_plural = "Participations"
-        unique_together = ('event', 'participant')
+        unique_together = ("event", "participant")
+
+    def __str__(self):
+        return f"{self.participant.email} - {self.event.title} - {self.event.date.strftime('%d/%m/%Y')}"
 
 
 class MembershipSection(BaseSections):

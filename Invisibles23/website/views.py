@@ -16,6 +16,8 @@ from .models import (
     MiscarriageTabSections,
     YoutubeVideos,
     Event,
+    Participant,
+    EventParticipants,
     ContactSection,
     AssoStatus,
     MembershipSection,
@@ -204,17 +206,19 @@ class EventRegistrationView(View):
             "event": event,
         }
         return render(request, self.template_name, context)
-    
+
     def post(self, request, pk):
         form = EventRegistrationForm(request.POST)
-        domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        domain = (
+            "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        )
         stripe.api_key = env("STRIPE_API_TOKEN")
-        
+
         if settings.DEBUG:
             logger.debug("||====== DEBUG MODE IS ON ! ======||")
             logger.debug(f"Domain: {domain}")
             logger.debug(f"Request data: {request.POST}")
-            
+
         if form.is_valid():
             logger.info("Event registration form is valid")
             membership_status = form.cleaned_data["membership_status"]
@@ -225,43 +229,73 @@ class EventRegistrationView(View):
             zip_code = form.cleaned_data["zip_code"]
             city = form.cleaned_data["city"]
             email = form.cleaned_data["email"]
-            
+
             # Get the event
             try:
                 event = Event.objects.get(pk=pk)
                 logger.info(f"Event found: {event}")
             except Event.DoesNotExist:
                 logger.error(f"Event with ID {pk} does not exist")
-                return render(request, self.template_name, {"form": form, "error_messages": "L'événement n'existe pas."})
-            
+                return render(
+                    request,
+                    self.template_name,
+                    {"form": form, "error_messages": "L'événement n'existe pas."},
+                )
+
+            # Check if participant is already registered with this event
+            if Participant.objects.filter(email=email).exists():
+                participant = Participant.objects.get(email=email)
+                logger.info(
+                    f"Participant is already in the database: {participant.email}"
+                )
+
+                if EventParticipants.objects.filter(
+                    event=event, participant=participant
+                ).exists():
+                    logger.warning(
+                        f"Participant already registered for this event: {event}, it'll be redirected to the event page"
+                    )
+                    return render(
+                        request,
+                        self.template_name,
+                        {
+                            "form": form,
+                            "event": event,
+                            "error_messages": f"Il semblerait que vous soyez déjà inscrit à cet événement. Si vous avez des questions, veuillez nous contacter à l'adresse suivante",
+                        },
+                    )
+
             # Create metadata for the checkout session
             metadata = {
-                "event": f"{event.date} - {event.title} ({event.id})",
+                "event_id": event.id,
+                "event_infos": f"{event.date} - {event.title}",
                 "event_description": event.short_description,
-                "name": f"{first_name} {last_name}",
+                "fname": first_name,
+                "lname": last_name,
                 "membership_status": membership_status,
                 "address": address,
                 "zip_code": zip_code,
                 "city": city,
                 "customer_email": email,
             }
-            
+
             # Create lookup key based on the plan
             lookup_key = f"event-registration-{plan}"
-            
-            if settings.DEBUG: 
+
+            if settings.DEBUG:
                 logger.debug(f"Metadata: {metadata}")
                 logger.debug(f"Lookup key: {lookup_key}")
-            
+
             try:
                 # Get prices from Stripe
                 logger.info("Getting prices from Stripe ...")
                 prices = stripe.Price.list(
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
-                
-                if settings.DEBUG: logger.debug(f"Prices list: {prices}")
-                                
+
+                if settings.DEBUG:
+                    logger.debug(f"Prices list: {prices}")
+
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
                 checkout_session = stripe.checkout.Session.create(
@@ -281,14 +315,24 @@ class EventRegistrationView(View):
                 )
 
                 logger.info("Session created successfully ... redirecting to checkout")
-                
-                if settings.DEBUG: logger.debug(f"Session url: {checkout_session['url']}")
+
+                if settings.DEBUG:
+                    logger.debug(f"Session url: {checkout_session['url']}")
 
                 return redirect(checkout_session["url"], code=303)
-                
+
             except Exception as error:
-                logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
-                return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
+                logger.error(
+                    f"(EventRegistrationView) -> An exception occurred: {error}"
+                )
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        "form": form,
+                        "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}",
+                    },
+                )
         else:
             error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)
@@ -296,7 +340,7 @@ class EventRegistrationView(View):
 
 class ContactView(View):
     template_name = "pages/contact.html"
-    
+
     def get_queryset(self):
         # return Home section and contact section queryset
         return {
@@ -311,7 +355,10 @@ class ContactView(View):
 class MembershipView(View):
     template_name = "pages/membership.html"
     form_class = MembershipForm()
-    initial_form_state = {"subscription": "normal", "frequency": "yearly"} # Default state of radio buttons
+    initial_form_state = {
+        "subscription": "normal",
+        "frequency": "yearly",
+    }  # Default state of radio buttons
 
     @staticmethod
     def choosePricing(subscription, frequency):
@@ -340,7 +387,9 @@ class MembershipView(View):
                 "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
             )
         else:
-            logger.error(f"Invalid subscription or frequency: {subscription}, {frequency}")
+            logger.error(
+                f"Invalid subscription or frequency: {subscription}, {frequency}"
+            )
             raise ValueError("Invalid subscription or frequency")
 
         return _lookup_key
@@ -349,8 +398,8 @@ class MembershipView(View):
         # Text for the membership adhesion
         return {
             "sections_content": MembershipSection.objects.all(),
-        }    
-    
+        }
+
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
         sections = self.get_queryset()
@@ -362,10 +411,12 @@ class MembershipView(View):
 
     def post(self, request):
         form = MembershipForm(request.POST)
-        domain = "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        domain = (
+            "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        )
         stripe.api_key = env("STRIPE_API_TOKEN")
         logger.debug(f"Request data: {request.POST}")
-        
+
         if settings.DEBUG:
             logger.debug("||====== DEBUG MODE IS ON ! ======||")
 
@@ -403,12 +454,13 @@ class MembershipView(View):
                             logger.warning(
                                 f"Customer already has an active subscription: {subscription}"
                             )
-                            return JsonResponse(
+                            return render(
+                                request,
+                                self.template_name,
                                 {
-                                    "error": "Customer already exists in database.",
-                                    "error-message": "Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : ",
+                                    "form": form,
+                                    "error_messages": f"Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : {settings.DEV_EMAIL}",
                                 },
-                                status=409,
                             )
 
                 # Get the lookup key according to the subscription and frequency
@@ -420,7 +472,8 @@ class MembershipView(View):
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
 
-                if settings.DEBUG: logger.debug(f"Prices list: {prices}")
+                if settings.DEBUG:
+                    logger.debug(f"Prices list: {prices}")
 
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
@@ -457,14 +510,22 @@ class MembershipView(View):
                 )
 
                 logger.info("Session created successfully ... redirecting to checkout")
-                if settings.DEBUG: logger.debug(f"Session url: {checkout_session['url']}")
+                if settings.DEBUG:
+                    logger.debug(f"Session url: {checkout_session['url']}")
 
                 return redirect(checkout_session["url"], code=303)
 
             except Exception as error:
                 logger.error(f"(MembershipView) -> An exception occurred: {error}")
-                return render(request, self.template_name, {"form": form, "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}"})
-            
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        "form": form,
+                        "error_messages": f"Une erreur s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}",
+                    },
+                )
+
         else:
             error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)

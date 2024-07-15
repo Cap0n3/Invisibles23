@@ -15,12 +15,6 @@
                     <li class="list-group-item">
                         <small class="text-body-secondary"><b>Date :</b> {{ event.date|date:"d/m/Y" }}</small>
                     </li>
-                    <li class="list-group-item">
-                        <small class="text-body-secondary"><b>Adresse :</b> {{ event.address }}</small>
-                    </li>
-                    <li class="list-group-item">
-                        <small class="text-body-secondary"><b>Lien :</b> <a href="{{ event.link }}" target="_blank">{{ event.link }}</a></small>
-                    </li>
                 </ul>
             {% endif %}
         </div>

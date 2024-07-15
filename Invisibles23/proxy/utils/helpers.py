@@ -12,9 +12,10 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 
 CURR_PATH = os.path.dirname(os.path.realpath(__file__))
 
+
 def sendEmail(receiver_email, subject, email_file, placeholders={}):
     """
-    Send an email to the given receiver email address. The email file is an HTML file that contains the email content. 
+    Send an email to the given receiver email address. The email file is an HTML file that contains the email content.
     The placeholders in the email file are replaced with the actual values.
 
     Param
@@ -45,11 +46,13 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}):
     # Replace the placeholders in email with the actual values
     if len(placeholders) != 0:
         for key, value in placeholders.items():
-            html_content = html_content.replace(f"{{{key}}}", value if value is not None else "None")
+            html_content = html_content.replace(
+                f"{{{key}}}", value if value is not None else "None"
+            )
 
     # Create a MIMEText object for HTML content
     html_part = MIMEText(html_content, "html")
-    
+
     # Attach the HTML part to the message
     message.attach(html_part)
 

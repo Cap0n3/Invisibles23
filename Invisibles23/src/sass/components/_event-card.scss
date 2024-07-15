@@ -40,6 +40,16 @@
             margin-left: 8px;
         }
 
+        .register-btn {
+            // Some general button style does not work here (don't know why)
+            text-decoration: none;
+            width: 160px;
+
+            @include lessThan-md {
+                width: 100%;
+            }
+        }
+
         @include md {
             width: 80%;
         }

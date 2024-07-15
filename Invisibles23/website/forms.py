@@ -155,4 +155,3 @@ class EventRegistrationForm(forms.Form):
     )
     # Hidden input to store the event pk (NO NEED FOR THIS, CAN BE DONE WITH URL PARAMETER)
     # event = forms.IntegerField(widget=forms.HiddenInput(), required=True)
-    

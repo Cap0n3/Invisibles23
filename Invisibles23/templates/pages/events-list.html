@@ -29,10 +29,22 @@
                         {{ event.short_description }}
                         <span><a href="{% url 'event-detail' event.pk %}">En savoir plus</a></span>
                     </div>
-                    <div class="time">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 d-flex flex-column flex-md-row p-0 justify-content-start align-items-start align-items-center gap-4 gap-md-5">
+                                <div class="time order-md-2"> 
+                                    <i class="bi bi-clock"></i> <span>{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</span>  
+                                </div>
+                                {% if event.is_talk_event %}
+                                    <a href={% url "event-registration" event.pk %} class="btn btn-primary register-btn order-md-1" role="button">S'inscrire</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% comment %} <div class="time">
                         <a href={% url "event-registration" event.pk %} class="btn btn-primary" role="button">S'inscrire</a>
                         <i class="bi bi-clock"></i> <span>{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</span>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
             </div>
         {% endfor %}

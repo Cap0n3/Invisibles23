@@ -16,6 +16,13 @@
                 <div class="section-text mt-5 mt-lg-0 mb-5 text-lg-start">
                     {{ event.full_description|safe }}
                 </div>
+                {% if event.is_talk_event %}
+                    <div class="container-fluid text-start mb-5 p-0">
+                        <h4 class="d-lg-block mb-5 text-lg-start text-uppercase">Inscription</h4>
+                        <p>Vous souhaitez participer à cet événement ? Inscrivez-vous dès maintenant en cliquant sur le bouton ci-dessous.</p>
+                        <a href={% url "event-registration" event.pk %} class="btn btn-primary order-md-1" role="button">S'inscrire</a>
+                    </div>
+                {% endif %}
                 {% if event.address or event.link %}
                     <ul class="list-group list-group-flush text-start text-break mb-5">
                         <li class="list-group-item"><small class="text-body-secondary"><b>Heure :</b> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small></li>
