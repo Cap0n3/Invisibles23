@@ -113,7 +113,7 @@ class EventAdmin(admin.ModelAdmin):
         (
             "Type d'événement",
             {
-                "fields": ("is_talk_event",),
+                "fields": ("is_talk_event", "participants_limit"),
             },
         ),
         (

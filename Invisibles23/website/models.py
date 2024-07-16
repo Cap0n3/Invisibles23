@@ -1,4 +1,5 @@
 from django.db import models
+from Invisibles23.logging_config import logger
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from django.utils.safestring import mark_safe
@@ -272,6 +273,10 @@ class Event(models.Model):
         max_length=100, blank=True, verbose_name="Adresse de l'évènement"
     )
     link = models.URLField(blank=True)
+    participants_limit = models.PositiveIntegerField(
+        default=10, verbose_name="Nombre maximum de participants (groupe de parole)"
+    )
+    is_fully_booked = models.BooleanField(default=False)
     participants = models.ManyToManyField(
         "Participant",
         through="EventParticipants",
@@ -304,6 +309,7 @@ class Event(models.Model):
         if self.end_time.hour - self.start_time.hour > 24:
             raise ValidationError("L'évènement ne peut pas durer plus de 24 heures !")
 
+    
     def __str__(self):
         return mark_safe(
             f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>"
@@ -334,7 +340,36 @@ class EventParticipants(models.Model):
         verbose_name = "Participation"
         verbose_name_plural = "Participations"
         unique_together = ("event", "participant")
-
+    
+    def save(self, *args, **kwargs):
+        # Number of participants for this event + 1 because the current participant is not yet counted
+        participant_count = EventParticipants.objects.filter(event=self.event).count() + 1
+        # Get the limit of participants for this event
+        limit = self.event.participants_limit
+        logger.debug(f"Set limit: {limit} - Total participants for event ID '{self.event.id}': {participant_count}")
+        if participant_count == limit:
+            logger.warning(f"Event {self.event.title} is now fully booked, the limit is {limit} participants")
+            logger.info(f"Setting event with ID '{self.event.id}' as fully booked")
+            Event.objects.filter(pk=self.event.pk).update(is_fully_booked=True)
+        elif participant_count > limit:
+            logger.error(f"Event with ID '{self.event.id}' is already fully booked ! Max participants: {limit}")
+            raise ValidationError("L'évènement est complet !")
+        super().save(*args, **kwargs)
+        
+    def delete(self, *args, **kwargs):
+        # Count the number of participants for this event minus the participant being deleted
+        participant_count = EventParticipants.objects.filter(event=self.event).count() - 1
+        # Get the limit of participants for this event
+        limit = self.event.participants_limit
+        logger.debug(f"Set limit: {limit} - Total participants for event ID '{self.event.id}': {participant_count}")
+        if participant_count < limit:
+            logger.warning(f"Event {self.event.title} is no longer fully booked, the limit is {limit} participants")
+            logger.info(f"Setting event with ID '{self.event.id}' as not fully booked")
+            Event.objects.filter(pk=self.event.pk).update(is_fully_booked=False)
+        # Delete the participant
+        super().delete(*args, **kwargs)
+        
+            
     def __str__(self):
         return f"{self.participant.email} - {self.event.title} - {self.event.date.strftime('%d/%m/%Y')}"
 

@@ -28,4 +28,10 @@ test-event-webhook:
 	@echo "Running tests for event webhook..."
 	python manage.py test proxy -v 2
 
+# Launch a specific test case by passing the test case name as an argument
+# Example: make test-case case=EventParticipantsModelTest
+.PHONY: test-case
+test-case:
+	python manage.py test website.tests.$(case) -v 2
+
 
