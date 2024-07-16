@@ -87,7 +87,6 @@ class EventAdmin(admin.ModelAdmin):
     """
     Customize the Event admin page.
     """
-
     list_display = (
         "date",
         "title",

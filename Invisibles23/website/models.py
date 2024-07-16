@@ -135,7 +135,6 @@ class BaseRessources(models.Model):
 
     # If image is not provided, use the default image
     def save(self, *args, **kwargs):
-        print("Saving !!!")
         if not self.image:
             self.image = "default_Img_ressources"
         super().save(*args, **kwargs)
@@ -293,7 +292,7 @@ class Event(models.Model):
         """
         Check if the event is not in the past
         """
-        super().clean()
+        cleaned_data = super().clean()
         if self.date < date.today():
             raise ValidationError(
                 "La date de l'évènement ne peut pas être dans le passé !"
@@ -308,8 +307,7 @@ class Event(models.Model):
         # Check if the event is not too long
         if self.end_time.hour - self.start_time.hour > 24:
             raise ValidationError("L'évènement ne peut pas durer plus de 24 heures !")
-
-    
+   
     def __str__(self):
         return mark_safe(
             f"<span style='color: #BC52BE'>[DATE : {self.date.strftime('%d/%m/%Y')}]</span><span> - {self.title} </span>"
@@ -340,6 +338,27 @@ class EventParticipants(models.Model):
         verbose_name = "Participation"
         verbose_name_plural = "Participations"
         unique_together = ("event", "participant")
+        
+    def clean(self):
+        """
+        This method is called only when user is adding a new participant to an event from admin console.
+        It checks if the event is fully booked before adding a new participant.
+        """
+        # Get current participant (they all go through the clean method)
+        participant_id = self.participant.id
+        # Check if the event is fully booked
+        isFullyBooked = self.event.is_fully_booked
+        # Get all registered participants for the current event
+        event_instances = EventParticipants.objects.filter(event=self.event)
+        # Check if the current participant is already in the event or not
+        if not event_instances.filter(participant_id=participant_id).exists():
+            logger.info("User is adding a new participant from admin")
+            logger.info(f"Adding participant with ID '{participant_id}' to event with ID '{self.event.id}'")
+            if isFullyBooked:
+                logger.error(f"User tried to add a new user from console but event with ID '{self.event.id}' cannot accept more participants, it is fully booked")
+                raise ValidationError("L'évènement est complet, vous ne pouvez pas ajouter ce participant !")
+        else:
+            super().clean()
     
     def save(self, *args, **kwargs):
         # Number of participants for this event + 1 because the current participant is not yet counted

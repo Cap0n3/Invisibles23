@@ -1,7 +1,6 @@
 from django import forms
 from .validators import validate_names, validate_address, validate_zipcode
 
-
 class MembershipForm(forms.Form):
     subscription_choices = [
         ("support", "Soutien - CHF/EUR 84 par année (CHF/EUR 7.70 par mois)"),
