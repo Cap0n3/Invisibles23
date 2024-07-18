@@ -87,10 +87,12 @@ class EventAdmin(admin.ModelAdmin):
     """
     Customize the Event admin page.
     """
+
     list_display = (
         "date",
         "title",
         "is_talk_event",
+        "is_fully_booked",
     )  # Customize fields displayed in list view
     ordering = ("-date",)  # Order by date
     search_fields = (
@@ -108,11 +110,21 @@ class EventAdmin(admin.ModelAdmin):
     )  # Add filters for date and location
     inlines = [ParticipantInline]
 
+    readonly_fields = ("is_fully_booked",)
+
     fieldsets = (
         (
             "Type d'événement",
             {
-                "fields": ("is_talk_event", "participants_limit"),
+                "fields": ("is_talk_event",),
+                "description": "Si il s'agit d'un événement de type 'Groupe de parole', veuillez cocher la case ci-dessus. Sinon laissez la case décochée.",
+            },
+        ),
+        (
+            "Limitation du nombre de participants (si groupe de parole)",
+            {
+                "fields": ("participants_limit",),
+                "description": "Si il s'agit d'un événement de type 'Groupe de parole', ajoutez les participants ici. Au cas où l'événement est complet mais que vous souhaitez ajouter un participant, veuillez d'abord augmenter le nombre de participants maximum, puis sauvegarder les modification et enfin ajouter le participant.",
             },
         ),
         (
@@ -124,7 +136,20 @@ class EventAdmin(admin.ModelAdmin):
         (
             "Informations sur l'événement",
             {
-                "fields": ("short_description", "full_description", "address", "link"),
+                "fields": (
+                    "is_fully_booked",
+                    "short_description",
+                    "full_description",
+                    "address",
+                    "link",
+                ),
+            },
+        ),
+        (
+            "Participants",
+            {
+                "fields": (),
+                "description": "Après le paiement sur Stripe, les participants seront ajoutés automatiquement à la liste ci-dessous. Vous pouvez également ajouter des participants manuellement en cliquant sur le bouton 'Ajouter un participant'. Attention, le nombre de participants ne doit pas dépasser le nombre maximum de participants.",
             },
         ),
     )

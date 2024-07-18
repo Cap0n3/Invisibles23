@@ -18,15 +18,10 @@ migrate-all:
 	python manage.py migrate
 
 # === Test commands === #
-.PHONY: test-event-registration
-test-env-registration:
-	@echo "Running tests for event registration..."
-	python manage.py test website -v 2
-
-.PHONY: test-event-webhook
-test-event-webhook:
-	@echo "Running tests for event webhook..."
-	python manage.py test proxy -v 2
+.PHONY: test-all
+test-all:
+	@echo "Running all tests..."
+	python manage.py test -v 2
 
 # Launch a specific test case by passing the test case name as an argument
 # Example: make test-case case=EventParticipantsModelTest

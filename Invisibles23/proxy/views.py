@@ -323,7 +323,6 @@ class StipeEventRegistrationWebhook(View):
             if settings.DEBUG:
                 logger.debug(f"Event type: {event['type']}")
                 logger.debug(f"Event data: {data}")
-                logger.debug(f"Payload: {payload}")
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -352,14 +351,29 @@ class StipeEventRegistrationWebhook(View):
             meeting = Event.objects.get(id=meeting_id)
 
             # Create new participant if it doesn't exist
+            # participant, created = Participant.objects.get_or_create(
+            #     fname=metadata["fname"],
+            #     lname=metadata["lname"],
+            #     email=customer_email,
+            #     address=metadata["address"],
+            #     zip_code=metadata["zip_code"],
+            #     city=metadata["city"],
+            # )
             participant, created = Participant.objects.get_or_create(
-                fname=metadata["fname"],
-                lname=metadata["lname"],
                 email=customer_email,
-                address=metadata["address"],
-                zip_code=metadata["zip_code"],
-                city=metadata["city"],
+                defaults={
+                    "fname": metadata["fname"],
+                    "lname": metadata["lname"],
+                    "address": metadata["address"],
+                    "zip_code": metadata["zip_code"],
+                    "city": metadata["city"],
+                },
             )
+
+            if created:
+                logger.info(f"New participant created: {participant}")
+            else:
+                logger.info(f"Participant already exists: {participant}")
 
             # Associate the participant with the event
             EventParticipants.objects.create(event=meeting, participant=participant)
