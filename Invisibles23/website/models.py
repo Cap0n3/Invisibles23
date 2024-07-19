@@ -334,51 +334,66 @@ class Event(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        # In case event is already fully booked, check if the participants limit has been changed
-        if self.is_fully_booked:
-            # Get the current participants limit
-            current_participants_limit = Event.objects.get(
-                pk=self.pk
-            ).participants_limit
-            # If the limit has been changed and is now higher or lower than the current number of participants
-            if self.participants_limit != current_participants_limit:
-                logger.info(
-                    f"Participants limit has been changed for event with ID '{self.pk}'"
-                )
-                new_limit = self.participants_limit
-                if new_limit > current_participants_limit:
-                    logger.info(
-                        f"New limit of {new_limit} is higher than the current limit of {current_participants_limit}"
-                    )
-                    logger.info(
-                        f"Updating event with ID '{self.pk}' to not fully booked"
-                    )
-                    # Change the event to not fully booked
-                    self.is_fully_booked = False
-                elif new_limit < current_participants_limit:
-                    logger.info(
-                        f"New limit of {new_limit} is lower than the current limit of {current_participants_limit}"
-                    )
-                    logger.info(
-                        f"Checking if the event is now fully booked with the new limit"
-                    )
-                    # Get the number of participants for this event
-                    participant_count = (
-                        EventParticipants.objects.filter(event=self).count()
-                    )
-                    if participant_count == new_limit:
+        if self.pk:  # Only check for existing events
+            current_event = Event.objects.get(pk=self.pk)
+            current_participants_limit = current_event.participants_limit
+            # Is there already participants for this event ?
+            if EventParticipants.objects.filter(event=self).exists():
+                if self.is_fully_booked:
+                    # In case event is already fully booked, check if the participants limit has been changed
+                    if self.participants_limit != current_participants_limit:
                         logger.info(
-                            f"Event with ID '{self.pk}' is now fully booked with the new limit of {new_limit}"
+                            f"Participants limit has been changed for event with ID '{self.pk}'"
                         )
-                        self.is_fully_booked = True
-                    else:
-                        logger.warning(
-                            f"The limit cannot be lower than the current number of participants ({participant_count})"
+                        new_limit = self.participants_limit
+                        self._handle_limit_change(new_limit, current_participants_limit)
+                elif not self.is_fully_booked:
+                    # Has the participants limit been changed ?
+                    if self.participants_limit != current_participants_limit:
+                        logger.info(
+                            f"Participants limit has been changed for event with ID '{self.pk}'"
                         )
-                        raise ValidationError(
-                            "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants !"
-                        )
+                        new_limit = self.participants_limit
+                        self._handle_limit_change(new_limit, current_participants_limit)
+        
         super().save(*args, **kwargs)
+        
+    def _handle_limit_change(self, new_limit, current_limit):
+        """
+        If the limit has been changed by user, check if the event is now fully booked or not
+        """
+        if new_limit > current_limit:
+            logger.info(
+                f"New limit of {new_limit} is higher than the current limit of {current_limit}"
+            )
+            logger.info(
+                f"Updating event with ID '{self.pk}' to not fully booked"
+            )
+            # Change the event to not fully booked
+            self.is_fully_booked = False
+        elif new_limit < current_limit:
+            logger.info(
+                f"New limit of {new_limit} is lower than the current limit of {current_limit}"
+            )
+            logger.info(
+                f"Checking if the event is now fully booked with the new limit"
+            )
+            # Get the number of participants for this event
+            participant_count = (
+                EventParticipants.objects.filter(event=self).count()
+            )
+            if participant_count == new_limit:
+                logger.info(
+                    f"Event with ID '{self.pk}' is now fully booked with the new limit of {new_limit}"
+                )
+                self.is_fully_booked = True
+            elif participant_count > new_limit:
+                logger.warning(
+                    f"The limit cannot be lower than the current number of participants ({participant_count})"
+                )
+                raise ValidationError(
+                    "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants !"
+                )
 
     def __str__(self):
         return mark_safe(f"{self.title} - {self.date.strftime('%d/%m/%Y')}")
@@ -444,7 +459,7 @@ class EventParticipants(models.Model):
         participant_count = (
             EventParticipants.objects.filter(event=self.event).count() + 1
         )
-        # Get the limit of participants for this event
+        # Get the current limit of participants for this event
         limit = self.event.participants_limit
         logger.debug(
             f"Set limit: {limit} - Total participants for event ID '{self.event.id}': {participant_count}"
