@@ -201,28 +201,12 @@ class EventModelTest(TestCase):
     - If an event has 5 participants and the limit is lowered to 5, event should be fully booked
         - If the limit is lowered to 4, the model should return an error
     - If an event has 9 participants and is fully booked, if a participant cancels, the event should no longer be fully booked
-        - If the limit is lowered to 4, the model should return an error
     """
-    
     def setUp(self):
-        # Create a standard test event
-        self.event = Event.objects.create(
-            is_talk_event=False,
-            title="Standard Test Event",
-            short_description="This is a test event",
-            full_description="This is a test event, please ignore it.",
-            date="2022-12-12",
-            start_time="12:00",
-            end_time="14:00",
-            address="Chemin de la Mairie 1",
-            link="https://www.myevent.com",
-        )
-        logger.debug(f"Created standard event for testing: {self.event}")
-        
-        # Create a talk group event
+        # Create a talk group event (default limit is 9)
         self.talk_group_event = Event.objects.create(
             is_talk_event=True,
-            title="Talk Group Event",
+            title="Test Event",
             short_description="This is a test talk group event",
             full_description="This is a test talk group event, please ignore it.",
             date="2022-12-12",
@@ -238,49 +222,156 @@ class EventModelTest(TestCase):
         """
         Test if a standard event can be created
         """
+        self.event = Event.objects.create(
+            is_talk_event=False,
+            title="Standard Test Event",
+            short_description="This is a test event",
+            full_description="This is a test event, please ignore it.",
+            date="2022-12-12",
+            start_time="12:00:00",
+            end_time="14:00:00",
+            address="Chemin de la Mairie 1",
+            link="https://www.myevent.com",
+        )
+        logger.debug(f"Events {Event.objects.all()}")
         self.assertTrue(Event.objects.filter(title="Standard Test Event").exists())
         logger.debug(f"Event 'Standard Test Event' successfully created.")
     
-    @unittest 
+    #@unittest.skip("Skip for now")
     def test_create_empty_talk_group(self):
         """
         Test if an empty talk group event can be created
         """
+        self.event = Event.objects.create(
+            is_talk_event=False,
+            title="Talk Group Event",
+            short_description="This is a test event",
+            full_description="This is a test event, please ignore it.",
+            date="2022-12-12",
+            start_time="12:00:00",
+            end_time="14:00:00",
+            address="Chemin de la Mairie 1",
+            link="https://www.myevent.com",
+        )
         self.assertTrue(Event.objects.filter(title="Talk Group Event").exists())
         logger.debug(f"Event 'Talk Group Event' successfully created.")
         
-    @unittest
+    #@unittest.skip("Skip for now")
     def test_create_talk_group_event(self):
         """
-        Test if a talk group event with 5 participants can be created and is not fully booked
+        Test if a talk group event with 5 participants can be created and is not fully booked.
+        Then, add 4 more participants to the event and check if it is fully booked.
         """
-        # Get participant IDs
-        participant_ids = [participant.id for participant in self.participants[:5]]
-        logger.debug(f"Participant IDs: {participant_ids}")
-
         # Associate all participants with the event
-        for participant_id in participant_ids:
+        for participant in self.participants[:5]:
             EventParticipants.objects.create(
-                event=self.talk_group_event, participant_id=participant_id
+                event=self.talk_group_event, participant=participant
             )
-        event = Event.objects.get(title="Talk Group Event")
+        event = Event.objects.get(title="Test Event")
         self.assertEqual(event.participants.count(), 5)
         self.assertFalse(event.is_fully_booked)
-        logger.debug(f"Event 'Talk Group Event' successfully created with 5 participants.")
+        logger.debug(f"Event 'Test Event' successfully created with 5 participants.")
         
         # Add 4 more participants to the event
         for i in range(4):
             EventParticipants.objects.create(
-                event=self.talk_group_event, participant_id=self.participants[i+5].id
+                event=self.talk_group_event, participant=self.participants[i+5]
             )
-        updated_event = Event.objects.get(title="Talk Group Event")
+        updated_event = Event.objects.get(title="Test Event")
         self.assertEqual(updated_event.participants.count(), 9)
         self.assertTrue(updated_event.is_fully_booked)
-        logger.debug(f"Event 'Talk Group Event' is now fully booked with 9 participants.")
+        logger.debug(f"Event 'Test Event' is now fully booked with 9 participants.")
     
-         
+    #@unittest
+    def test_create_fully_booked_talk_group_event(self):
+        """
+        Test if a talk group event with 9 participants can be created and is fully booked.
+        Then, remove a participant from the event and check if it is no longer fully booked.
+        """
+        # Associate all participants with the event
+        for participant in self.participants[:9]:
+            EventParticipants.objects.create(
+                event=self.talk_group_event, participant=participant
+            )
+        event = Event.objects.get(title="Test Event")
+        self.assertEqual(event.participants.count(), 9)
+        self.assertTrue(event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' successfully created with 9 participants.")
+        
+        # Remove a participant from the event
+        EventParticipants.objects.get(event=self.talk_group_event, participant=self.participants[0]).delete()
+        updated_event = Event.objects.get(title="Test Event")
+        self.assertEqual(updated_event.participants.count(), 8)
+        self.assertFalse(updated_event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' is no longer fully booked with 8 participants.")
+        
+    #@unittest
+    def test_insert_too_much_participants(self):
+        """
+        Test if a talk group event with 11 participants cannot be created (exceeding the limit).
+        """
+        with self.assertRaises(Exception):
+            for participant in self.participants:
+                EventParticipants.objects.create(
+                    event=self.talk_group_event, participant=participant
+                )
+            logger.debug(f"Successfully raised exception when trying to exceed participant limit.")
+            
+    #@unittest
+    def test_lower_participants_limit(self):
+        """
+        Test if an event with 5 participants and a limit of 5 is fully booked.
+        Then, if the limit is lowered to 4, the model should return an error.
+        """
+        # Associate all participants with the event
+        for participant in self.participants[:5]:
+            EventParticipants.objects.create(
+                event=self.talk_group_event, participant=participant
+            )
+        event = Event.objects.get(title="Test Event")
+        self.assertEqual(event.participants.count(), 5)
+        self.assertFalse(event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' successfully created with 5 participants.")
+        
+        # Lower the participants limit to 5
+        event.participants_limit = 5
+        event.save()
+        updated_event = Event.objects.get(title="Test Event")
+        self.assertEqual(updated_event.participants_limit, 5)
+        self.assertTrue(updated_event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' is now fully booked with 5 participants.")
 
+        # Lower the participants limit to 4
+        event.participants_limit = 4
+        with self.assertRaises(Exception):
+            event.save()
+        logger.debug(f"Successfully raised exception when trying to lower limit to less than number of participants.")
+        
+    #@unittest
+    def test_lower_participants_limit_fully_booked(self):
+        """
+        Test if an event with 9 participants and a limit of 9 is fully booked.
+        Then, if a participant cancels, the event should no longer be fully booked.
+        If the limit is lowered to 4, the model should return an error.
+        """
+        # Associate all participants with the event
+        for participant in self.participants[:9]:
+            EventParticipants.objects.create(
+                event=self.talk_group_event, participant=participant
+            )
+        event = Event.objects.get(title="Test Event")
+        self.assertEqual(event.participants.count(), 9)
+        self.assertTrue(event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' successfully created with 9 participants.")
+        
+        # Remove a participant from the event
+        EventParticipants.objects.get(event=self.talk_group_event, participant=self.participants[0]).delete()
+        updated_event = Event.objects.get(title="Test Event")
+        self.assertEqual(updated_event.participants.count(), 8)
+        self.assertFalse(updated_event.is_fully_booked)
+        logger.debug(f"Event 'Test Event' is no longer fully booked with 8 participants.")
 
+            
 class AdminFormSubmissionTest(TestCase):
     """
     This test case will test the admin console form submission. It simulates the form submission process and checks if the form is processed correctly.
@@ -302,7 +393,7 @@ class AdminFormSubmissionTest(TestCase):
         logger.debug("Logged in as superuser...")
         self.participants, self.test_participants = create_participants()
 
-    @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_simple_event_submission(self):
         """
         Test if the admin form submission for a simple event (not a talk group event) is successful.
@@ -345,7 +436,7 @@ class AdminFormSubmissionTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Test Event").exists())
         logger.debug(f"Event 'Test Event' successfully created.")
 
-    @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_talk_event_submission(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
@@ -410,7 +501,7 @@ class AdminFormSubmissionTest(TestCase):
         for participant in event.participants.all():
             self.assertTrue(participant.id in participant_ids)
 
-    @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_insert_too_much_participants(self):
         """
         Test if the admin form submission for a talk event with 11 participants is prevented.
@@ -457,7 +548,7 @@ class AdminFormSubmissionTest(TestCase):
             f"Successfully raised exception when trying to exceed participant limit"
         )
 
-    @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_remove_a_participant(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
