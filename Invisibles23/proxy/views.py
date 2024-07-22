@@ -10,6 +10,7 @@ import environ
 import requests
 import stripe
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .utils.helpers import sendEmail, find_key_in_dict
@@ -310,31 +311,44 @@ class StipeEventRegistrationWebhook(View):
 
     def post(self, request):
         logger.info("Stripe event registration webhook initiated ...")
-        payload = request.body
-        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-        stripe_secret = env("STRIPE_WEBHOOK_SECRET")
-        stripe.api_key = env("STRIPE_API_TOKEN")
-        event = None
-        owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
 
         try:
-            event = stripe.Event.construct_from(json.loads(payload), stripe_secret)
-            data = event["data"]
+            payload = request.body
+            sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+            stripe_secret = env("STRIPE_WEBHOOK_SECRET")
+            stripe.api_key = env("STRIPE_API_TOKEN")
+
+            event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
+
             if settings.DEBUG:
                 logger.debug(f"Event type: {event['type']}")
-                logger.debug(f"Event data: {data}")
+                logger.debug(f"Event data: {event['data']}")
+
+            if event["type"] == "checkout.session.completed":
+                self.handle_checkout_completed(event["data"])
+            else:
+                logger.warning(f"Unhandled event type: {event['type']}")
+
+            return HttpResponse(status=200)
+
         except ValueError as e:
-            # Invalid payload
-            logger.error("Invalid payload")
+            logger.error(f"Invalid payload: {str(e)}")
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
-            # Invalid signature
-            logger.error("Invalid signature")
+            logger.error(f"Invalid signature: {str(e)}")
             return HttpResponse(status=403)
+        except Exception as e:
+            logger.error(f"Unexpected error in webhook: {str(e)}")
+            return HttpResponse(status=500)
+        
+    def handle_checkout_completed(self, data):
+        """
+        Subroutine to handle the checkout completed event.
+        """
+        logger.info("[EVENT] Checkout completed event initiated ...")
 
         # === EVENT HANDLING === #
-        if event["type"] == "checkout.session.completed":
-            logger.info("[EVENT] Checkout completed event initiated ...")
+        try:
 
             # Get information about the invoice
             customer_name = find_key_in_dict(data["object"]["customer_details"], "name")
@@ -346,10 +360,11 @@ class StipeEventRegistrationWebhook(View):
             )
             metadata = find_key_in_dict(data["object"], "metadata")
 
-            # Get the meeting id (actual event)
             meeting_id = metadata["event_id"]
-            meeting = Event.objects.get(id=meeting_id)
+            if not meeting_id:
+                raise ValueError("Missing event_id in metadata")
             
+            meeting = Event.objects.get(id=meeting_id)
             logger.info(f"Extracted all data for event registration: {meeting}")
 
             participant, created = Participant.objects.get_or_create(
@@ -363,25 +378,27 @@ class StipeEventRegistrationWebhook(View):
                 },
             )
 
-            if created:
-                logger.info(f"New participant created: {participant}")
-            else:
-                logger.info(f"Participant already exists: {participant}")
-
+            logger.info(f"{'New' if created else 'Existing'} participant: {participant}")
+            
             # Associate the participant with the event
             EventParticipants.objects.create(event=meeting, participant=participant)
             logger.info(f"Participant {participant} registered for event {meeting}")
 
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_name}")
-            logger.info(
-                f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}"
-            )
+            logger.info(f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}")
             logger.info(f"Metadata for customer: {metadata}")
+            logger.info(f"Metadata for customer: {metadata}")
+            
             if settings.DEBUG:
                 logger.debug(f"Event data for payment: {data}")
-
-        return HttpResponse(status=200)
+                
+        except ObjectDoesNotExist as e:
+            logger.error(f"Event not found: {str(e)}")
+        except ValueError as e:
+            logger.error(f"Invalid data in webhook payload: {str(e)}")
+        except Exception as e:
+            logger.error(f"Error processing checkout completed event: {str(e)}")
 
 
 class EmailSender(View):
