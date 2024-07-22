@@ -315,19 +315,21 @@ class Event(models.Model):
         # Check if the event is not too long
         if self.end_time.hour - self.start_time.hour > 24:
             raise ValidationError("L'évènement ne peut pas durer plus de 24 heures !")
-        
+
         # Check if the participants limit is not too high
         if self.participants_limit > 50:
-            raise ValidationError("Le nombre maximum de participants ne peut pas être supérieur à 50 !")
-        
+            raise ValidationError(
+                "Le nombre maximum de participants ne peut pas être supérieur à 50 !"
+            )
+
         # Check if the participants limit is not too low
         if self.participants_limit < 1:
-            raise ValidationError("Le nombre maximum de participants ne peut pas être inférieur à 1 !")
-        
+            raise ValidationError(
+                "Le nombre maximum de participants ne peut pas être inférieur à 1 !"
+            )
+
         # Check if the participants limit is not lower than the current number of participants
-        participant_count = (
-            EventParticipants.objects.filter(event=self).count()
-        )
+        participant_count = EventParticipants.objects.filter(event=self).count()
         if self.participants_limit < participant_count:
             raise ValidationError(
                 "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
@@ -355,9 +357,9 @@ class Event(models.Model):
                         )
                         new_limit = self.participants_limit
                         self._handle_limit_change(new_limit, current_participants_limit)
-        
+
         super().save(*args, **kwargs)
-        
+
     def _handle_limit_change(self, new_limit, current_limit):
         """
         If the limit has been changed by user, check if the event is now fully booked or not
@@ -366,22 +368,16 @@ class Event(models.Model):
             logger.info(
                 f"New limit of {new_limit} is higher than the current limit of {current_limit}"
             )
-            logger.info(
-                f"Updating event with ID '{self.pk}' to not fully booked"
-            )
+            logger.info(f"Updating event with ID '{self.pk}' to not fully booked")
             # Change the event to not fully booked
             self.is_fully_booked = False
         elif new_limit < current_limit:
             logger.info(
                 f"New limit of {new_limit} is lower than the current limit of {current_limit}"
             )
-            logger.info(
-                f"Checking if the event is now fully booked with the new limit"
-            )
+            logger.info(f"Checking if the event is now fully booked with the new limit")
             # Get the number of participants for this event
-            participant_count = (
-                EventParticipants.objects.filter(event=self).count()
-            )
+            participant_count = EventParticipants.objects.filter(event=self).count()
             if participant_count == new_limit:
                 logger.info(
                     f"Event with ID '{self.pk}' is now fully booked with the new limit of {new_limit}"
@@ -419,6 +415,7 @@ class EventParticipants(models.Model):
     """
     Model to link participants to events (Join table)
     """
+
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
 
