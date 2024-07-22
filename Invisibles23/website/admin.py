@@ -149,7 +149,7 @@ class EventAdmin(admin.ModelAdmin):
             "Participants",
             {
                 "fields": (),
-                "description": "Après le paiement sur Stripe, les participants seront ajoutés automatiquement à la liste ci-dessous. Vous pouvez également ajouter des participants manuellement en cliquant sur le bouton 'Ajouter un participant'. Attention, le nombre de participants ne doit pas dépasser le nombre maximum de participants.",
+                "description": "Après le paiement sur Stripe, les participants seront ajoutés automatiquement à la liste ci-dessous. Vous pouvez également ajouter des participants manuellement en cliquant sur le bouton 'Ajouter un participant'. Attention, si vous effacer un participant, il ne sera pas automatiquement remboursé.",
             },
         ),
     )
