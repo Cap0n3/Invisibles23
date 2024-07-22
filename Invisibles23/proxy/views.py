@@ -349,16 +349,9 @@ class StipeEventRegistrationWebhook(View):
             # Get the meeting id (actual event)
             meeting_id = metadata["event_id"]
             meeting = Event.objects.get(id=meeting_id)
+            
+            logger.info(f"Extracted all data for event registration: {meeting}")
 
-            # Create new participant if it doesn't exist
-            # participant, created = Participant.objects.get_or_create(
-            #     fname=metadata["fname"],
-            #     lname=metadata["lname"],
-            #     email=customer_email,
-            #     address=metadata["address"],
-            #     zip_code=metadata["zip_code"],
-            #     city=metadata["city"],
-            # )
             participant, created = Participant.objects.get_or_create(
                 email=customer_email,
                 defaults={
@@ -377,6 +370,7 @@ class StipeEventRegistrationWebhook(View):
 
             # Associate the participant with the event
             EventParticipants.objects.create(event=meeting, participant=participant)
+            logger.info(f"Participant {participant} registered for event {meeting}")
 
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_name}")
