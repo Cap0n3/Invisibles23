@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="description" content="Notification d'inscription au groupe de parole">
+    <meta name="keywords" content="email, template, groupe de parole, notification d'inscription">
+    <meta name="author" content="Les Invisibles">
+    <meta charset="UTF-8">
+    <title>Inscription au groupe de parole</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <p><strong>Objet : </strong>Nouvelle inscription au groupe de parole</p>
+    <hr>
+    <p>Chère Tamara,</p>
+    <p>J'ai le plaisir de t'informer qu'une nouvelle personne s'est inscrite à un prochain groupe de parole de l'association Les Invisibles.</p>
+    <p>Voici les informations de l'inscrit·e :</p>
+    <table>
+        <tr>
+            <th>Prénom</th>
+            <td>{fname}</td>
+        </tr>
+        <tr>
+            <th>Nom</th>
+            <td>{lname}</td>
+        </tr>
+        <tr>
+            <th>Adresse</th>
+            <td>{address}</td>
+        </tr>
+        <tr>
+            <th>Code postal</th>
+            <td>{zip_code}</td>
+        </tr>
+        <tr>
+            <th>Ville</th>
+            <td>{city}</td>
+        </tr>
+        <tr>
+            <th>Nom de l'événement</th>
+            <td>{event_title}</td>
+        </tr>
+        <tr>
+            <th>Date de l'événement</th>
+            <td>{event_date} à {event_start_time}</td>
+        </tr>
+    </table>
+    <p>Tu pourras retrouver cette inscription ainsi que toutes les autres dans ton espace <a href="https://www.lesinvisibles.ch/admin/">administrateur</a> sous l'onglet "Rendez-vous". Pour y accéder, utilise tes identifiants habituels.</p>
+    <p>N'oublie pas de préparer l'accueil de ce·tte nouveau·elle participant·e pour le groupe de parole prévu à la date indiquée ci-dessus.</p>
+    <p><i>Cet e-mail a été envoyé automatiquement par le système de gestion des inscriptions de l'association "Les Invisibles".</i></p>
+    <p><strong>L'Association Les Invisibles</strong><br><a href="mailto:association@lesinvisibles.ch">association@lesinvisibles.ch</a></p>
+</body>
+</html>

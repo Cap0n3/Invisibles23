@@ -311,7 +311,7 @@ class StipeEventRegistrationWebhook(View):
 
     def post(self, request):
         logger.info("Stripe event registration webhook initiated ...")
-
+        
         try:
             payload = request.body
             sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
@@ -346,7 +346,8 @@ class StipeEventRegistrationWebhook(View):
         Subroutine to handle the checkout completed event.
         """
         logger.info("[EVENT] Checkout completed event initiated ...")
-
+        owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
+        
         # === EVENT HANDLING === #
         try:
 
@@ -392,6 +393,39 @@ class StipeEventRegistrationWebhook(View):
             
             if settings.DEBUG:
                 logger.debug(f"Event data for payment: {data}")
+                
+            # Sending notification to owner
+            sendEmail(
+                owner_email,
+                "Nouvelle inscription à un groupe de parole",
+                "event_notification.html",
+                {
+                    "fname": metadata["fname"],
+                    "lname": metadata["lname"],
+                    "address": metadata["address"],
+                    "zip_code": metadata["zip_code"],
+                    "city": metadata["city"],
+                    "event_title": meeting.title,
+                    "event_date": meeting.date.strftime("%d/%m/%Y"),
+                    "event_start_time": meeting.start_time.strftime("%H:%M"),
+                    "event_end_time": meeting.end_time.strftime("%H:%M"),
+                },
+            )
+            
+            # Sending confirmation to participant
+            sendEmail(
+                customer_email,
+                "Confirmation d'inscription à un groupe de parole",
+                "event_confirmation_email.html",
+                {
+                    "fname": metadata["fname"],
+                    "lname": metadata["lname"],
+                    "event_title": meeting.title,
+                    "event_date": meeting.date.strftime("%d/%m/%Y"),
+                    "event_start_time": meeting.start_time.strftime("%H:%M"),
+                    "event_end_time": meeting.end_time.strftime("%H:%M"),
+                },
+            )
                 
         except ObjectDoesNotExist as e:
             logger.error(f"Event not found: {str(e)}")
