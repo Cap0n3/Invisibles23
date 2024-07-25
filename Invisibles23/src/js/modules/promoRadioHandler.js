@@ -2,7 +2,7 @@
  * Handles the selection of a radio button and displays appropriate alerts based on the selection.
  */
 export function promoRadioHandler() {
-    console.log("Checking radio buttons");
+    console.log("Checking sanity of promoRadioHandler");
     const memberAlertBox = document.getElementById('alert-box-member');
     const nonMemberAlertBox = document.getElementById('alert-box-non-member');
     const memberRadioButtons = document.querySelectorAll('#member-check input[type="radio"]');
@@ -15,7 +15,6 @@ export function promoRadioHandler() {
     memberRadioButtons.forEach(radio => radio.addEventListener('change', () => {
         // Get the selected radio button value
         const selectedRadioButton = [...memberRadioButtons].find(radio => radio.checked).value;
-        console.log(selectedRadioButton);
         // Display the appropriate alert box based on the selected
         if (selectedRadioButton === 'isMember') {
             memberAlertBox.classList.remove('d-none');
