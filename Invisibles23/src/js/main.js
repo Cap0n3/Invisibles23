@@ -6,7 +6,7 @@ import { searchBehavior } from "./modules/ressources.js";
 import { expandText } from "./modules/common/utils/helpers.js";
 import { newsletterForm } from "./modules/common/newsletterForm.js";
 import { initRecaptchaV2 } from "./modules/common/utils/helpers.js";
-
+import { promoRadioHandler } from "./modules/promoRadioHandler.js";
 import { getAPISecrets } from "./modules/common/utils/api.js";
 
 /**
@@ -44,6 +44,7 @@ async function initialize() {
     // if current page is /rendez-vous/<int:pk>/inscription/
     else if (/rendez-vous\/[0-9]+\/inscription/.test(currentPage)) {
         formValidation("#eventRegistrationForm"); // Initialize the event form
+        promoRadioHandler(); // Get the promo alert box and display it if needed
     }
     
     // Initialize bootstrap popovers (to remove if not used)

@@ -13,13 +13,19 @@
                 <div class="mb-4">
                     <h5 class="text-uppercase mb-5">Êtes-vous membre de l'association ?</h5>
                     {% for radio in form.membership_status %}
-                        <div class="form-check">
+                        <div id="member-check" class="form-check">
                             <label class="form-check-label">
                                 {{ radio.tag }}
                                 {{ radio.choice_label }}
                             </label>
                         </div>
                     {% endfor %}
+                    <div id="alert-box-non-member" class="alert alert-info mt-4 d-none" role="alert">
+                        Si vous n'êtes pas encore membre, pourquoi ne pas <a href={% url 'membership' %} class="alert-link">adhérer aux Invisibles</a> ? Vous soutiendrez ainsi notre cause et bénéficierez de nombreux avantages. Mais aucune obligation ! Vous pouvez aussi participer à nos événements en tant que non-membre.
+                    </div>
+                    <div id="alert-box-member" class="alert alert-info mt-4 d-none" role="alert">
+                        Lors de votre adhésion, vous avez reçu par e-mail <strong>un code promo</strong> pour bénéficier de tarifs préférentiels sur nos événements. N'oubliez pas de l'indiquer dans le champ prévu à cet effet lors du paiement (colonne de gauche).
+                    </div>
                 </div>
                 <hr>
                 <div class="my-4">

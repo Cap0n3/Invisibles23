@@ -92,7 +92,7 @@ class EventRegistrationForm(forms.Form):
         choices=membership_choices,
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
         # Define the initial value of the radio button
-        initial="isNotMember",
+        #initial="isNotMember",
         required=True,
     )
     plan = forms.ChoiceField(
