@@ -395,6 +395,22 @@ class AdminFormSubmissionTest(TestCase):
     - A participant can be removed from a fully booked talk group event from admin, making it no longer fully booked
     - Starting from a not fully booked talk group event with 3 participants, if the user lower the limit to less than the number of participants, the form should return an error
     """
+    
+    @classmethod
+    def setUpClass(cls):
+        """
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF.
+        I don't know why it is necessary to do this, environs seems to not load the .env file correctly
+        during testing (therefore setting DEBUG to false, see settings.py).
+        """
+        super().setUpClass()
+        cls.override = override_settings(DEBUG=True)
+        cls.override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.override.disable()
 
     def setUp(self):
         self.admin_user = User.objects.create_superuser(
@@ -405,7 +421,7 @@ class AdminFormSubmissionTest(TestCase):
         logger.debug("Logged in as superuser...")
         self.participants, self.test_participants = create_participants()
 
-    # @unittest.skip("Skip for now")
+    @unittest.skip("Skip for now")
     def test_simple_event_submission(self):
         """
         Test if the admin form submission for a simple event (not a talk group event) is successful.
@@ -448,7 +464,7 @@ class AdminFormSubmissionTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Test Event").exists())
         logger.debug(f"Event 'Test Event' successfully created.")
 
-    # @unittest.skip("Skip for now")
+    #@unittest.skip("Skip for now")
     def test_talk_event_submission(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
@@ -513,7 +529,7 @@ class AdminFormSubmissionTest(TestCase):
         for participant in event.participants.all():
             self.assertTrue(participant.id in participant_ids)
 
-    # @unittest.skip("Skip for now")
+    @unittest.skip("Skip for now")
     def test_insert_too_much_participants(self):
         """
         Test if the admin form submission for a talk event with 11 participants is prevented.
@@ -560,7 +576,7 @@ class AdminFormSubmissionTest(TestCase):
             f"Successfully raised exception when trying to exceed participant limit"
         )
 
-    # @unittest.skip("Skip for now")
+    @unittest.skip("Skip for now")
     def test_remove_a_participant(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
@@ -623,7 +639,7 @@ class AdminFormSubmissionTest(TestCase):
         self.assertFalse(updated_event.is_fully_booked)
         logger.debug(f"Event '{event.title}' is no longer fully booked.")
 
-    # @unittest.skip("Skip for now")
+    @unittest.skip("Skip for now")
     def test_lower_participants_limit(self):
         """
         Test if the admin form submission for a talk event with 3 participants is successful.

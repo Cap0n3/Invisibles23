@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from Invisibles23.logging_config import logger
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
@@ -299,8 +300,13 @@ class Event(models.Model):
     def clean(self):
         """
         Check if the event is not in the past
-        """
-        cleaned_data = super().clean()
+        """        
+        if settings.DEBUG:
+            logger.debug(f"Cleaning event data: {self}")
+            # Log all the key-value pairs of the event object
+            for key, value in self.__dict__.items():
+                logger.debug(f"{key}: {value}")
+        
         if self.date < date.today():
             raise ValidationError(
                 "La date de l'évènement ne peut pas être dans le passé !"
@@ -329,13 +335,20 @@ class Event(models.Model):
             )
 
         # Check if the participants limit is not lower than the current number of participants
-        participant_count = EventParticipants.objects.filter(event=self).count()
-        if self.participants_limit < participant_count:
-            raise ValidationError(
-                "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
-            )
+        if self.pk:
+            participant_count = EventParticipants.objects.filter(event=self).count()
+            if self.participants_limit < participant_count:
+                raise ValidationError(
+                    "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
+                )
+        
+        logger.info("Event data is valid !")    
+        super().clean()
 
     def save(self, *args, **kwargs):
+        if settings.DEBUG:
+            logger.debug(f"Saving event object: {self}")
+        
         if self.pk:  # Only check for existing events
             current_event = Event.objects.get(pk=self.pk)
             current_participants_limit = current_event.participants_limit
