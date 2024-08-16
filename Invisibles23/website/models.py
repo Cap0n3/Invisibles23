@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from Invisibles23.logging_config import logger
+from Invisibles23.logging_utils import log_debug_info
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from django.utils.safestring import mark_safe
@@ -300,13 +301,9 @@ class Event(models.Model):
     def clean(self):
         """
         Check if the event is not in the past
-        """        
-        if settings.DEBUG:
-            logger.debug(f"Cleaning event data: {self}")
-            # Log all the key-value pairs of the event object
-            for key, value in self.__dict__.items():
-                logger.debug(f"{key}: {value}")
-        
+        """
+        log_debug_info("Cleaning event data:", self, inspect_attributes=True)
+
         if self.date < date.today():
             raise ValidationError(
                 "La date de l'évènement ne peut pas être dans le passé !"
@@ -334,21 +331,20 @@ class Event(models.Model):
                 "Le nombre maximum de participants ne peut pas être inférieur à 1 !"
             )
 
-        # Check if the participants limit is not lower than the current number of participants    
+        # Check if the participants limit is not lower than the current number of participants
         if self.id:
             participant_count = EventParticipants.objects.filter(event=self).count()
             if self.participants_limit < participant_count:
                 raise ValidationError(
                     "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
                 )
-        
-        logger.info("Event data is valid !")    
+
+        logger.info("Event data is valid !")
         super().clean()
 
     def save(self, *args, **kwargs):
-        if settings.DEBUG:
-            logger.debug(f"Saving event object: {self}")
-        
+        log_debug_info("Saving event data:", self)
+
         if self.pk:  # Only check for existing events
             current_event = Event.objects.get(pk=self.pk)
             current_participants_limit = current_event.participants_limit
@@ -405,7 +401,10 @@ class Event(models.Model):
                 )
 
     def __str__(self):
-        return mark_safe(f"{self.title} - {self.date.strftime('%d/%m/%Y')}")
+        # Must check if it's a date obj to avoid err when __str__ is called (e.g : error when using log_debug_info)
+        return mark_safe(
+            f"{self.title} - {self.date.strftime('%d/%m/%Y') if isinstance(self.date, date) else 'Évènement sans date'}"
+        )
 
 
 class Participant(models.Model):
@@ -439,42 +438,41 @@ class EventParticipants(models.Model):
 
     def clean(self):
         """
-        This method is called only when user is adding a new participant to an event from admin console.
-        It checks if the event is fully booked before adding a new participant.
+        Validates the addition of a new participant to an event from the admin console.
+        Checks if the event is fully booked before adding a new participant.
         """
-        if settings.DEBUG:
-            logger.debug(f"Cleaning EventParticipants object: {self}")
-            # Log all the key-value pairs of the EventParticipants object
-            for key, value in self.__dict__.items():
-                logger.debug(f"{key}: {value}")
-        # Get current participant (they all go through the clean method)
+        log_debug_info(
+            "Cleaning EventParticipants object:", self, inspect_attributes=True
+        )
+
+        if not self.event.id:
+            return super().clean()
+
         participant_id = self.participant.id
-        # Check if the event is fully booked
-        isFullyBooked = self.event.is_fully_booked
-        # Get all registered participants for the current event
         event_instances = EventParticipants.objects.filter(event=self.event)
-        # Check if the current participant is already in the event or not
-        if not event_instances.filter(participant_id=participant_id).exists():
-            logger.info("User is adding a new participant from admin")
-            logger.info(
-                f"Adding participant with ID '{participant_id}' to event with ID '{self.event.id}'"
+
+        if event_instances.filter(participant_id=participant_id).exists():
+            return super().clean()
+
+        logger.info(
+            f"Adding participant with ID '{participant_id}' to event with ID '{self.event.id}'"
+        )
+
+        if self.event.is_fully_booked:
+            logger.error(
+                f"Cannot add participant. Event with ID '{self.event.id}' is fully booked."
             )
-            if isFullyBooked:
-                logger.error(
-                    f"User tried to add a new user from console but event with ID '{self.event.id}' cannot accept more participants, it is fully booked"
-                )
-                raise ValidationError(
-                    "L'évènement est complet, vous ne pouvez pas ajouter ce participant !"
-                )
-        else:
-            super().clean()
+            raise ValidationError(
+                "L'évènement est complet, vous ne pouvez pas ajouter ce participant !"
+            )
+
+        super().clean()
 
     def save(self, *args, **kwargs):
-        if settings.DEBUG:
-            logger.debug(f"Saving EventParticipants object: {self}")
-            # Log all the key-value pairs of the EventParticipants object
-            for key, value in self.__dict__.items():
-                logger.debug(f"{key}: {value}")
+        log_debug_info(
+            "Saving EventParticipants object:", self, inspect_attributes=True
+        )
+
         # Number of participants for this event + 1 because the current participant is not yet counted
         participant_count = (
             EventParticipants.objects.filter(event=self.event).count() + 1
@@ -495,6 +493,8 @@ class EventParticipants(models.Model):
                 f"Event with ID '{self.event.id}' is already fully booked ! Max participants: {limit}"
             )
             raise ValidationError("L'évènement est complet !")
+
+        log_debug_info("EventParticipants object saved successfully !")
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -517,7 +517,8 @@ class EventParticipants(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.participant.email} - {self.event.title} - {self.event.date.strftime('%d/%m/%Y')}"
+        # Must check if it's a date obj to avoid err when __str__ is called (e.g : error when using log_debug_info)
+        return f"{self.participant.email} - {self.event.title} - {self.event.date.strftime('%d/%m/%Y') if isinstance(self.event.date, date) else 'Évènement sans date'}"
 
 
 class MembershipSection(BaseSections):

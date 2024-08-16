@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from website.models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
+from Invisibles23.logging_utils import log_debug_info
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
@@ -138,8 +139,7 @@ class StripeWebhook(View):
         try:
             event = stripe.Event.construct_from(json.loads(payload), stripe_secret)
             data = event["data"]
-            if settings.DEBUG:
-                logger.debug(f"Event data: {data}")
+            log_debug_info("Event data", data)
         except ValueError as e:
             # Invalid payload
             logger.error("Invalid payload")
@@ -175,8 +175,7 @@ class StripeWebhook(View):
                 f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}"
             )
             logger.info(f"Invoice URL: {invoice_url}")
-            if settings.DEBUG:
-                logger.debug(f"Event data for invoice paid: {data}")
+            log_debug_info("Event data for invoice paid:", data)
 
             # Sending invoice to member
             logger.info(
@@ -185,8 +184,8 @@ class StripeWebhook(View):
 
             # Update customer with metadata
             logger.info("Updating customer metadata ...")
-            if settings.DEBUG:
-                logger.debug(f"Metadata for customer: {data}")
+            log_debug_info("Metadata for customer:", data)
+
             stripe.Customer.modify(
                 customer_id,
                 metadata={
@@ -253,8 +252,7 @@ class StripeWebhook(View):
 
         elif event["type"] == "payment_intent.payment_failed":
             logger.warning("[EVENT] Payment failed event initiated ...")
-            if settings.DEBUG:
-                logger.debug(f"Event data for payment failed : {event['data']}")
+            log_debug_info("Event data for payment failed:", event["data"])
 
             # Get information about the payment failure
             name = find_key_in_dict(data["object"], "name")
@@ -292,8 +290,7 @@ class StripeWebhook(View):
                 },
             )
         elif event["type"] == "customer.created":
-            if settings.DEBUG:
-                logger.debug(f"Event data for customer created : {data['object']}")
+            log_debug_info("Event data for customer created:", data["object"])
 
         else:
             logger.warning(f"Unhandled event type: {event['type']}")
@@ -311,7 +308,7 @@ class StipeEventRegistrationWebhook(View):
 
     def post(self, request):
         logger.info("Stripe event registration webhook initiated ...")
-        
+
         try:
             payload = request.body
             sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
@@ -320,9 +317,8 @@ class StipeEventRegistrationWebhook(View):
 
             event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
 
-            if settings.DEBUG:
-                logger.debug(f"Event type: {event['type']}")
-                logger.debug(f"Event data: {event['data']}")
+            log_debug_info("Event type", event["type"])
+            log_debug_info("Event data", event["data"])
 
             if event["type"] == "checkout.session.completed":
                 self.handle_checkout_completed(event["data"])
@@ -340,14 +336,14 @@ class StipeEventRegistrationWebhook(View):
         except Exception as e:
             logger.error(f"Unexpected error in webhook: {str(e)}")
             return HttpResponse(status=500)
-        
+
     def handle_checkout_completed(self, data):
         """
         Subroutine to handle the checkout completed event.
         """
         logger.info("[EVENT] Checkout completed event initiated ...")
         owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
-        
+
         # === EVENT HANDLING === #
         try:
 
@@ -364,7 +360,7 @@ class StipeEventRegistrationWebhook(View):
             meeting_id = metadata["event_id"]
             if not meeting_id:
                 raise ValueError("Missing event_id in metadata")
-            
+
             meeting = Event.objects.get(id=meeting_id)
             logger.info(f"Extracted all data for event registration: {meeting}")
 
@@ -379,21 +375,23 @@ class StipeEventRegistrationWebhook(View):
                 },
             )
 
-            logger.info(f"{'New' if created else 'Existing'} participant: {participant}")
-            
+            logger.info(
+                f"{'New' if created else 'Existing'} participant: {participant}"
+            )
+
             # Associate the participant with the event
             EventParticipants.objects.create(event=meeting, participant=participant)
             logger.info(f"Participant {participant} registered for event {meeting}")
 
             # Logging the invoice paid event
             logger.info(f"Invoice paid for: customer ID {customer_name}")
-            logger.info(f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}")
+            logger.info(
+                f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}"
+            )
             logger.info(f"Metadata for customer: {metadata}")
             logger.info(f"Metadata for customer: {metadata}")
-            
-            if settings.DEBUG:
-                logger.debug(f"Event data for payment: {data}")
-                
+            log_debug_info("Event data for payment:", data)
+
             # Sending notification to owner
             sendEmail(
                 owner_email,
@@ -411,7 +409,7 @@ class StipeEventRegistrationWebhook(View):
                     "event_end_time": meeting.end_time.strftime("%H:%M"),
                 },
             )
-            
+
             # Sending confirmation to participant
             sendEmail(
                 customer_email,
@@ -426,7 +424,7 @@ class StipeEventRegistrationWebhook(View):
                     "event_end_time": meeting.end_time.strftime("%H:%M"),
                 },
             )
-                
+
         except ObjectDoesNotExist as e:
             logger.error(f"Event not found: {str(e)}")
         except ValueError as e:

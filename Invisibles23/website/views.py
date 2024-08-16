@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
+from Invisibles23.logging_utils import log_debug_info
 from .forms import MembershipForm, EventRegistrationForm
 from .utils.view_helpers import createFormErrorContext
 from datetime import date
@@ -214,10 +215,9 @@ class EventRegistrationView(View):
         )
         stripe.api_key = env("STRIPE_API_TOKEN")
 
-        if settings.DEBUG:
-            logger.debug("||====== DEBUG MODE IS ON ! ======||")
-            logger.debug(f"Domain: {domain}")
-            logger.debug(f"Request data: {request.POST}")
+        log_debug_info("||====== DEBUG MODE IS ON ! ======||")
+        log_debug_info("Domain", domain)
+        log_debug_info("Request data", request.POST)
 
         if form.is_valid():
             logger.info("Event registration form is valid")
@@ -282,9 +282,8 @@ class EventRegistrationView(View):
             # Create lookup key based on the plan
             lookup_key = f"event-registration-{plan}"
 
-            if settings.DEBUG:
-                logger.debug(f"Metadata: {metadata}")
-                logger.debug(f"Lookup key: {lookup_key}")
+            log_debug_info("Metadata", metadata)
+            log_debug_info("Lookup key", lookup_key)
 
             try:
                 # Get prices from Stripe
@@ -293,8 +292,7 @@ class EventRegistrationView(View):
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
 
-                if settings.DEBUG:
-                    logger.debug(f"Prices list: {prices}")
+                log_debug_info("Prices list", prices)
 
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
@@ -315,9 +313,7 @@ class EventRegistrationView(View):
                 )
 
                 logger.info("Session created successfully ... redirecting to checkout")
-
-                if settings.DEBUG:
-                    logger.debug(f"Session url: {checkout_session['url']}")
+                log_debug_info("Session url", checkout_session["url"])
 
                 return redirect(checkout_session["url"], code=303)
 
@@ -415,10 +411,7 @@ class MembershipView(View):
             "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
         )
         stripe.api_key = env("STRIPE_API_TOKEN")
-        logger.debug(f"Request data: {request.POST}")
-
-        if settings.DEBUG:
-            logger.debug("||====== DEBUG MODE IS ON ! ======||")
+        log_debug_info("Request data", request.POST)
 
         if form.is_valid():
             logger.info("Membership form is valid")
@@ -472,8 +465,7 @@ class MembershipView(View):
                     lookup_keys=[lookup_key], expand=["data.product"]
                 )
 
-                if settings.DEBUG:
-                    logger.debug(f"Prices list: {prices}")
+                log_debug_info("Prices list", prices)
 
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
@@ -510,8 +502,7 @@ class MembershipView(View):
                 )
 
                 logger.info("Session created successfully ... redirecting to checkout")
-                if settings.DEBUG:
-                    logger.debug(f"Session url: {checkout_session['url']}")
+                log_debug_info("Session url", checkout_session["url"])
 
                 return redirect(checkout_session["url"], code=303)
 

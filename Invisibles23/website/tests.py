@@ -89,7 +89,7 @@ class EventRegistrationViewTest(TestCase):
         self.event = Event.objects.get(title="Test Event")
         logger.debug(f"Created event for testing: {self.event}")
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test post")
     def test_post(self):
         """
         Check if the user is redirected to a stripe checkout page
@@ -115,7 +115,7 @@ class EventRegistrationViewTest(TestCase):
             logger.debug(f"Response URL: {response.url}")
             self.assertTrue(response.url)
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test invalid post")
     def test_invalid_post(self):
         """
         If the user inputs invalid data, the form should be displayed again with the error messages.
@@ -145,7 +145,7 @@ class EventRegistrationViewTest(TestCase):
         self.assertEqual(error_inputs_list, ["plan", "email", "address"])
         self.assertTrue(error_messages)
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test participant already registered")
     def test_participant_already_registered(self):
         """
         If the user is already registered for the event, the form should return an error.
@@ -218,7 +218,7 @@ class EventModelTest(TestCase):
         # Create test participants
         self.participants, self.test_participants = create_participants()
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test create standard event")
     def test_create_standard_event(self):
         """
         Test if a standard event can be created
@@ -238,7 +238,7 @@ class EventModelTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Standard Test Event").exists())
         logger.debug(f"Event 'Standard Test Event' successfully created.")
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test create empty talk group")
     def test_create_empty_talk_group(self):
         """
         Test if an empty talk group event can be created
@@ -257,7 +257,7 @@ class EventModelTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Talk Group Event").exists())
         logger.debug(f"Event 'Talk Group Event' successfully created.")
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test create talk group event")
     def test_create_talk_group_event(self):
         """
         Test if a talk group event with 5 participants can be created and is not fully booked.
@@ -283,7 +283,7 @@ class EventModelTest(TestCase):
         self.assertTrue(updated_event.is_fully_booked)
         logger.debug(f"Event 'Test Event' is now fully booked with 9 participants.")
 
-    # @unittest
+    # @unittest(skip="Skip test create fully booked talk group event")
     def test_create_fully_booked_talk_group_event(self):
         """
         Test if a talk group event with 9 participants can be created and is fully booked.
@@ -310,7 +310,7 @@ class EventModelTest(TestCase):
             f"Event 'Test Event' is no longer fully booked with 8 participants."
         )
 
-    # @unittest
+    # @unittest(skip="Skip test insert too much participants")
     def test_insert_too_much_participants(self):
         """
         Test if a talk group event with 11 participants cannot be created (exceeding the limit).
@@ -324,7 +324,7 @@ class EventModelTest(TestCase):
                 f"Successfully raised exception when trying to exceed participant limit."
             )
 
-    # @unittest
+    # @unittest(skip="Skip test lower participants limit")
     def test_lower_participants_limit(self):
         """
         Test if an event with 5 participants and a limit of 5 is fully booked.
@@ -356,7 +356,7 @@ class EventModelTest(TestCase):
             f"Successfully raised exception when trying to lower limit to less than number of participants."
         )
 
-    # @unittest
+    # @unittest(skip="Skip test lower participants limit fully booked")
     def test_lower_participants_limit_fully_booked(self):
         """
         Test if an event with 9 participants and a limit of 9 is fully booked.
@@ -395,7 +395,7 @@ class AdminFormSubmissionTest(TestCase):
     - A participant can be removed from a fully booked talk group event from admin, making it no longer fully booked
     - Starting from a not fully booked talk group event with 3 participants, if the user lower the limit to less than the number of participants, the form should return an error
     """
-    
+
     @classmethod
     def setUpClass(cls):
         """
@@ -422,8 +422,8 @@ class AdminFormSubmissionTest(TestCase):
         self.participants, self.test_participants = create_participants()
         # Check if there's 11 participants in Participant database
         self.assertEqual(Participant.objects.count(), 11)
-               
-    @unittest.skip("Skip for now")
+
+    # @unittest.skip("Skip test simple event submission")
     def test_simple_event_submission(self):
         """
         Test if the admin form submission for a simple event (not a talk group event) is successful.
@@ -466,7 +466,7 @@ class AdminFormSubmissionTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Test Event").exists())
         logger.debug(f"Event 'Test Event' successfully created.")
 
-    #@unittest.skip("Skip for now")
+    # @unittest.skip("Skip test talk event submission")
     def test_talk_event_submission(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
@@ -531,7 +531,7 @@ class AdminFormSubmissionTest(TestCase):
         for participant in event.participants.all():
             self.assertTrue(participant.id in participant_ids)
 
-    @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test insert too much participants")
     def test_insert_too_much_participants(self):
         """
         Test if the admin form submission for a talk event with 11 participants is prevented.
@@ -578,7 +578,7 @@ class AdminFormSubmissionTest(TestCase):
             f"Successfully raised exception when trying to exceed participant limit"
         )
 
-    @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test remove participant")
     def test_remove_a_participant(self):
         """
         Test if the admin form submission for a talk event with 9 participants is successful.
@@ -641,7 +641,7 @@ class AdminFormSubmissionTest(TestCase):
         self.assertFalse(updated_event.is_fully_booked)
         logger.debug(f"Event '{event.title}' is no longer fully booked.")
 
-    @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test lower participants limit")
     def test_lower_participants_limit(self):
         """
         Test if the admin form submission for a talk event with 3 participants is successful.
@@ -748,7 +748,7 @@ class EventParticipantsModelTest(TestCase):
         # Create test participants
         self.participants, self.test_participants = create_participants()
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test associate participant")
     def test_associate_participant(self):
         """Test if a participant can be correctly associated with an event"""
         EventParticipants.objects.create(
@@ -765,7 +765,7 @@ class EventParticipantsModelTest(TestCase):
             f"Successfully associated participant {participant.fname} {participant.lname} with event '{self.event.title}'"
         )
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test associate participant twice")
     def test_associate_participant_twice(self):
         """Test if an event/participant relation cannot be created if it already exists"""
         EventParticipants.objects.create(
@@ -782,7 +782,7 @@ class EventParticipantsModelTest(TestCase):
             "Successfully raised exception when trying to associate participant twice"
         )
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test fully booked event")
     def test_participants_limit(self):
         """Test if the EventParticipants model correctly handles the participants limit"""
         logger.debug(
@@ -823,7 +823,7 @@ class EventParticipantsModelTest(TestCase):
             f"Final event state: Fully booked: {final_event.is_fully_booked}, Participant count: {final_event.participants.count()}"
         )
 
-    # @unittest.skip("Skip for now")
+    # @unittest.skip("Skip test cancel participant")
     def test_cancel_participant(self):
         """Test if an event is no longer fully booked if a participant cancels"""
         for i in range(10):
