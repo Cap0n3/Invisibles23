@@ -334,8 +334,8 @@ class Event(models.Model):
                 "Le nombre maximum de participants ne peut pas être inférieur à 1 !"
             )
 
-        # Check if the participants limit is not lower than the current number of participants
-        if self.pk:
+        # Check if the participants limit is not lower than the current number of participants    
+        if self.id:
             participant_count = EventParticipants.objects.filter(event=self).count()
             if self.participants_limit < participant_count:
                 raise ValidationError(
@@ -442,6 +442,11 @@ class EventParticipants(models.Model):
         This method is called only when user is adding a new participant to an event from admin console.
         It checks if the event is fully booked before adding a new participant.
         """
+        if settings.DEBUG:
+            logger.debug(f"Cleaning EventParticipants object: {self}")
+            # Log all the key-value pairs of the EventParticipants object
+            for key, value in self.__dict__.items():
+                logger.debug(f"{key}: {value}")
         # Get current participant (they all go through the clean method)
         participant_id = self.participant.id
         # Check if the event is fully booked
@@ -465,6 +470,11 @@ class EventParticipants(models.Model):
             super().clean()
 
     def save(self, *args, **kwargs):
+        if settings.DEBUG:
+            logger.debug(f"Saving EventParticipants object: {self}")
+            # Log all the key-value pairs of the EventParticipants object
+            for key, value in self.__dict__.items():
+                logger.debug(f"{key}: {value}")
         # Number of participants for this event + 1 because the current participant is not yet counted
         participant_count = (
             EventParticipants.objects.filter(event=self.event).count() + 1

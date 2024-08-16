@@ -420,7 +420,9 @@ class AdminFormSubmissionTest(TestCase):
         self.client.login(username="admin", password="admin")
         logger.debug("Logged in as superuser...")
         self.participants, self.test_participants = create_participants()
-
+        # Check if there's 11 participants in Participant database
+        self.assertEqual(Participant.objects.count(), 11)
+               
     @unittest.skip("Skip for now")
     def test_simple_event_submission(self):
         """
