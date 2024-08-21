@@ -1,3 +1,5 @@
+{% load my_templatetags %}
+
 <section class="normal-section container-fluid text-center p-5 {{ bg }}">
     <div class="row">
         <!--FORM-->
@@ -24,7 +26,7 @@
                         Si vous n'êtes pas encore membre, pourquoi ne pas <a href={% url 'membership' %} class="alert-link">adhérer aux Invisibles</a> ? Vous soutiendrez ainsi notre cause et bénéficierez de nombreux avantages. Mais aucune obligation ! Vous pouvez aussi participer à nos événements en tant que non-membre.
                     </div>
                     <div id="alert-box-member" class="alert alert-info mt-4 d-none" role="alert">
-                        Lors de votre adhésion, vous avez reçu par e-mail <strong>un code promo</strong> pour bénéficier de tarifs préférentiels sur nos événements. N'oubliez pas de l'indiquer dans le champ prévu à cet effet lors du paiement (colonne de gauche).
+                        Lors de votre adhésion, vous avez reçu par e-mail <strong>un code promo</strong> pour bénéficier de tarifs préférentiels sur nos événements. <strong>N'oubliez pas de l'indiquer dans le champ prévu à cet effet lors du paiement (colonne de gauche).</strong>
                     </div>
                 </div>
                 <hr>
@@ -51,6 +53,9 @@
                     <div class="text-start my-4">
                         {{ form.email }}
                     </div>
+                    <div class="my-4">
+                        {{ form.phone }}
+                    </div>
                 </div>
                 <hr>
                 <div class="my-4">
@@ -70,16 +75,6 @@
                 </div>
             </form>
         </div>
-        <!--HELP ASIDE-->
-        <div class="container col-md-5 px-md-5 ">
-            <div class="card mb-3" id="assistance-card">
-                <div class="card-header">Avez-vous une question ?</div>
-                <div class="card-body">
-                    <i class="bi bi-chat-dots-fill"></i>
-                    <p class="card-text">En cas de doute n'hésitez pas à me contacter, je me ferai une joie de vous guider et de répondre à vos questions.</p>
-                    <a href={% url 'contact' %} class="btn btn-primary" target="_blank">Contactez-moi</a>
-                </div>
-            </div>
-        </div>
+        {% help_aside %}
     </div>
 </section>

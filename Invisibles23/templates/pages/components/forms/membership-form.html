@@ -1,3 +1,5 @@
+{% load my_templatetags %}
+
 <section class="normal-section container-fluid text-center p-5 {{ bg }}">
     <div class="row">
         <!--FORM-->
@@ -71,15 +73,6 @@
             </form>
         </div>
         <!--HELP ASIDE-->
-        <div class="container col-md-5 px-md-5 ">
-            <div class="card mb-3" id="assistance-card">
-                <div class="card-header">Avez-vous une question ?</div>
-                <div class="card-body">
-                    <i class="bi bi-chat-dots-fill"></i>
-                    <p class="card-text">En cas de doute n'hésitez pas à me contacter, je me ferai une joie de vous guider et de répondre à vos questions.</p>
-                    <a href={% url 'contact' %} class="btn btn-primary" target="_blank">Contactez-moi</a>
-                </div>
-            </div>
-        </div>
+        {% help_aside %}
     </div>
 </section>

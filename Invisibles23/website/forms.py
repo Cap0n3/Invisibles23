@@ -84,9 +84,9 @@ class MembershipForm(forms.Form):
 class EventRegistrationForm(forms.Form):
     membership_choices = [("isMember", "Oui"), ("isNotMember", "Non")]
     plan_choices = [
-        ("reduced", "Réduit - CHF/EUR 10 par année (CHF/EUR 15 pour les non-membres)"),
-        ("normal", "Normal - CHF/EUR 20 par année (CHF/EUR 25 pour les non-membres)"),
-        ("support", "Soutien - CHF/EUR 25 par année (CHF/EUR 30 pour les non-membres)"),
+        ("reduced", "Réduit - CHF/EUR (CHF/EUR 15 pour les non-membres)"),
+        ("normal", "Normal - CHF/EUR (CHF/EUR 25 pour les non-membres)"),
+        ("support", "Soutien - CHF/EUR (CHF/EUR 30 pour les non-membres)"),
     ]
     membership_status = forms.ChoiceField(
         choices=membership_choices,
@@ -123,6 +123,14 @@ class EventRegistrationForm(forms.Form):
         max_length=100,
         widget=forms.EmailInput(
             attrs={"class": "form-control normal-input", "placeholder": "Email"}
+        ),
+        required=True,
+    )
+    phone = forms.CharField(
+        min_length=2,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
         ),
         required=True,
     )

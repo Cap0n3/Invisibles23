@@ -1,0 +1,8 @@
+{% if is_talk_event %}
+    <a href="{% url "event-registration" event_pk %}"
+       class="btn {% if is_fully_booked %}btn-danger{% else %}btn-primary{% endif %} register-btn order-md-1 {% if is_fully_booked %}disabled{% endif %}"
+       role="button"
+       {% if is_fully_booked %}aria-disabled="true"{% endif %}>
+        {{ is_fully_booked|yesno:"Complet, S'inscrire" }}
+    </a>
+{% endif %}

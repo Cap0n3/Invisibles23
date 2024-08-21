@@ -411,6 +411,9 @@ class Participant(models.Model):
     fname = models.CharField(max_length=50, verbose_name="Nom")
     lname = models.CharField(max_length=50, verbose_name="Prénom")
     email = models.EmailField(verbose_name="Email", unique=True)
+    phone = models.CharField(
+        max_length=20, verbose_name="Numéro de téléphone", blank=True
+    )
     address = models.CharField(max_length=100, verbose_name="Adresse")
     zip_code = models.CharField(max_length=100, verbose_name="Code postal")
     city = models.CharField(max_length=100, verbose_name="Ville")

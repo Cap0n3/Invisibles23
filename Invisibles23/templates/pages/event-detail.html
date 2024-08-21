@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load my_templatetags %}
+
 <!--Unique code from the page-->
 {% block content %}
     <!--HEADER-->
@@ -20,14 +22,7 @@
                     <div class="container-fluid text-start mb-5 p-0">
                         <h4 class="d-lg-block mb-5 text-lg-start text-uppercase">Inscription</h4>
                         <p>Vous souhaitez participer à cet événement ? Inscrivez-vous dès maintenant en cliquant sur le bouton ci-dessous.</p>
-                        <a 
-                            href="{% url "event-registration" event.pk %}" 
-                            class="btn btn-primary register-btn order-md-1 {% if event.is_fully_booked %}disabled{% endif %}" 
-                            role="button"
-                            {% if event.is_fully_booked %}aria-disabled="true"{% endif %}
-                        >
-                            {{ event.is_fully_booked|yesno:"Complet, S'inscrire" }}
-                        </a>
+                        {% event_registration_button event.pk event.is_talk_event event.is_fully_booked %}
                     </div>
                 {% endif %}
                 {% if event.address or event.link %}

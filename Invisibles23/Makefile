@@ -21,7 +21,7 @@ mkmigs-dry-run:
 
 migrate-all:
 	@echo "Migrating all apps..."
-	python manage.py mkmigs
+	python manage.py makemigrations
 	python manage.py migrate
 
 # === Test commands === #
