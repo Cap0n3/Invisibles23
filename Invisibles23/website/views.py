@@ -225,6 +225,7 @@ class EventRegistrationView(View):
             plan = form.cleaned_data["plan"]
             first_name = form.cleaned_data["fname"]
             last_name = form.cleaned_data["lname"]
+            phone = form.cleaned_data["phone"]
             address = form.cleaned_data["address"]
             zip_code = form.cleaned_data["zip_code"]
             city = form.cleaned_data["city"]
@@ -272,6 +273,7 @@ class EventRegistrationView(View):
                 "event_description": event.short_description,
                 "fname": first_name,
                 "lname": last_name,
+                "phone": phone,
                 "membership_status": membership_status,
                 "address": address,
                 "zip_code": zip_code,

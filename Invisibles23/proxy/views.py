@@ -369,6 +369,8 @@ class StipeEventRegistrationWebhook(View):
                 defaults={
                     "fname": metadata["fname"],
                     "lname": metadata["lname"],
+                    "email": metadata["customer_email"],
+                    "phone": metadata["phone"],
                     "address": metadata["address"],
                     "zip_code": metadata["zip_code"],
                     "city": metadata["city"],
@@ -400,6 +402,8 @@ class StipeEventRegistrationWebhook(View):
                 {
                     "fname": metadata["fname"],
                     "lname": metadata["lname"],
+                    "email": metadata["customer_email"],
+                    "phone": metadata["phone"],
                     "address": metadata["address"],
                     "zip_code": metadata["zip_code"],
                     "city": metadata["city"],

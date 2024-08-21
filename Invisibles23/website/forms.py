@@ -1,8 +1,49 @@
 from django import forms
-from .validators import validate_names, validate_address, validate_zipcode
+from .validators import (
+    validate_names,
+    validate_address,
+    validate_zipcode,
+    validate_phone,
+)
+import re
 
+class PhoneWidget(forms.TextInput):
+    input_type = 'tel'
+
+# Custom phone number field
+class PhoneNumber(forms.Field):
+    def __init__(
+        self,
+        required=True,
+        label=None,
+        initial=None,
+        widget=None,
+        help_text=None,
+        validators=[],
+        *args,
+        **kwargs
+    ):
+        super().__init__(
+            required=required,
+            label=label,
+            initial=initial,
+            widget=widget or PhoneWidget(attrs={'placeholder': 'xxx-xxx-xxxx'}),
+            help_text=help_text,
+            validators=validators,
+            *args,
+            **kwargs
+        )
+    def clean(self, value):
+        value = super().clean(value)
+        if value is None:
+            return value
+        return value
 
 class MembershipForm(forms.Form):
+    """
+    This form is used to register for a membership.
+    """
+
     subscription_choices = [
         ("support", "Soutien - CHF/EUR 84 par année (CHF/EUR 7.70 par mois)"),
         ("normal", "Normal - CHF/EUR 50 par année (CHF/EUR 4.50 par mois)"),
@@ -82,6 +123,10 @@ class MembershipForm(forms.Form):
 
 
 class EventRegistrationForm(forms.Form):
+    """
+    This form is used to register for an event (talk group).
+    """
+
     membership_choices = [("isMember", "Oui"), ("isNotMember", "Non")]
     plan_choices = [
         ("reduced", "Réduit - CHF/EUR (CHF/EUR 15 pour les non-membres)"),
@@ -126,12 +171,11 @@ class EventRegistrationForm(forms.Form):
         ),
         required=True,
     )
-    phone = forms.CharField(
-        min_length=2,
-        max_length=100,
-        widget=forms.TextInput(
+    phone = PhoneNumber(
+        widget=PhoneWidget(
             attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
         ),
+        validators=[validate_phone],
         required=True,
     )
     address = forms.CharField(

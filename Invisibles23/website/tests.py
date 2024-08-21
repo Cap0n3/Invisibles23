@@ -36,6 +36,7 @@ def create_participants():
         participant = Participant.objects.create(
             fname=participant_data["fname"],
             lname=participant_data["lname"],
+            phone=f"0{random.randint(100000000, 999999999)}",
             email=f"{participant_data['fname'].lower()}.{participant_data['lname'].lower()}@test.com",
             address=f"{random.randint(1, 100)} Test Street",
             zip_code=f"{random.randint(10000, 99999)}",
@@ -125,6 +126,7 @@ class EventRegistrationViewTest(TestCase):
             {
                 "fname": "John",
                 "lname": "Doe",
+                "phone": "+41_invalid_899",
                 "email": "invalid_email",
                 "membership_status": "isMember",
                 "zip_code": "1228",
@@ -142,7 +144,7 @@ class EventRegistrationViewTest(TestCase):
         # Checks
         error_inputs_list = list(error_inputs)  # Convert the dict_keys object to a list
         self.assertTemplateUsed(response, "pages/event-registration.html")
-        self.assertEqual(error_inputs_list, ["plan", "email", "address"])
+        self.assertEqual(error_inputs_list, ["plan", "email", "phone", "address"])
         self.assertTrue(error_messages)
 
     # @unittest.skip("Skip test participant already registered")

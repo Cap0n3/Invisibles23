@@ -11,6 +11,7 @@ const zipcodeRegex = /^[a-zA-Z0-9]{2,}\s?-?[a-zA-Z0-9]{0,}$/;
 // The displayed date is formatted based on the locale of the user's browser, 
 // but the parsed value is always formatted yyyy-mm-dd.
 const birthdateRegex = /^\d{4}-\d{1,2}-\d{1,2}$/;
+const phoneRegex = /^(\+(41|33)|00\s?(41|33)|0\d{1,2})(\s?\(0\))?(\s)?(\d{1,2})(\s)?(\d{2,3})(\s)?(\d{2})(\s)?(\d{2})(\s)?(\d{2})?$/;
 
 /**
  * Validate a website forms with JustValidate
@@ -67,6 +68,13 @@ export function formValidation(formID) {
             rules.push(
                 createJustValidateRule("customRegexp", birthdateRegex, "Veuillez entrer une date valide (JJ/MM/AAAA)")
             )
+        }
+        else if (inputType === 'tel') {
+            rules.push(
+                createJustValidateRule("minLength", 5),
+                createJustValidateRule("maxLength", 80),
+                createJustValidateRule("customRegexp", phoneRegex, "Le numéro de téléphone n'est pas valide (ex: +41 79 123 45 67, 0033 6 12 34 56 78, 079 123 45 67)")
+            );
         }
         
         // Add field to validator if it's not a hidden or submit input
