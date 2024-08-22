@@ -279,6 +279,7 @@ class EventRegistrationView(View):
                 "zip_code": zip_code,
                 "city": city,
                 "customer_email": email,
+                "type": "talk-group",
             }
 
             # Create lookup key based on the plan
@@ -493,7 +494,6 @@ class MembershipView(View):
                             "city": city,
                             "customer_email": email,
                             "phone": phone,
-                            "lookup_key": lookup_key,
                         },
                     },
                     metadata={
@@ -504,6 +504,7 @@ class MembershipView(View):
                         "city": city,
                         "customer_email": email,
                         "phone": phone,
+                        "type": "membership",
                     },
                     mode="subscription",
                     success_url=domain + "/success/",
