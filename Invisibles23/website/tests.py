@@ -100,6 +100,7 @@ class EventRegistrationViewTest(TestCase):
             "fname": "John",
             "lname": "Doe",
             "email": "test@gmail.com",
+            "phone": "+41 79 123 45 67",
             "address": "Chemin du Pré-Fleuri 3",
             "zip_code": "1228",
             "city": "Plan-les-Ouates",
