@@ -309,6 +309,9 @@ class EventRegistrationView(View):
                     allow_promotion_codes=True,
                     customer_email=email,
                     metadata=metadata,
+                    payment_intent_data={
+                        "metadata": metadata,
+                    },
                     mode="payment",
                     success_url=domain + "/success/",
                     cancel_url=domain + "/rendez-vous/",

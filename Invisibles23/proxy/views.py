@@ -391,7 +391,6 @@ class StipeEventRegistrationWebhook(View):
                 f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}"
             )
             logger.info(f"Metadata for customer: {metadata}")
-            logger.info(f"Metadata for customer: {metadata}")
             log_debug_info("Event data for payment:", data)
 
             # Sending notification to owner

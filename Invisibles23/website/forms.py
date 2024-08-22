@@ -40,6 +40,7 @@ class PhoneNumber(forms.Field):
             return value
         return value
 
+
 class MembershipForm(forms.Form):
     """
     This form is used to register for a membership.

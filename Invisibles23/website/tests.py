@@ -7,6 +7,75 @@ from .models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
 import random
 
+# ======================================= #
+# ====== MEMBER REGISTRATION TESTS ====== #
+# ======================================= #
+
+class MembershipViewTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF.
+        I don't know why it is necessary to do this, environs seems to not load the .env file correctly
+        during testing (therefore setting DEBUG to false, see settings.py).
+        """
+        super().setUpClass()
+        cls.override = override_settings(DEBUG=True)
+        cls.override.enable()
+        
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.override.disable()
+    
+    def setUp(self):
+        # Create a test member
+        self.member = {
+            "subscription": "reduced",
+            "frequency": "yearly",
+            "fname": "John",
+            "lname": "Doe",
+            "email": "johndoe@test.com",
+            "birthday": "1990-01-01",
+            "address": "123 Test Street",
+            "zip_code": "1234",
+            "city": "Test City",
+            "lookup_key": "reduced-yearly",
+        }
+    
+    # @unittest.skip("Skip test post")
+    def test_post(self):
+        """
+        Test if the user is redirected to a stripe checkout page
+        """
+        response = self.client.post("/membership/", self.member)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url)
+        
+    
+    # @unittest.skip("Skip test invalid post")
+    def test_invalid_post(self):
+        """
+        Test if the user is redirected to the membership page if the form is invalid
+        """
+        response = self.client.post("/membership/", {
+            "subscription": "reduced",
+            "frequency": "gnarly",
+            "fname": "John###",
+            "lname": "Doe",
+            "email": "NotAnEmail",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/membership.html")
+        error_inputs = response.context.get("error_inputs")
+        error_inputs_list = list(error_inputs)
+        self.assertTrue(error_inputs)
+        self.assertEqual(error_inputs_list, ["frequency", "fname", "address", "zip_code", "city", "email"])
+        
+
+# ====================================== #
+# ====== EVENT REGISTRATION TESTS ====== #
+# ====================================== #
 
 def create_participants():
     """
@@ -69,11 +138,13 @@ class EventRegistrationViewTest(TestCase):
         cls.override = override_settings(DEBUG=True)
         cls.override.enable()
 
+    
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         cls.override.disable()
 
+    
     def setUp(self):
         # Create a test event
         Event.objects.create(
@@ -90,6 +161,7 @@ class EventRegistrationViewTest(TestCase):
         self.event = Event.objects.get(title="Test Event")
         logger.debug(f"Created event for testing: {self.event}")
 
+    
     # @unittest.skip("Skip test post")
     def test_post(self):
         """
@@ -117,6 +189,7 @@ class EventRegistrationViewTest(TestCase):
             logger.debug(f"Response URL: {response.url}")
             self.assertTrue(response.url)
 
+    
     # @unittest.skip("Skip test invalid post")
     def test_invalid_post(self):
         """
