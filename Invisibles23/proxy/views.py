@@ -192,6 +192,7 @@ class StripeWebhook(View):
                     "name": metadata["name"],
                     "birthday": metadata["birthday"],
                     "customer_email": metadata["customer_email"],
+                    "phone": metadata["phone"],
                     "address": metadata["address"],
                     "zip_code": metadata["zip_code"],
                     "city": metadata["city"],
@@ -314,6 +315,11 @@ class StipeEventRegistrationWebhook(View):
             sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
             stripe_secret = env("STRIPE_WEBHOOK_SECRET")
             stripe.api_key = env("STRIPE_API_TOKEN")
+            
+            logger.debug(f"Payload: {payload}")
+            logger.debug(f"Signature header: {sig_header}")
+            logger.debug(f"Stripe secret: {stripe_secret}")
+            logger.debug(f"Stripe API token: {stripe.api_key}")
 
             event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
 

@@ -43,6 +43,12 @@
                     <div class="my-4">
                         {{ form.lname }}
                     </div>
+                    <div class="text-start my-4">
+                        {{ form.email }}
+                    </div>
+                    <div class="text-start my-4">
+                        {{ form.phone }}
+                    </div>
                     <div class="my-4">
                         <label for="{{ form.birthday.id_for_label }}" class="mb-4">
                             {{ form.birthday.label }} :
@@ -61,9 +67,6 @@
                     </div>
                     <div class="text-start my-4">
                         {{ form.city }}  
-                    </div>
-                    <div class="text-start my-4">
-                        {{ form.email }}
                     </div>
                 </div>
                 <hr>

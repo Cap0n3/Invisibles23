@@ -81,6 +81,13 @@ class MembershipForm(forms.Form):
         validators=[validate_names],
         required=True,
     )
+    phone = PhoneNumber(
+        widget=PhoneWidget(
+            attrs={"class": "form-control normal-input", "placeholder": "Téléphone"}
+        ),
+        validators=[validate_phone],
+        required=True,
+    )
     birthday = forms.DateField(
         label="Date de naissance",
         widget=forms.DateInput(

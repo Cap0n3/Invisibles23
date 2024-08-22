@@ -429,6 +429,7 @@ class MembershipView(View):
             zip_code = form.cleaned_data["zip_code"]
             city = form.cleaned_data["city"]
             email = form.cleaned_data["email"]
+            phone = form.cleaned_data["phone"]
             lookup_key = request.POST.get("lookup_key")
 
             try:
@@ -491,6 +492,8 @@ class MembershipView(View):
                             "zip_code": zip_code,
                             "city": city,
                             "customer_email": email,
+                            "phone": phone,
+                            "lookup_key": lookup_key,
                         },
                     },
                     metadata={
@@ -500,6 +503,7 @@ class MembershipView(View):
                         "zip_code": zip_code,
                         "city": city,
                         "customer_email": email,
+                        "phone": phone,
                     },
                     mode="subscription",
                     success_url=domain + "/success/",
