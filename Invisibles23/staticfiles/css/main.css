@@ -839,6 +839,15 @@ nav.show {
   text-decoration: underline;
   margin-left: 8px;
 }
+.event-cards .infos-col .register-btn {
+  text-decoration: none;
+  width: 160px;
+}
+@media screen and (max-width: 768px) {
+  .event-cards .infos-col .register-btn {
+    width: 100%;
+  }
+}
 @media screen and (min-width: 768px) {
   .event-cards .infos-col {
     width: 80%;
@@ -920,7 +929,7 @@ body a {
   color: rgb(146, 147, 153);
   text-decoration: underline;
 }
-body .btn-primary {
+body .btn-primary, body .btn-danger {
   border-radius: 15px;
   padding: 12px 0 12px 0;
   width: 160px;
@@ -929,12 +938,12 @@ body .btn-primary {
   background-color: #002E48;
   border-color: #002E48;
 }
-body .btn-primary:hover {
+body .btn-primary:hover, body .btn-danger:hover {
   background-color: #00456c;
   border-color: #00456c;
 }
 @media screen and (max-width: 992px) {
-  body .btn-primary {
+  body .btn-primary, body .btn-danger {
     width: 100%;
   }
 }
