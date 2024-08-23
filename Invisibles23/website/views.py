@@ -36,9 +36,11 @@ from django.conf import settings
 from django.shortcuts import redirect
 import stripe
 
+
 # Initialise env vars
 env = environ.Env()
 env.read_env("../.env")
+
 
 # == Base view classes to stay DRY == #
 class BaseThematicView(View):
@@ -197,6 +199,13 @@ class EventDetailView(View):
 
 
 class EventRegistrationView(View):
+    """
+    View to handle the event (talk group) registration form and the Stripe checkout session.
+    Lookup keys are used to get the prices from Stripe :
+    - talkGroup-registration-reduced
+    - talkGroup-registration-normal
+    - talkGroup-registration-support
+    """
     template_name = "pages/event-registration.html"
 
     def get(self, request, pk):
@@ -283,7 +292,7 @@ class EventRegistrationView(View):
             }
 
             # Create lookup key based on the plan
-            lookup_key = f"event-registration-{plan}"
+            lookup_key = f"talkGroup-registration-{plan}"
 
             log_debug_info("Metadata", metadata)
             log_debug_info("Lookup key", lookup_key)
@@ -312,6 +321,14 @@ class EventRegistrationView(View):
                     metadata=metadata,
                     payment_intent_data={
                         "metadata": metadata,
+                    },
+                    custom_text={
+                        "submit": {
+                            "message": "Si vous êtes membres de l'association, n'oubliez pas d'appliquer votre code promo lors du paiement (colonne de gauche).",
+                        },
+                        "after_submit": {
+                            "message": "Vous serrez redirigé vers le site de l'association après le paiement sécurisé.",
+                        },
                     },
                     mode="payment",
                     success_url=domain + "/success/",
@@ -362,6 +379,7 @@ class MembershipView(View):
         "frequency": "yearly",
     }  # Default state of radio buttons
 
+
     @staticmethod
     def choosePricing(subscription, frequency):
         """
@@ -396,12 +414,14 @@ class MembershipView(View):
 
         return _lookup_key
 
+    
     def get_queryset(self):
         # Text for the membership adhesion
         return {
             "sections_content": MembershipSection.objects.all(),
         }
 
+    
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
         sections = self.get_queryset()
@@ -411,6 +431,7 @@ class MembershipView(View):
         }
         return render(request, self.template_name, context)
 
+    
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = (
@@ -473,7 +494,7 @@ class MembershipView(View):
                 )
 
                 log_debug_info("Prices list", prices)
-
+                
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
                 checkout_session = stripe.checkout.Session.create(
@@ -494,6 +515,7 @@ class MembershipView(View):
                             "city": city,
                             "customer_email": email,
                             "phone": phone,
+                            "type": "membership",
                         },
                     },
                     metadata={

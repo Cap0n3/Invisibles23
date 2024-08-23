@@ -7,8 +7,10 @@ from .validators import (
 )
 import re
 
+
 class PhoneWidget(forms.TextInput):
     input_type = 'tel'
+
 
 # Custom phone number field
 class PhoneNumber(forms.Field):
@@ -93,7 +95,7 @@ class MembershipForm(forms.Form):
         widget=forms.DateInput(
             attrs={"type": "date", "class": "form-control normal-input"}
         ),
-        required=False,
+        required=True,
     )
     address = forms.CharField(
         min_length=2,
@@ -138,9 +140,9 @@ class EventRegistrationForm(forms.Form):
 
     membership_choices = [("isMember", "Oui"), ("isNotMember", "Non")]
     plan_choices = [
-        ("reduced", "Réduit - CHF/EUR (CHF/EUR 15 pour les non-membres)"),
-        ("normal", "Normal - CHF/EUR (CHF/EUR 25 pour les non-membres)"),
-        ("support", "Soutien - CHF/EUR (CHF/EUR 30 pour les non-membres)"),
+        ("reduced", "Réduit - 10 CHF/EUR (CHF/EUR 15 pour les non-membres)"),
+        ("normal", "Normal - 20 CHF/EUR (CHF/EUR 25 pour les non-membres)"),
+        ("support", "Soutien - 25 CHF/EUR (CHF/EUR 30 pour les non-membres)"),
     ]
     membership_status = forms.ChoiceField(
         choices=membership_choices,

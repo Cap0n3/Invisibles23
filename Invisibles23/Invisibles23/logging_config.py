@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 # === 2. Créer un ou plusieurs handler === #
 # Diriger les logs vers "standard output"
 stream_handler = logging.StreamHandler(sys.stdout)
-file_handler = logging.FileHandler("Invisibles23/logs/debug.log", mode='w')
+file_handler = logging.FileHandler("Invisibles23/logs/debug.log")
 
 # === 3. Ajouter les handlers au logger === #
 logger.addHandler(stream_handler)

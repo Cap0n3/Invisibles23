@@ -78,7 +78,7 @@ class MembershipViewTest(TestCase):
         self.assertTrue(error_inputs)
         self.assertEqual(
             error_inputs_list,
-            ["frequency", "fname", "phone", "address", "zip_code", "city", "email"],
+            ["frequency", "fname", "phone", "birthday", "address", "zip_code", "city", "email"],
         )
         logger.debug(f"Error inputs: {error_inputs_list}")
 

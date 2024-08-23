@@ -324,9 +324,11 @@ class StripeWebhook(View):
             # Get metadata from event data
             data = event["data"]
             metadata = self.extract_metadata(data, event["type"])
-            logger.info(f"Registration type: {metadata['type']}")
-            registration_type = metadata["type"]
-            logger.info(f"Type of registration : {registration_type}")
+            if metadata:
+                log_debug_info("Extracted metadata : ", metadata)
+                logger.info(f"Registration type: {metadata['type']}")
+                registration_type = metadata["type"]
+                logger.info(f"Type of registration : {registration_type}")
             
             if event["type"] == "checkout.session.completed":
                 if registration_type == "talk-group":
@@ -566,7 +568,6 @@ class StripeWebhook(View):
         elif event_type == "invoice.paid":
             metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
         
-        logger.info(f"Extracted metadata: {metadata}")
         return metadata
         
     

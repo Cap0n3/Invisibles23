@@ -7,7 +7,8 @@
     <section class="normal-section container-fluid text-center p-5 bg-light-beige">
         <h2 class="d-lg-none mb-5 text-uppercase">{{ event.title }}</h2>
         <div class="row p-lg-3">
-            {% if event.address or event.link %}
+            <h2 class="d-none d-lg-block mb-5 text-lg-start text-uppercase">{{ event.title }}</h2>
+            {% if event.date %}
                 <ul class="list-group list-group-flush text-start text-break mb-5">
                     <li class="list-group-item">
                         <small class="text-body-secondary"><b>Heure :</b> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small>
