@@ -1,5 +1,6 @@
 import logging
 import sys
+import settings
 
 # === 1. Créer un logger personnalisé === #
 logger = logging.getLogger(__name__)
@@ -7,11 +8,16 @@ logger = logging.getLogger(__name__)
 # === 2. Créer un ou plusieurs handler === #
 # Diriger les logs vers "standard output"
 stream_handler = logging.StreamHandler(sys.stdout)
-file_handler = logging.FileHandler("Invisibles23/logs/debug.log")
+
+if settings.DEBUG:
+    # Diriger les logs vers un fichier
+    file_handler = logging.FileHandler("Invisibles23/logs/debug.log")
 
 # === 3. Ajouter les handlers au logger === #
 logger.addHandler(stream_handler)
-logger.addHandler(file_handler)
+
+if settings.DEBUG:
+    logger.addHandler(file_handler)
 
 # === 4. Choisir un niveau de journalisation minimum === #
 logger.setLevel(logging.DEBUG)
@@ -24,4 +30,6 @@ stream_format = logging.Formatter(
 
 # Associer les formats au handlers
 stream_handler.setFormatter(stream_format)
-file_handler.setFormatter(stream_format)
+
+if settings.DEBUG:
+    file_handler.setFormatter(stream_format)
