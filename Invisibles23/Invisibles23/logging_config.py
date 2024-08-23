@@ -1,6 +1,6 @@
 import logging
 import sys
-import settings
+from django.conf import settings
 
 # === 1. Créer un logger personnalisé === #
 logger = logging.getLogger(__name__)
