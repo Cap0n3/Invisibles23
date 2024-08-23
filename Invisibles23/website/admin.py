@@ -164,6 +164,23 @@ class EventAdmin(admin.ModelAdmin):
         return qs
 
 
+class ParticipantAdmin(admin.ModelAdmin):
+    """
+    Customize the Participant admin page.
+    """
+    list_display = (
+        "email",
+        "lname",
+        "fname", 
+        "phone",
+    )  # Customize fields displayed in list view
+    search_fields = (
+        "fname",
+        "lname",
+        "email",
+        "phone",
+    )  # Add search functionality
+
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
 
@@ -179,7 +196,7 @@ custom_admin_site.register(AssoSections)
 custom_admin_site.register(MembershipSection)
 custom_admin_site.register(DonationSection)
 custom_admin_site.register(Event, EventAdmin)
-custom_admin_site.register(Participant)
+custom_admin_site.register(Participant, ParticipantAdmin)
 custom_admin_site.register(EventParticipants)
 custom_admin_site.register(ContactSection)
 custom_admin_site.register(YoutubeVideos)

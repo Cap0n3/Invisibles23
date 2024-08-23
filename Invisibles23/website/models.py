@@ -408,8 +408,8 @@ class Event(models.Model):
 
 
 class Participant(models.Model):
-    fname = models.CharField(max_length=50, verbose_name="Nom")
-    lname = models.CharField(max_length=50, verbose_name="Prénom")
+    fname = models.CharField(max_length=50, verbose_name="Prénom")
+    lname = models.CharField(max_length=50, verbose_name="Nom")
     email = models.EmailField(verbose_name="Email", unique=True)
     phone = models.CharField(
         max_length=20, verbose_name="Numéro de téléphone", blank=True

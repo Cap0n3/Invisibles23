@@ -324,18 +324,22 @@ class StripeWebhook(View):
             # Get metadata from event data
             data = event["data"]
             metadata = self.extract_metadata(data, event["type"])
+            registration_type = None
+            
             if metadata:
                 log_debug_info("Extracted metadata : ", metadata)
                 logger.info(f"Registration type: {metadata['type']}")
                 registration_type = metadata["type"]
                 logger.info(f"Type of registration : {registration_type}")
             
-            if event["type"] == "checkout.session.completed":
-                if registration_type == "talk-group":
-                    self.handle_talk_group(event["data"], metadata)
-            elif event["type"] == "invoice.paid":
-                if registration_type == "membership":
-                    self.handle_membership(event["data"], metadata)
+            if event["type"] == "checkout.session.completed" and registration_type == "talk-group":
+                self.handle_talk_group(event["data"], metadata)
+            elif event["type"] == "invoice.paid" and registration_type == "membership":
+                self.handle_membership(event["data"], metadata)
+            elif event["type"] == "payment_intent.payment_failed":
+                logger.warning(f"[EVENT] Payment failed event initiated for {metadata['type'] if metadata else None}: {metadata}")
+            elif event["type"] == "invoice.payment_failed":
+                logger.warning(f"[EVENT] Invoice payment failed event initiated for {metadata['type'] if metadata else None}: {metadata}")
             else:
                 logger.warning(f"Unhandled event type: {event['type']}")
 
@@ -560,16 +564,14 @@ class StripeWebhook(View):
         """
         Extract metadata from the event data based on the event type.
         """
-        metadata = None
         log_debug_info(f"Event type: {event_type}")
         
-        if event_type == "checkout.session.completed":
-            metadata = find_key_in_dict(data["object"], "metadata")
-        elif event_type == "invoice.paid":
-            metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
+        if event_type in ["checkout.session.completed", "payment_intent.payment_failed"]:
+            return find_key_in_dict(data["object"], "metadata")
+        elif event_type in ["invoice.paid", "invoice.payment_failed"]:
+            return find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
         
-        return metadata
-        
+        return None
     
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
