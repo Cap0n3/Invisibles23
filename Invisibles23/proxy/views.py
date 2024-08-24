@@ -330,7 +330,6 @@ class StripeWebhook(View):
                 log_debug_info("Extracted metadata : ", metadata)
                 logger.info(f"Registration type: {metadata['type']}")
                 registration_type = metadata["type"]
-                logger.info(f"Type of registration : {registration_type}")
             
             if event["type"] == "checkout.session.completed" and registration_type == "talk-group":
                 self.handle_talk_group(event["data"], metadata)

@@ -19,6 +19,7 @@ from .models import (
     DonationSection,
 )
 from django.utils import timezone
+from django.contrib.auth.models import User, Permission
 
 
 class CustomAdminSite(AdminSite):
@@ -181,10 +182,14 @@ class ParticipantAdmin(admin.ModelAdmin):
         "phone",
     )  # Add search functionality
 
+
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
 
+
 # Register the models
+custom_admin_site.register(User)
+custom_admin_site.register(Permission)
 custom_admin_site.register(HomeSections)
 custom_admin_site.register(AboutSections)
 custom_admin_site.register(ChronicTabSections)

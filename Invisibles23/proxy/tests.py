@@ -48,6 +48,10 @@ class StripeWebhookTestCase(TestCase):
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
     def test_stripe_membership_webhook(self, mock_construct_event):
+        """
+        This test simulates a Stripe webhook event for a membership payment.
+        It uses invoice.paid event to simulate a successful payment.
+        """
         # Setup the mock to return a simulated Stripe event
         mock_event_data = {
             "id": "evt_1MqqbKLt4dXK03v5qaIbiNCC",
@@ -294,6 +298,10 @@ class StripeWebhookTestCase(TestCase):
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
     def test_stripe_event_registration_webhook(self, mock_construct_event):
+        """
+        This test simulates a Stripe webhook event for an event registration payment.
+        It uses the checkout.session.completed event to simulate a successful payment.
+        """
         # Setup the mock to return a simulated Stripe event
         mock_event_data = {
             "id": "evt_1MqqbKLt4dXK03v5qaIbiNCC",
