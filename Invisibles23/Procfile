@@ -1,1 +1,1 @@
-web: gunicorn 'Invisibles23.wsgi'
+web: python manage.py migrate && gunicorn 'Invisibles23.wsgi'
