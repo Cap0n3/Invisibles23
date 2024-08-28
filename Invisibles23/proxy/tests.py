@@ -17,6 +17,10 @@ import string
 
 
 class StripeWebhookTestCase(TestCase):
+    """
+    Test case for the Stripe webhook view (member registration and event registration).
+    Note: This test is a simulation of a Stripe webhook event, it does not actually send a request to Stripe.
+    """
     @classmethod
     def setUpClass(cls):
         """
@@ -460,6 +464,10 @@ class StripeWebhookTestCase(TestCase):
         
         
 class MailchimpProxyTestCase(TestCase):
+    """
+    Important: This test case requires a Mailchimp account and a list to be created. 
+    Don't forget that many of the tests will add a fake contact to the list, so you may need to remove them manually.
+    """
     @classmethod
     def setUpClass(cls):
         """
@@ -476,14 +484,16 @@ class MailchimpProxyTestCase(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         cls.override.disable()
-        
+       
+     
     def setUp(self):
         # Create a random email address
         self.random_email = MailchimpProxyTestCase._generate_random_email()
         self.random_fname, self.random_lname = MailchimpProxyTestCase._generate_fake_name()
 
-    
-    def test_mailchimp_add_contact(self):
+
+    @unittest.skip("Skip test_mailchimp_add_full_contact")
+    def test_mailchimp_add_full_contact(self):
         """
         This actually test adding a contact to the Mailchimp list (in a test account).
         IMPORTANT: This test will fail if the contact already exists in the list, you MUST manually remove contact from the list.
@@ -502,6 +512,59 @@ class MailchimpProxyTestCase(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
+        
+    @unittest.skip("Skip test_mailchimp_add_partial_contact")
+    def test_mailchimp_add_partial_contact(self):
+        """
+        This test adds a contact to the Mailchimp list without specifying all the fields (like in a newsletter subscription form).
+        """
+        client = Client()
+        response = client.post(
+            reverse('mailchimp-proxy'),
+            data={
+                "email": self.random_email,
+                "test_status": "null",
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+    
+    
+    @unittest.skip("Skip test_mailchimp_add_contact_with_invalid_email")
+    def test_double_subscription(self):
+        """
+        This test tries to add the same contact twice to the Mailchimp list.
+        """        
+        client = Client()
+        response = client.post(
+            reverse('mailchimp-proxy'),
+            data={
+                "email": self.random_email,
+                "fname": self.random_fname,
+                "lname": self.random_lname,
+                "phone": "075 701 58 68",
+                "birthday": "01/31",
+                "address": "Chemin des Fauvettes 6, 1212 Lancy",
+                "test_status": "null",
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        
+        # Try to add the same contact again
+        response = client.post(
+            reverse('mailchimp-proxy'),
+            data={
+                "email": self.random_email,
+                "fname": self.random_fname,
+                "lname": self.random_lname,
+                "phone": "075 701 58 68",
+                "birthday": "01/31",
+                "address": "Chemin des Fauvettes 6, 1212 Lancy",
+                "test_status": "null",
+            }
+        )
+        log_debug_info("Response content: ", response.content)
+        self.assertEqual(response.status_code, 400)
+    
     
     @staticmethod  
     def _generate_random_email():
@@ -524,6 +587,7 @@ class MailchimpProxyTestCase(TestCase):
         # Construct and return the email address
         return f"{random_username}_{random_numbers}@fallen.{domain}"
     
+    
     @staticmethod
     def _generate_fake_name():
         """
@@ -535,8 +599,8 @@ class MailchimpProxyTestCase(TestCase):
             A tuple containing the fake first name and last name.
         """
         # Lists of sample first names and last names
-        first_names = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Katie', 'Michael', 'Sarah', 'David', 'Laura']
-        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Taylor']
+        first_names = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Katie', 'Michael', 'Sarah', 'David', 'Laura', 'Kevin', 'Rachel', 'Mark', 'Julie']
+        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Taylor', 'Clark', 'Lewis', 'Lee', 'Walker']
         
         # Randomly select a first name and last name
         first_name = random.choice(first_names)
