@@ -6,14 +6,14 @@ from Invisibles23.logging_utils import log_debug_info
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
-import json
-import environ
-import requests
-import stripe
 from django.conf import settings
+from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+import environ
+import requests
+import stripe
 from .utils.helpers import sendEmail, find_key_in_dict
 
 # Read the .env file
@@ -73,6 +73,9 @@ class AushaProxy(View):
 
 
 class MailchimpProxy(View):
+    """
+    This view handles the subscription to the mailing list. It uses the Mailchimp API to add a new member to the list.
+    """
     http_method_names = ["post"]  # Only POST requests are allowed
     server_prefix = "us21"
     mailchimp_api_key = env("MAILCHIMP_API_KEY")
@@ -119,186 +122,6 @@ class MailchimpProxy(View):
             )
 
 
-# @method_decorator(csrf_exempt, name="dispatch")
-# class StripeWebhook(View):
-#     """
-#     Stripe webhook handler for membership subscription payments.
-#     """
-
-#     http_method_names = ["post"]  # Only POST requests are allowed
-
-#     def post(self, request):
-#         logger.info("Stripe membership webhook initiated ...")
-#         payload = request.body
-#         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-#         stripe_secret = env("STRIPE_WEBHOOK_SECRET")
-#         stripe.api_key = env("STRIPE_API_TOKEN")
-#         event = None
-#         owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
-
-#         try:
-#             event = stripe.Event.construct_from(json.loads(payload), stripe_secret)
-#             data = event["data"]
-#             log_debug_info("Event data", data)
-#         except ValueError as e:
-#             # Invalid payload
-#             logger.error("Invalid payload")
-#             return HttpResponse(status=400)
-#         except stripe.error.SignatureVerificationError as e:
-#             # Invalid signature
-#             logger.error("Invalid signature")
-#             return HttpResponse(status=403)
-
-#         # === EVENT HANDLING === #
-#         if event["type"] == "checkout.session.completed":
-#             logger.info("[EVENT] Checkout session completed event initiated ...")
-
-#         elif event["type"] == "invoice.paid":
-#             logger.info("[EVENT] Invoice paid event initiated ...")
-
-#             # Get information about the invoice
-#             customer_id = find_key_in_dict(data["object"], "customer")
-#             member_name = find_key_in_dict(data["object"], "customer_name")
-#             member_email = find_key_in_dict(data["object"], "customer_email")
-#             member_country = find_key_in_dict(data["object"], "country")
-#             invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
-#             metadata = find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
-#             plan = (
-#                 data["object"]["lines"]["data"][0]["description"]
-#                 if data["object"]["lines"]["data"][0]["description"]
-#                 else None
-#             )
-
-#             # Logging the invoice paid event
-#             logger.info(f"Invoice paid for: customer ID {customer_id}")
-#             logger.info(
-#                 f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}"
-#             )
-#             logger.info(f"Invoice URL: {invoice_url}")
-#             log_debug_info("Event data for invoice paid:", data)
-
-#             # Sending invoice to member
-#             logger.info(
-#                 f"(StripeWebhook) Sending welcome & invoice to member at {member_email} ..."
-#             )
-
-#             # Update customer with metadata
-#             logger.info("Updating customer metadata ...")
-#             log_debug_info("Metadata for customer:", data)
-
-#             stripe.Customer.modify(
-#                 customer_id,
-#                 metadata={
-#                     "name": metadata["name"],
-#                     "birthday": metadata["birthday"],
-#                     "customer_email": metadata["customer_email"],
-#                     "phone": metadata["phone"],
-#                     "address": metadata["address"],
-#                     "zip_code": metadata["zip_code"],
-#                     "city": metadata["city"],
-#                     "country": member_country,
-#                 },
-#             )
-
-#             sendEmail(
-#                 member_email,
-#                 "Confirmation d'adhésion à l'association Les Invisibles",
-#                 "adhesion_email.html",
-#                 {
-#                     "name": member_name,
-#                 },
-#             )
-
-#             sendEmail(
-#                 member_email,
-#                 "Reçu de paiement adhésion",
-#                 "invoice_email.html",
-#                 {
-#                     "name": member_name,
-#                     "email": member_email,
-#                     "invoice_url": invoice_url,
-#                     "customer_id": customer_id,
-#                     "membership_plan": plan,
-#                 },
-#             )
-
-#             # Sending invoice to owner
-#             logger.info(
-#                 f"Sending notification and invoice to owner at {owner_email} ..."
-#             )
-
-#             sendEmail(
-#                 owner_email,
-#                 "Un nouveau membre a rejoint l'association Les Invisibles",
-#                 "adhesion_notification.html",
-#                 {
-#                     "name": member_name,
-#                     "email": member_email,
-#                     "country": member_country,
-#                 },
-#             )
-
-#             sendEmail(
-#                 owner_email,
-#                 "Reçu de paiement adhésion",
-#                 "invoice_email_accounting.html",
-#                 {
-#                     "name": member_name,
-#                     "email": member_email,
-#                     "invoice_url": invoice_url,
-#                     "customer_id": customer_id,
-#                     "membership_plan": plan,
-#                 },
-#             )
-
-#         elif event["type"] == "payment_intent.payment_failed":
-#             logger.warning("[EVENT] Payment failed event initiated ...")
-#             log_debug_info("Event data for payment failed:", event["data"])
-
-#             # Get information about the payment failure
-#             name = find_key_in_dict(data["object"], "name")
-#             email = find_key_in_dict(data["object"], "email")
-#             customer_id = find_key_in_dict(data["object"], "customer")
-#             message = find_key_in_dict(data["object"], "message")
-
-#             logger.warning(
-#                 f"Payment failed for {name} with email {email} and customer ID {customer_id}"
-#             )
-#             logger.warning(f"Payment failed message: {message}")
-
-#             # Send email to owner for payment failed
-#             sendEmail(
-#                 owner_email,
-#                 "Erreur lors du paiement d'un abonnement",
-#                 "payment_failed_notification.html",
-#                 {
-#                     "name": name,
-#                     "email": email,
-#                     "customer_id": customer_id,
-#                     "message": message,
-#                 },
-#             )
-
-#             # Send email to member for payment failed
-#             sendEmail(
-#                 email,
-#                 "Erreur lors du paiement de votre abonnement",
-#                 "payment_failed_email.html",
-#                 {
-#                     "name": name,
-#                     "email": email,
-#                     "message": message,
-#                 },
-#             )
-#         elif event["type"] == "customer.created":
-#             log_debug_info("Event data for customer created:", data["object"])
-
-#         else:
-#             logger.warning(f"Unhandled event type: {event['type']}")
-
-#         return HttpResponse(status=200)
-
-
 @method_decorator(csrf_exempt, name="dispatch")
 class StripeWebhook(View):
     """
@@ -307,7 +130,30 @@ class StripeWebhook(View):
 
     http_method_names = ["post"]  # Only POST requests are allowed
     
-    def post(self, request):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Your custom initialization code here
+        self.owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
+        self.member_id = None
+        self.member_name = None
+        self.member_email = None
+        self.member_country = None
+        self.member_invoice_url = None
+        self.member_plan = None
+        self.customer_name = None
+        self.customer_email = None
+        self.customer_country = None
+        self.meeting_id = None
+        self.meeting = None
+        self.data = None
+        self.metadata = None
+        self.event_type = None
+    
+    
+    def post(self, request) -> HttpResponse:
+        """
+        Handle the POST request for the Stripe webhook.
+        """ 
         logger.info("Stripe event registration webhook initiated ...")
 
         try:
@@ -315,30 +161,30 @@ class StripeWebhook(View):
             sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
             stripe_secret = env("STRIPE_WEBHOOK_SECRET")
             stripe.api_key = env("STRIPE_API_TOKEN")
-            
             event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
+            self.event_type = event["type"]
             
-            log_debug_info(f"Event type: {event['type']}")
+            log_debug_info(f"Event type: {self.event_type}")
             #log_debug_info("Event data", event["data"])
             
             # Get metadata from event data
-            data = event["data"]
-            metadata = self.extract_metadata(data, event["type"])
+            self.data = event["data"]
+            self._extract_metadata()
             registration_type = None
             
-            if metadata:
-                log_debug_info("Extracted metadata : ", metadata)
-                logger.info(f"Registration type: {metadata['type']}")
-                registration_type = metadata["type"]
+            if self.metadata:
+                log_debug_info("Extracted metadata : ", self.metadata)
+                logger.info(f"Registration type: {self.metadata['type']}")
+                registration_type = self.metadata["type"]
             
-            if event["type"] == "checkout.session.completed" and registration_type == "talk-group":
-                self.handle_talk_group(event["data"], metadata)
-            elif event["type"] == "invoice.paid" and registration_type == "membership":
-                self.handle_membership(event["data"], metadata)
-            elif event["type"] == "payment_intent.payment_failed":
-                logger.warning(f"[EVENT] Payment failed event initiated for {metadata['type'] if metadata else None}: {metadata}")
-            elif event["type"] == "invoice.payment_failed":
-                logger.warning(f"[EVENT] Invoice payment failed event initiated for {metadata['type'] if metadata else None}: {metadata}")
+            if self.event_type == "checkout.session.completed" and registration_type == "talk-group":
+                self.handle_talk_group()
+            elif self.event_type == "invoice.paid" and registration_type == "membership":
+                self.handle_membership()
+            elif self.event_type == "payment_intent.payment_failed":
+                logger.warning(f"[EVENT] Payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}")
+            elif self.event_type == "invoice.payment_failed":
+                logger.warning(f"[EVENT] Invoice payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}")
             else:
                 logger.warning(f"Unhandled event type: {event['type']}")
 
@@ -355,201 +201,54 @@ class StripeWebhook(View):
             return HttpResponse(status=500)
         
     
-    def handle_membership(self, data, metadata):
+    def handle_membership(self) -> None:
         """
         Subroutine to handle the membership subscription.
-        """
-        owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
-        
+        """        
         try:
-            # Get information about the invoice
-            customer_id = find_key_in_dict(data["object"], "customer")
-            member_name = find_key_in_dict(data["object"], "customer_name")
-            member_email = find_key_in_dict(data["object"], "customer_email")
-            member_country = find_key_in_dict(data["object"], "country")
-            invoice_url = find_key_in_dict(data["object"], "hosted_invoice_url")
-            plan = (
-                data["object"]["lines"]["data"][0]["description"]
-                if data["object"]["lines"]["data"][0]["description"]
-                else None
-            )
-
-            # Logging the invoice paid event
-            logger.info(f"Invoice paid for: customer ID {customer_id}")
-            logger.info(
-                f"Member name: {member_name}, email: {member_email}, country: {member_country}, plan: {plan}"
-            )
-            logger.info(f"Invoice URL: {invoice_url}")
-            log_debug_info("Event data for invoice paid:", data)
-
-            # Sending invoice to member
-            logger.info(
-                f"(StripeWebhook) Sending welcome & invoice to member at {member_email} ..."
-            )
-
-            # Update customer with metadata
-            logger.info("Updating customer metadata ...")
-            log_debug_info("Metadata for customer:", data)
+            # Extract member data from the event data
+            self._extract_member_data()
 
             stripe.Customer.modify(
-                customer_id,
+                self.member_id,
                 metadata={
-                    "name": metadata["name"],
-                    "birthday": metadata["birthday"],
-                    "customer_email": metadata["customer_email"],
-                    "phone": metadata["phone"],
-                    "address": metadata["address"],
-                    "zip_code": metadata["zip_code"],
-                    "city": metadata["city"],
-                    "country": member_country,
-                },
-            )
-
-            sendEmail(
-                member_email,
-                "Confirmation d'adhésion à l'association Les Invisibles",
-                "adhesion_email.html",
-                {
-                    "name": member_name,
-                },
-            )
-
-            sendEmail(
-                member_email,
-                "Reçu de paiement adhésion",
-                "invoice_email.html",
-                {
-                    "name": member_name,
-                    "email": member_email,
-                    "invoice_url": invoice_url,
-                    "customer_id": customer_id,
-                    "membership_plan": plan,
-                },
-            )
-
-            # Sending invoice to owner
-            logger.info(
-                f"Sending notification and invoice to owner at {owner_email} ..."
-            )
-
-            sendEmail(
-                owner_email,
-                "Un nouveau membre a rejoint l'association Les Invisibles",
-                "adhesion_notification.html",
-                {
-                    "name": member_name,
-                    "email": member_email,
-                    "country": member_country,
-                },
-            )
-
-            sendEmail(
-                owner_email,
-                "Reçu de paiement adhésion",
-                "invoice_email_accounting.html",
-                {
-                    "name": member_name,
-                    "email": member_email,
-                    "invoice_url": invoice_url,
-                    "customer_id": customer_id,
-                    "membership_plan": plan,
+                    "name": self.metadata["name"],
+                    "birthday": self.metadata["birthday"],
+                    "customer_email": self.metadata["customer_email"],
+                    "phone": self.metadata["phone"],
+                    "address": self.metadata["address"],
+                    "zip_code": self.metadata["zip_code"],
+                    "city": self.metadata["city"],
+                    "country": self.member_country,
                 },
             )
             
+            self._log_event()
+            self._send_membership_alerts()
+            
         except ValueError as e:
             logger.error(f"Invalid data in webhook payload: {str(e)}")
+            raise ValueError("Invalid data in webhook payload")
         except Exception as e:
             logger.error(f"Error processing membership event: {str(e)}")
+            raise Exception("Error processing membership event")
+        else:
+            logger.info("Membership subscription event completed.")
+        finally:
+            self._subscribe_to_mailing_list()
+                
     
-    
-    def handle_talk_group(self, data, metadata):
+    def handle_talk_group(self) -> None:
         """
         Subroutine to handle the checkout for talk group event.
         """
         logger.info("[EVENT] Checkout completed event initiated ...")
-        owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
 
-        # === EVENT HANDLING === #
-        try:
-
-            # Get information about the invoice
-            customer_name = find_key_in_dict(data["object"]["customer_details"], "name")
-            customer_email = find_key_in_dict(
-                data["object"]["customer_details"], "email"
-            )
-            customer_country = find_key_in_dict(
-                data["object"]["customer_details"], "country"
-            )
-
-            meeting_id = metadata["event_id"]
-            if not meeting_id:
-                raise ValueError("Missing event_id in metadata")
-
-            meeting = Event.objects.get(id=meeting_id)
-            logger.info(f"Extracted all data for event registration: {meeting}")
-
-            participant, created = Participant.objects.get_or_create(
-                email=customer_email,
-                defaults={
-                    "fname": metadata["fname"],
-                    "lname": metadata["lname"],
-                    "email": metadata["customer_email"],
-                    "phone": metadata["phone"],
-                    "address": metadata["address"],
-                    "zip_code": metadata["zip_code"],
-                    "city": metadata["city"],
-                },
-            )
-
-            logger.info(
-                f"{'New' if created else 'Existing'} participant: {participant}"
-            )
-
-            # Associate the participant with the event
-            EventParticipants.objects.create(event=meeting, participant=participant)
-            logger.info(f"Participant {participant} registered for event {meeting}")
-
-            # Logging the invoice paid event
-            logger.info(f"Invoice paid for: customer ID {customer_name}")
-            logger.info(
-                f"Customer name: {customer_name}, email: {customer_email}, country: {customer_country}"
-            )
-            log_debug_info("Event data for payment:", data)
-
-            # Sending notification to owner
-            sendEmail(
-                owner_email,
-                "Nouvelle inscription à un groupe de parole",
-                "event_notification.html",
-                {
-                    "fname": metadata["fname"],
-                    "lname": metadata["lname"],
-                    "email": metadata["customer_email"],
-                    "phone": metadata["phone"],
-                    "address": metadata["address"],
-                    "zip_code": metadata["zip_code"],
-                    "city": metadata["city"],
-                    "event_title": meeting.title,
-                    "event_date": meeting.date.strftime("%d/%m/%Y"),
-                    "event_start_time": meeting.start_time.strftime("%H:%M"),
-                    "event_end_time": meeting.end_time.strftime("%H:%M"),
-                },
-            )
-
-            # Sending confirmation to participant
-            sendEmail(
-                customer_email,
-                "Confirmation d'inscription à un groupe de parole",
-                "event_confirmation_email.html",
-                {
-                    "fname": metadata["fname"],
-                    "lname": metadata["lname"],
-                    "event_title": meeting.title,
-                    "event_date": meeting.date.strftime("%d/%m/%Y"),
-                    "event_start_time": meeting.start_time.strftime("%H:%M"),
-                    "event_end_time": meeting.end_time.strftime("%H:%M"),
-                },
-            )
+        try:        
+            self._extract_customer_data()
+            self._create_and_associate_participant_with_event()
+            self._log_event()
+            self._send_event_registration_alerts()
 
         except ObjectDoesNotExist as e:
             logger.error(f"Event not found: {str(e)}")
@@ -559,19 +258,235 @@ class StripeWebhook(View):
             logger.error(f"Error processing checkout completed event: {str(e)}")
 
     
-    def extract_metadata(self, data, event_type):
+    def _extract_member_data(self) -> None:
         """
-        Extract metadata from the event data based on the event type.
+        Extract member data from the event data (only for membership subscription)(setter).
         """
-        log_debug_info(f"Event type: {event_type}")
         
-        if event_type in ["checkout.session.completed", "payment_intent.payment_failed"]:
-            return find_key_in_dict(data["object"], "metadata")
-        elif event_type in ["invoice.paid", "invoice.payment_failed"]:
-            return find_key_in_dict(data["object"]["lines"]["data"][0], "metadata")
+        self.member_id = find_key_in_dict(self.data["object"], "customer")
+        self.member_name = find_key_in_dict(self.data["object"], "customer_name")
+        self.member_email = find_key_in_dict(self.data["object"], "customer_email")
+        self.member_country = find_key_in_dict(self.data["object"], "country")
+        self.member_invoice_url = find_key_in_dict(self.data["object"], "hosted_invoice_url")
+        self.member_plan = self.data["object"]["lines"]["data"][0]["description"]
+
+        missing_fields = []
+
+        if not self.member_id:
+            missing_fields.append("member_id")
+        if not self.member_name:
+            missing_fields.append("member_name")
+        if not self.member_email:
+            missing_fields.append("member_email")
+        if not self.member_country:
+            missing_fields.append("member_country")
+        if not self.member_invoice_url:
+            missing_fields.append("member_invoice_url")
+        if not self.member_plan:
+            missing_fields.append("member_plan")
+
+        if missing_fields:
+            raise ValueError(f"Missing member data in event payload: {', '.join(missing_fields)}")
+
+            
+    def _extract_customer_data(self) -> None:
+        """
+        Extract customer data from the event data (only for event registration)(setter).
+        """
+        self.customer_name = find_key_in_dict(self.data["object"]["customer_details"], "name")
+        self.customer_email = find_key_in_dict(
+            self.data["object"]["customer_details"], "email"
+        )
+        self.customer_country = find_key_in_dict(
+            self.data["object"]["customer_details"], "country"
+        )
+        self.meeting_id = self.metadata.get("event_id")
+
+        missing_fields = []
         
-        return None
+        if not self.customer_name:
+            missing_fields.append("customer_name")
+        if not self.customer_email:
+            missing_fields.append("customer_email")
+        if not self.customer_country:
+            missing_fields.append("customer_country")
+        if not self.meeting_id:
+            missing_fields.append("meeting_id")
+
+        if missing_fields:
+            raise ValueError(f"Missing customer data in event payload: {', '.join(missing_fields)}")
+
     
+    def _extract_metadata(self) -> None:
+        """
+        Extract metadata from the event data based on the event type (setter).
+        """
+        log_debug_info(f"Event type: {self.event_type}")
+        
+        if self.event_type in ["checkout.session.completed", "payment_intent.payment_failed"]:
+            self.metadata = find_key_in_dict(self.data["object"], "metadata")
+        elif self.event_type in ["invoice.paid", "invoice.payment_failed"]:
+            self.metadata = find_key_in_dict(self.data["object"]["lines"]["data"][0], "metadata")
+        
+    
+    def _create_and_associate_participant_with_event(self) -> None:
+        """
+        This method creates a new participant if they do not already exist in the database and associates them with the event.
+        """
+        self.meeting = Event.objects.get(id=self.meeting_id)
+        logger.info(f"Extracted all data for event registration: {self.meeting}")
+
+        participant, created = Participant.objects.get_or_create(
+            email=self.customer_email,
+            defaults={
+                "fname": self.metadata["fname"],
+                "lname": self.metadata["lname"],
+                "email": self.metadata["customer_email"],
+                "phone": self.metadata["phone"],
+                "address": self.metadata["address"],
+                "zip_code": self.metadata["zip_code"],
+                "city": self.metadata["city"],
+            },
+        )
+
+        logger.info(
+            f"{'New' if created else 'Existing'} participant: {participant}"
+        )
+
+        # Associate the participant with the event
+        EventParticipants.objects.create(event=self.meeting, participant=participant)
+        logger.info(f"Participant {participant} registered for event {self.meeting}")
+    
+    
+    def _send_membership_alerts(self) -> None:
+        """
+        Send email alerts to the member and owner after a successful membership subscription.
+        """
+        # Sending confirmation to member
+        sendEmail(
+            self.member_email,
+            "Confirmation d'adhésion à l'association Les Invisibles",
+            "adhesion_email.html",
+            {
+                "name": self.member_name,
+            },
+        )
+
+        sendEmail(
+            self.member_email,
+            "Reçu de paiement adhésion",
+            "invoice_email.html",
+            {
+                "name": self.member_name,
+                "email": self.member_email,
+                "invoice_url": self.member_invoice_url,
+                "customer_id": self.member_id,
+                "membership_plan": self.member_plan,
+            },
+        )
+
+        # Sending invoice to owner
+        logger.info(
+            f"Sending notification and invoice to owner at {self.owner_email} ..."
+        )
+
+        sendEmail(
+            self.owner_email,
+            "Un nouveau membre a rejoint l'association Les Invisibles",
+            "adhesion_notification.html",
+            {
+                "name": self.member_name,
+                "email": self.member_email,
+                "country": self.member_country,
+            },
+        )
+
+        sendEmail(
+            self.owner_email,
+            "Reçu de paiement adhésion",
+            "invoice_email_accounting.html",
+            {
+                "name": self.member_name,
+                "email": self.member_email,
+                "invoice_url": self.member_invoice_url,
+                "customer_id": self.member_id,
+                "membership_plan": self.member_plan,
+            },
+        )
+
+
+    def _send_event_registration_alerts(self) -> None:
+        # Sending notification to owner
+        sendEmail(
+            self.owner_email,
+            "Nouvelle inscription à un groupe de parole",
+            "event_notification.html",
+            {
+                "fname": self.metadata["fname"],
+                "lname": self.metadata["lname"],
+                "email": self.metadata["customer_email"],
+                "phone": self.metadata["phone"],
+                "address": self.metadata["address"],
+                "zip_code": self.metadata["zip_code"],
+                "city": self.metadata["city"],
+                "event_title": self.meeting.title,
+                "event_date": self.meeting.date.strftime("%d/%m/%Y"),
+                "event_start_time": self.meeting.start_time.strftime("%H:%M"),
+                "event_end_time": self.meeting.end_time.strftime("%H:%M"),
+            },
+        )
+
+        # Sending confirmation to participant
+        sendEmail(
+            self.customer_email,
+            "Confirmation d'inscription à un groupe de parole",
+            "event_confirmation_email.html",
+            {
+                "fname": self.metadata["fname"],
+                "lname": self.metadata["lname"],
+                "event_title": self.meeting.title,
+                "event_date": self.meeting.date.strftime("%d/%m/%Y"),
+                "event_start_time": self.meeting.start_time.strftime("%H:%M"),
+                "event_end_time": self.meeting.end_time.strftime("%H:%M"),
+            },
+        )
+    
+    
+    def _subscribe_to_mailing_list(self) -> None:
+        """
+        Subscribe the member to the mailing list (Mailchimp).
+        """
+        try:
+            # Use mailchimp proxy to add member to mailing list
+            logger.info("Adding member to mailing list ...")
+            mailchimp_data = {
+                "email": self.member_email,
+                "test_status": None,
+            }
+            response = requests.post(reverse("mailchimp-proxy"), data=mailchimp_data)
+            
+            logger.info(f"Mailchimp response: {response}")
+        except Exception as e:
+            logger.error(f"Error adding member to mailing list: {str(e)}")
+
+
+    def _log_event(self) -> None:
+        """
+        Log event data and metadata.
+        """
+        if self.event_type == "invoice.paid":
+            logger.info(f"Invoice paid for: customer ID {self.member_id}")
+            logger.info(f"Member name: {self.member_name}, email: {self.member_email}, country: {self.member_country}, plan: {self.member_plan}")
+            logger.info(f"Invoice URL: {self.member_invoice_url}")
+            log_debug_info("Event data for invoice paid:", self.data)
+            log_debug_info("Metadata for customer:", self.metadata)
+            logger.info("Updating customer metadata ...")
+        elif self.event_type == "checkout.session.completed":
+            logger.info(f"Checkout completed for: event ID {self.meeting_id}")
+            logger.info(f"Customer name: {self.customer_name}, email: {self.customer_email}, country: {self.customer_country}")
+            log_debug_info("Event data for payment:", self.data)
+    
+
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
     logger.info("EmailSender initialized ...")

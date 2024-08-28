@@ -44,10 +44,11 @@ class StripeWebhookTestCase(TestCase):
             end_time="14:00",
         )
 
-    
+
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
-    def test_stripe_membership_webhook(self, mock_construct_event):
+    @patch("proxy.views.stripe.Customer.modify", return_value=None)
+    def test_stripe_membership_webhook(self, mock_stripe_customer_modify, mock_construct_event):
         """
         This test simulates a Stripe webhook event for a membership payment.
         It uses invoice.paid event to simulate a successful payment.
@@ -276,7 +277,8 @@ class StripeWebhookTestCase(TestCase):
         }
 
         mock_construct_event.return_value = mock_event_data
-
+        #mock_stripe_customer_modify.return_value = None
+        
         # Simulated payload
         payload = b'{\n  "id": "evt_3PqcGjBpqKPTmGHq28tgNN8c",\n  "object": "event",\n  "api_version": "2023-10-16",\n  "created": 1724337945,\n  "data": {\n    "object": {\n      "id": "pi_3PqcGjBpqKPTmGHq25tIse2a",\n      "object": "payment_intent",\n      "amount": 3000,\n      "currency": "usd",\n      "status": "requires_payment_method",\n      "shipping": {\n        "address": {\n          "city": "San Francisco",\n          "country": "US",\n          "line1": "510 Townsend St",\n          "postal_code": "94103",\n          "state": "CA"\n        },\n        "name": "Jenny Rosen"\n      }\n    }\n  },\n  "livemode": false,\n  "pending_webhooks": 2,\n  "request": {\n    "id": "req_88lDWA22gUCC9F",\n    "idempotency_key": "be9654eb-1ac6-4066-9632-06061b826f44"\n  },\n  "type": "invoice.paid"\n}'
 
@@ -440,3 +442,15 @@ class StripeWebhookTestCase(TestCase):
 
         # Assert that the response status is 200 OK
         self.assertEqual(response.status_code, 200)
+        
+        # Check that the participant has been created
+        participant = Participant.objects.get(email="afra.amaya@tutanota.com")
+        self.assertEqual(participant.email, "afra.amaya@tutanota.com")
+        self.assertEqual(participant.fname, "Marc")
+        self.assertEqual(participant.lname, "Cash")
+        
+        # Check that the participant has been added to the event
+        event_participant = EventParticipants.objects.get(event=self.event, participant=participant)
+        self.assertEqual(event_participant.event, self.event)
+        self.assertEqual(event_participant.participant, participant)
+        

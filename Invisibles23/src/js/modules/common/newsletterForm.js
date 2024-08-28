@@ -40,6 +40,14 @@ export function newsletterForm(formID) {
         )
 }
 
+
+/**
+ * This function is called when the newsletter form is submitted.
+ * It adds the email to the list of contacts.
+ * 
+ * @param {*} formObject 
+ * @param {*} email 
+ */
 async function handleNewsletterSubmit(formObject, email) {
     const formID = formObject.target.id;
     const messageSelectors = {

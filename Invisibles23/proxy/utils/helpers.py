@@ -13,7 +13,7 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 CURR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def sendEmail(receiver_email, subject, email_file, placeholders={}):
+def sendEmail(receiver_email, subject, email_file, placeholders={}) -> None:
     """
     Send an email to the given receiver email address. The email file is an HTML file that contains the email content.
     The placeholders in the email file are replaced with the actual values.
@@ -63,7 +63,7 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}):
         server.sendmail(sender_email, receiver_email, message.as_string())
 
 
-def find_key_in_dict(d, target):
+def find_key_in_dict(d, target) -> str:
     """
     Recursively search for a key in a nested dictionary.
 
