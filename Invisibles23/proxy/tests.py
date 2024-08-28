@@ -5,11 +5,15 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 import unittest
+import requests
 from proxy.views import StripeWebhook
 from website.models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from unittest.mock import patch, Mock
+from Invisibles23.logging_utils import log_debug_info
+import random
+import string
 
 
 class StripeWebhookTestCase(TestCase):
@@ -454,3 +458,88 @@ class StripeWebhookTestCase(TestCase):
         self.assertEqual(event_participant.event, self.event)
         self.assertEqual(event_participant.participant, participant)
         
+        
+class MailchimpProxyTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF.
+        I don't know why it is necessary to do this, environs seems to not load the .env file correctly
+        during testing (therefore setting DEBUG to false, see settings.py).
+        """
+        super().setUpClass()
+        cls.override = override_settings(DEBUG=True)
+        cls.override.enable()
+
+    
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.override.disable()
+        
+    def setUp(self):
+        # Create a random email address
+        self.random_email = MailchimpProxyTestCase._generate_random_email()
+        self.random_fname, self.random_lname = MailchimpProxyTestCase._generate_fake_name()
+
+    
+    def test_mailchimp_add_contact(self):
+        """
+        This actually test adding a contact to the Mailchimp list (in a test account).
+        IMPORTANT: This test will fail if the contact already exists in the list, you MUST manually remove contact from the list.
+        """
+        client = Client()
+        response = client.post(
+            reverse('mailchimp-proxy'),
+            data={
+                "email": self.random_email,
+                "fname": self.random_fname,
+                "lname": self.random_lname,
+                "phone": "075 701 58 68",
+                "birthday": "01/31",
+                "address": "Chemin des Fauvettes 6, 1212 Lancy",
+                "test_status": "null",
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+    
+    @staticmethod  
+    def _generate_random_email():
+        """
+        Generate a realistic but random email address with a fake username and domain.
+        """
+        # Generate a random username (mix of letters)
+        username_length = random.randint(5, 10)
+        random_username = ''.join(random.choices(string.ascii_lowercase, k=username_length))
+        
+        # Generate random numbers
+        random_numbers = ''.join(random.choices(string.digits, k=random.randint(1, 5)))
+        
+        # List of possible domains
+        domains = ['com', 'ch', 'fr']
+        
+        # Randomly select a domain
+        domain = random.choice(domains)
+        
+        # Construct and return the email address
+        return f"{random_username}_{random_numbers}@fallen.{domain}"
+    
+    @staticmethod
+    def _generate_fake_name():
+        """
+        Generate a fake first name and last name for testing purposes.
+        
+        Returns
+        -------
+        tuple
+            A tuple containing the fake first name and last name.
+        """
+        # Lists of sample first names and last names
+        first_names = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Katie', 'Michael', 'Sarah', 'David', 'Laura']
+        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Taylor']
+        
+        # Randomly select a first name and last name
+        first_name = random.choice(first_names)
+        last_name = random.choice(last_names)
+        
+        return first_name, last_name

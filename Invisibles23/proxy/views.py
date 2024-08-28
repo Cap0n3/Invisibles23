@@ -76,23 +76,55 @@ class MailchimpProxy(View):
     """
     This view handles the subscription to the mailing list. It uses the Mailchimp API to add a new member to the list.
     """
+
     http_method_names = ["post"]  # Only POST requests are allowed
-    server_prefix = "us21"
-    mailchimp_api_key = env("MAILCHIMP_API_KEY")
-    list_id = env("MAILCHIMP_LIST_ID")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.server_prefix = None
+        self.mailchimp_api_key = env("MAILCHIMP_API_KEY")
+        self.list_id = env("MAILCHIMP_LIST_ID")
+        self.subscriber_email = None
+        self.subscriber_fname = None
+        self.subscriber_lname = None
 
     def post(self, request):
-        email = request.POST.get("email")
+        logger.info("MailchimpProxy initiated ...")
+
+        # email = request.POST.get("email")
+        self.subscriber_email = request.POST.get("email")
+        self.subscriber_fname = request.POST.get("fname") or ""
+        self.subscriber_lname = request.POST.get("lname") or ""
+        self.phone = request.POST.get("phone") or ""
+        self.birthday = request.POST.get("birthday") or ""
+        self.address = request.POST.get("address") or ""
         test_status = request.POST.get("test_status")
         test_status = int(test_status) if test_status != "null" else None
+        
+        logger.info(f"Adding subscriber {self.subscriber_email} to the mailing list ...")
+        log_debug_info(
+            f"Subscriber email: {self.subscriber_email} Subscriber name: {self.subscriber_fname} {self.subscriber_lname}"
+        )
 
-        if not email:
+        if not self.subscriber_email:
+            logger.error("No email provided for newsletter subscription")
             return HttpResponseBadRequest("Email is required")
 
-        member_info = {"email_address": email, "status": "subscribed"}
+        member_info = {
+            "email_address": self.subscriber_email,
+            "status": "subscribed",
+            "merge_fields": {
+                "FNAME": self.subscriber_fname,
+                "LNAME": self.subscriber_lname,
+                "ADDRESS": self.address,
+                "BIRTHDAY": self.birthday,
+                "PHONE": self.phone,
+            },
+        }
 
         # Mailchimp API endpoint
         try:
+            self._set_server_prefix()
             if test_status and isinstance(test_status, int):
                 # Simulating a test error with custom status code and error message
                 raise ApiClientError("An error occurred", status_code=test_status)
@@ -102,7 +134,7 @@ class MailchimpProxy(View):
                 {"api_key": self.mailchimp_api_key, "server": self.server_prefix}
             )
             response = client.lists.add_list_member(self.list_id, member_info)
-            print("response: {}".format(response))
+            logger.info(f"Mailchimp response: {response}")
 
             return JsonResponse(
                 {
@@ -112,7 +144,7 @@ class MailchimpProxy(View):
             )
         except ApiClientError as error:
             # Same with f string
-            print(f"An exception occurred: {error.text}")
+            logger.error(f"An exception occurred: {error.text}")
 
             return JsonResponse(
                 {
@@ -120,6 +152,15 @@ class MailchimpProxy(View):
                 },
                 status=error.status_code,
             )
+
+    def _set_server_prefix(self):
+        """
+        Set the Mailchimp server prefix based on the DEBUG mode.
+        Note: Server prefix is used in the Mailchimp API URL.
+        """
+        prefix = "us9" if settings.DEBUG else "us21"
+        logger.info(f"Mailchimp server prefix set to : {prefix}")
+        self.server_prefix = prefix
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -129,11 +170,13 @@ class StripeWebhook(View):
     """
 
     http_method_names = ["post"]  # Only POST requests are allowed
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Your custom initialization code here
-        self.owner_email = settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
+        self.owner_email = (
+            settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
+        )
         self.member_id = None
         self.member_name = None
         self.member_email = None
@@ -148,12 +191,11 @@ class StripeWebhook(View):
         self.data = None
         self.metadata = None
         self.event_type = None
-    
-    
+
     def post(self, request) -> HttpResponse:
         """
         Handle the POST request for the Stripe webhook.
-        """ 
+        """
         logger.info("Stripe event registration webhook initiated ...")
 
         try:
@@ -163,28 +205,37 @@ class StripeWebhook(View):
             stripe.api_key = env("STRIPE_API_TOKEN")
             event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
             self.event_type = event["type"]
-            
+
             log_debug_info(f"Event type: {self.event_type}")
-            #log_debug_info("Event data", event["data"])
-            
+            # log_debug_info("Event data", event["data"])
+
             # Get metadata from event data
             self.data = event["data"]
             self._extract_metadata()
             registration_type = None
-            
+
             if self.metadata:
                 log_debug_info("Extracted metadata : ", self.metadata)
                 logger.info(f"Registration type: {self.metadata['type']}")
                 registration_type = self.metadata["type"]
-            
-            if self.event_type == "checkout.session.completed" and registration_type == "talk-group":
+
+            if (
+                self.event_type == "checkout.session.completed"
+                and registration_type == "talk-group"
+            ):
                 self.handle_talk_group()
-            elif self.event_type == "invoice.paid" and registration_type == "membership":
+            elif (
+                self.event_type == "invoice.paid" and registration_type == "membership"
+            ):
                 self.handle_membership()
             elif self.event_type == "payment_intent.payment_failed":
-                logger.warning(f"[EVENT] Payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}")
+                logger.warning(
+                    f"[EVENT] Payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}"
+                )
             elif self.event_type == "invoice.payment_failed":
-                logger.warning(f"[EVENT] Invoice payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}")
+                logger.warning(
+                    f"[EVENT] Invoice payment failed event initiated for {self.metadata['type'] if self.metadata else None}: {self.metadata}"
+                )
             else:
                 logger.warning(f"Unhandled event type: {event['type']}")
 
@@ -199,12 +250,11 @@ class StripeWebhook(View):
         except Exception as e:
             logger.error(f"Unexpected error in webhook: {str(e)}")
             return HttpResponse(status=500)
-        
-    
+
     def handle_membership(self) -> None:
         """
         Subroutine to handle the membership subscription.
-        """        
+        """
         try:
             # Extract member data from the event data
             self._extract_member_data()
@@ -222,10 +272,10 @@ class StripeWebhook(View):
                     "country": self.member_country,
                 },
             )
-            
+
             self._log_event()
             self._send_membership_alerts()
-            
+
         except ValueError as e:
             logger.error(f"Invalid data in webhook payload: {str(e)}")
             raise ValueError("Invalid data in webhook payload")
@@ -236,15 +286,14 @@ class StripeWebhook(View):
             logger.info("Membership subscription event completed.")
         finally:
             self._subscribe_to_mailing_list()
-                
-    
+
     def handle_talk_group(self) -> None:
         """
         Subroutine to handle the checkout for talk group event.
         """
         logger.info("[EVENT] Checkout completed event initiated ...")
 
-        try:        
+        try:
             self._extract_customer_data()
             self._create_and_associate_participant_with_event()
             self._log_event()
@@ -257,17 +306,18 @@ class StripeWebhook(View):
         except Exception as e:
             logger.error(f"Error processing checkout completed event: {str(e)}")
 
-    
     def _extract_member_data(self) -> None:
         """
         Extract member data from the event data (only for membership subscription)(setter).
         """
-        
+
         self.member_id = find_key_in_dict(self.data["object"], "customer")
         self.member_name = find_key_in_dict(self.data["object"], "customer_name")
         self.member_email = find_key_in_dict(self.data["object"], "customer_email")
         self.member_country = find_key_in_dict(self.data["object"], "country")
-        self.member_invoice_url = find_key_in_dict(self.data["object"], "hosted_invoice_url")
+        self.member_invoice_url = find_key_in_dict(
+            self.data["object"], "hosted_invoice_url"
+        )
         self.member_plan = self.data["object"]["lines"]["data"][0]["description"]
 
         missing_fields = []
@@ -286,14 +336,17 @@ class StripeWebhook(View):
             missing_fields.append("member_plan")
 
         if missing_fields:
-            raise ValueError(f"Missing member data in event payload: {', '.join(missing_fields)}")
+            raise ValueError(
+                f"Missing member data in event payload: {', '.join(missing_fields)}"
+            )
 
-            
     def _extract_customer_data(self) -> None:
         """
         Extract customer data from the event data (only for event registration)(setter).
         """
-        self.customer_name = find_key_in_dict(self.data["object"]["customer_details"], "name")
+        self.customer_name = find_key_in_dict(
+            self.data["object"]["customer_details"], "name"
+        )
         self.customer_email = find_key_in_dict(
             self.data["object"]["customer_details"], "email"
         )
@@ -303,7 +356,7 @@ class StripeWebhook(View):
         self.meeting_id = self.metadata.get("event_id")
 
         missing_fields = []
-        
+
         if not self.customer_name:
             missing_fields.append("customer_name")
         if not self.customer_email:
@@ -314,21 +367,26 @@ class StripeWebhook(View):
             missing_fields.append("meeting_id")
 
         if missing_fields:
-            raise ValueError(f"Missing customer data in event payload: {', '.join(missing_fields)}")
+            raise ValueError(
+                f"Missing customer data in event payload: {', '.join(missing_fields)}"
+            )
 
-    
     def _extract_metadata(self) -> None:
         """
         Extract metadata from the event data based on the event type (setter).
         """
         log_debug_info(f"Event type: {self.event_type}")
-        
-        if self.event_type in ["checkout.session.completed", "payment_intent.payment_failed"]:
+
+        if self.event_type in [
+            "checkout.session.completed",
+            "payment_intent.payment_failed",
+        ]:
             self.metadata = find_key_in_dict(self.data["object"], "metadata")
         elif self.event_type in ["invoice.paid", "invoice.payment_failed"]:
-            self.metadata = find_key_in_dict(self.data["object"]["lines"]["data"][0], "metadata")
-        
-    
+            self.metadata = find_key_in_dict(
+                self.data["object"]["lines"]["data"][0], "metadata"
+            )
+
     def _create_and_associate_participant_with_event(self) -> None:
         """
         This method creates a new participant if they do not already exist in the database and associates them with the event.
@@ -349,15 +407,12 @@ class StripeWebhook(View):
             },
         )
 
-        logger.info(
-            f"{'New' if created else 'Existing'} participant: {participant}"
-        )
+        logger.info(f"{'New' if created else 'Existing'} participant: {participant}")
 
         # Associate the participant with the event
         EventParticipants.objects.create(event=self.meeting, participant=participant)
         logger.info(f"Participant {participant} registered for event {self.meeting}")
-    
-    
+
     def _send_membership_alerts(self) -> None:
         """
         Send email alerts to the member and owner after a successful membership subscription.
@@ -414,7 +469,6 @@ class StripeWebhook(View):
             },
         )
 
-
     def _send_event_registration_alerts(self) -> None:
         # Sending notification to owner
         sendEmail(
@@ -450,8 +504,7 @@ class StripeWebhook(View):
                 "event_end_time": self.meeting.end_time.strftime("%H:%M"),
             },
         )
-    
-    
+
     def _subscribe_to_mailing_list(self) -> None:
         """
         Subscribe the member to the mailing list (Mailchimp).
@@ -464,11 +517,10 @@ class StripeWebhook(View):
                 "test_status": None,
             }
             response = requests.post(reverse("mailchimp-proxy"), data=mailchimp_data)
-            
+
             logger.info(f"Mailchimp response: {response}")
         except Exception as e:
             logger.error(f"Error adding member to mailing list: {str(e)}")
-
 
     def _log_event(self) -> None:
         """
@@ -476,16 +528,20 @@ class StripeWebhook(View):
         """
         if self.event_type == "invoice.paid":
             logger.info(f"Invoice paid for: customer ID {self.member_id}")
-            logger.info(f"Member name: {self.member_name}, email: {self.member_email}, country: {self.member_country}, plan: {self.member_plan}")
+            logger.info(
+                f"Member name: {self.member_name}, email: {self.member_email}, country: {self.member_country}, plan: {self.member_plan}"
+            )
             logger.info(f"Invoice URL: {self.member_invoice_url}")
             log_debug_info("Event data for invoice paid:", self.data)
             log_debug_info("Metadata for customer:", self.metadata)
             logger.info("Updating customer metadata ...")
         elif self.event_type == "checkout.session.completed":
             logger.info(f"Checkout completed for: event ID {self.meeting_id}")
-            logger.info(f"Customer name: {self.customer_name}, email: {self.customer_email}, country: {self.customer_country}")
+            logger.info(
+                f"Customer name: {self.customer_name}, email: {self.customer_email}, country: {self.customer_country}"
+            )
             log_debug_info("Event data for payment:", self.data)
-    
+
 
 class EmailSender(View):
     http_method_names = ["post"]  # Only POST requests are allowed
