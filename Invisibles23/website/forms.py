@@ -124,6 +124,15 @@ class MembershipForm(forms.Form):
         validators=[validate_names],
         required=True,
     )
+    country = forms.CharField(
+        min_length=2,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Pays"}
+        ),
+        validators=[validate_names],
+        required=True,
+    )
     email = forms.EmailField(
         max_length=100,
         widget=forms.EmailInput(

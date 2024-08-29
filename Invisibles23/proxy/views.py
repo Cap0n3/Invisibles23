@@ -220,7 +220,8 @@ class StripeWebhook(View):
 
     def handle_membership(self) -> None:
         """
-        Subroutine to handle the membership subscription.
+        Subroutine to handle the membership subscription. It updates the member's metadata and sends email alerts
+        Note : Updating is the only way I found to transmit the metadata to stripe
         """
         try:
             # Extract member data from the event data
@@ -236,12 +237,11 @@ class StripeWebhook(View):
                     "address": self.metadata["address"],
                     "zip_code": self.metadata["zip_code"],
                     "city": self.metadata["city"],
-                    "country": self.member_country,
+                    "country": self.metadata["country"],
                 },
             )
 
             self._log_event()
-            self._send_membership_alerts()
 
         except ValueError as e:
             logger.error(f"Invalid data in webhook payload: {str(e)}")
@@ -251,6 +251,7 @@ class StripeWebhook(View):
             raise Exception("Error processing membership event")
         else:
             logger.info("Membership subscription event completed.")
+            self._send_membership_alerts()
         finally:
             self._subscribe_to_mailing_list()
 
@@ -482,13 +483,13 @@ class StripeWebhook(View):
             "status": "subscribed",
             "merge_fields": {
                 "FNAME": self.member_name.split(" ")[0],
-                "LNAME": self.member_name.split(" ")[1],
-                "COUNTRY": "-",                
+                "LNAME": self.member_name.split(" ")[1],            
                 "ADDRESS": {
                     "addr1": self.metadata["address"],
                     "city": self.metadata["city"],
                     "state": "-",
                     "zip": self.metadata["zip_code"],
+                    "country": self.metadata["country"],
                 },
                 "PHONE": self.metadata["phone"],
                 "BIRTHDAY": format_birthdate_for_mailchimp(self.metadata["birthday"]),

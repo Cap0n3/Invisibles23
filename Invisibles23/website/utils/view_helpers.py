@@ -1,9 +1,14 @@
 from Invisibles23.logging_config import logger
 
 
-def createFormErrorContext(form):
+def createFormErrorContext(form) -> dict:
     """
     Create a context to display form errors in the template (used in MembershipView and EventRegistrationView)
+    
+    Returns
+    -------
+    dict
+        A dictionary containing the form, the error inputs and the error messages
     """
     # Get error data from the form
     error_data = form.errors.as_data()

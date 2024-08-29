@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render
 from django.views import View
 from Invisibles23.logging_config import logger
@@ -379,40 +380,24 @@ class MembershipView(View):
         "subscription": "normal",
         "frequency": "yearly",
     }  # Default state of radio buttons
-
-    @staticmethod
-    def choosePricing(subscription, frequency):
-        """
-        Choose the pricing based on the subscription and frequency.
-
-        It will return following values:
-        - support-monthly
-        - support-yearly
-        - normal-monthly
-        - normal-yearly
-        - reduced-monthly
-        - reduced-yearly
-        """
-        _lookup_key = ""
-        if subscription == "support":
-            _lookup_key = (
-                "support-monthly" if frequency == "monthly" else "support-yearly"
-            )
-        elif subscription == "normal":
-            _lookup_key = (
-                "normal-monthly" if frequency == "monthly" else "normal-yearly"
-            )
-        elif subscription == "reduced":
-            _lookup_key = (
-                "reduced-monthly" if frequency == "monthly" else "reduced-yearly"
-            )
-        else:
-            logger.error(
-                f"Invalid subscription or frequency: {subscription}, {frequency}"
-            )
-            raise ValueError("Invalid subscription or frequency")
-
-        return _lookup_key
+    
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.domain = ("http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}")
+        self.subscription = None
+        self.frequency = None
+        self.first_name = None
+        self.last_name = None
+        self.email = None
+        self.phone = None
+        self.birthday = None
+        self.address = None
+        self.zip_code = None
+        self.city = None
+        self.country = None
+        self.lookup_key = None
+        self.prices = None
+        self.checkout_session_object = None
 
     def get_queryset(self):
         # Text for the membership adhesion
@@ -431,109 +416,30 @@ class MembershipView(View):
 
     def post(self, request):
         form = MembershipForm(request.POST)
-        domain = (
-            "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
-        )
         stripe.api_key = env("STRIPE_API_TOKEN")
         log_debug_info("Request data", request.POST)
 
         if form.is_valid():
             logger.info("Membership form is valid")
-            subscription = form.cleaned_data["subscription"]
-            frequency = form.cleaned_data["frequency"]
-            first_name = form.cleaned_data["fname"]
-            last_name = form.cleaned_data["lname"]
-            birthday = form.cleaned_data["birthday"]
-            address = form.cleaned_data["address"]
-            zip_code = form.cleaned_data["zip_code"]
-            city = form.cleaned_data["city"]
-            email = form.cleaned_data["email"]
-            phone = form.cleaned_data["phone"]
-            lookup_key = request.POST.get("lookup_key")
 
             try:
+                self._extract_form_data(form)
                 # Check if customer already exists
-                logger.info("Checking if customer already exists ...")
-                customer_search = stripe.Customer.search(
-                    query=f"name:'{first_name} {last_name}' AND email:'{email}'",
-                )
-
-                # If customer exists, check if they have an active subscription
-                if customer_search.data:
-                    logger.info(f"Customer already exists: {customer_search.data[0]}")
-                    existing_customer_id = customer_search.data[0].id
-                    # Search for active subscription
-                    subscription_search = stripe.Subscription.search(
-                        query=f"status:'active'",
-                    )
-                    # Loop through subscriptions and find the one with the customer ID
-                    for subscription in subscription_search.data:
-                        if subscription.customer == existing_customer_id:
-                            logger.warning(
-                                f"Customer already has an active subscription: {subscription}"
-                            )
-                            return render(
-                                request,
-                                self.template_name,
-                                {
-                                    "form": form,
-                                    "error_messages": f"Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : {settings.DEV_EMAIL}",
-                                },
-                            )
-
-                # Get the lookup key according to the subscription and frequency
-                lookup_key = self.choosePricing(subscription, frequency)
-
-                # Get prices from Stripe
-                logger.info("Getting prices from Stripe ...")
-                prices = stripe.Price.list(
-                    lookup_keys=[lookup_key], expand=["data.product"]
-                )
-
-                log_debug_info("Prices list", prices)
-
-                # Create checkout session to redirect to Stripe
-                logger.info("Creating checkout session ...")
-                checkout_session = stripe.checkout.Session.create(
-                    line_items=[
+                if self._check_already_has_active_subscription():            
+                    return render(
+                        request,
+                        self.template_name,
                         {
-                            "price": prices.data[0].id,
-                            "quantity": 1,
+                            "form": form,
+                            "error_messages": f"Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}",
                         },
-                    ],
-                    currency="chf",
-                    customer_email=email,
-                    subscription_data={
-                        "metadata": {
-                            "name": f"{first_name} {last_name}",
-                            "birthday": birthday,
-                            "address": address,
-                            "zip_code": zip_code,
-                            "city": city,
-                            "customer_email": email,
-                            "phone": phone,
-                            "type": "membership",
-                        },
-                    },
-                    metadata={
-                        "name": f"{first_name} {last_name}",
-                        "birthday": birthday,
-                        "address": address,
-                        "zip_code": zip_code,
-                        "city": city,
-                        "customer_email": email,
-                        "phone": phone,
-                        "type": "membership",
-                    },
-                    mode="subscription",
-                    success_url=domain + "/success/",
-                    cancel_url=domain + "/membership/",
-                )
-
-                logger.info("Session created successfully ... redirecting to checkout")
-                log_debug_info("Session url", checkout_session["url"])
-
-                return redirect(checkout_session["url"], code=303)
+                    )
+                    
+                self._create_lookup_key()
+                self._get_stripe_price_list()
+                self._create_checkout_session()
+                
+                return redirect(self.checkout_session_object["url"], code=303)
 
             except Exception as error:
                 logger.error(f"(MembershipView) -> An exception occurred: {error}")
@@ -550,6 +456,166 @@ class MembershipView(View):
             error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)
 
+    def _extract_form_data(self, form) -> None:
+        """
+        Extracts the data from the form and assigns it to the class attributes.
+        """
+        try:
+            self.subscription = form.cleaned_data["subscription"]
+            self.frequency = form.cleaned_data["frequency"]
+            self.first_name = form.cleaned_data["fname"]
+            self.last_name = form.cleaned_data["lname"]
+            self.email = form.cleaned_data["email"]
+            self.phone = form.cleaned_data["phone"]
+            self.birthday = form.cleaned_data["birthday"]
+            self.address = form.cleaned_data["address"]
+            self.zip_code = form.cleaned_data["zip_code"]
+            self.city = form.cleaned_data["city"]
+            self.country = form.cleaned_data["country"]
+        except Exception as error:
+            logger.error(f"An exception occurred: {error}")
+            raise error
+
+    def _check_already_has_active_subscription(self) -> bool:
+        """
+        This function checks if a customer already exists in the Stripe database and
+        if the customer exists, it will check if they have an active subscription.
+        
+        Returns
+        -------
+        bool
+            True if the customer already has an active subscription, False otherwise
+        """
+        logger.info("Checking if customer already exists ...")
+        
+        try:
+            # Search for customer
+            customer_search = stripe.Customer.search(
+                query=f"name:'{self.first_name} {self.last_name}' AND email:'{self.email}'",
+            )
+        except Exception as error:
+            logger.error(f"An exception occurred: {error}")
+            raise error
+        
+        if customer_search:
+            logger.warning(f"Customer already exists: {customer_search.data[0]}")
+            existing_customer_id = customer_search.data[0].id
+            # Search for active subscription
+            try:
+                subscription_search = stripe.Subscription.search(
+                    query=f"status:'active'",
+                )
+            except Exception as error:
+                logger.error(f"An exception occurred: {error}")
+                raise error
+            else:
+                # Loop through subscriptions and find the one with the customer ID
+                for subscription in subscription_search.data:
+                    if subscription.customer == existing_customer_id:
+                        logger.warning(
+                            f"Customer already has an active subscription: {subscription}"
+                        )
+                        return True
+        return False
+    
+    def _create_lookup_key(self) -> None:
+        """
+        This function creates a lookup key based on the subscription and frequency.
+
+        It will return following values:
+        - support-monthly
+        - support-yearly
+        - normal-monthly
+        - normal-yearly
+        - reduced-monthly
+        - reduced-yearly
+        """
+        if self.subscription == "support":
+            self.lookup_key = (
+                "support-monthly" if self.frequency == "monthly" else "support-yearly"
+            )
+        elif self.subscription == "normal":
+            self.lookup_key = (
+                "normal-monthly" if self.frequency == "monthly" else "normal-yearly"
+            )
+        elif self.subscription == "reduced":
+            self.lookup_key = (
+                "reduced-monthly" if self.frequency == "monthly" else "reduced-yearly"
+            )
+        else:
+            logger.error(
+                f"Invalid subscription or frequency: {self.subscription}, {self.frequency}"
+            )
+            raise ValueError("Invalid subscription or frequency")
+    
+    def _get_stripe_price_list(self) -> None:
+        """
+        This function gets the prices from Stripe based on the lookup key.
+        """
+        try:
+            # Get prices from Stripe
+            logger.info("Getting prices from Stripe ...")
+            self.prices = stripe.Price.list(
+                lookup_keys=[self.lookup_key], expand=["data.product"]
+            )
+            log_debug_info("Prices list", self.prices)
+        except Exception as error:
+            logger.error(f"An exception occurred: {error}")
+            raise error
+
+    def _create_checkout_session(self) -> None:
+        """
+        This function creates a checkout session for the membership subscription.
+        It also creates metadata that will be used to store the member's information.
+        """
+        logger.info("Creating checkout session ...")
+        try:
+            self.checkout_session_object = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        "price": self.prices.data[0].id,
+                        "quantity": 1,
+                    },
+                ],
+                currency="chf",
+                customer_email=self.email,
+                subscription_data={
+                    "metadata": {
+                        "name": f"{self.first_name} {self.last_name}",
+                        "customer_email": self.email,
+                        "phone": self.phone,
+                        "birthday": self.birthday,
+                        "address": self.address,
+                        "zip_code": self.zip_code,
+                        "city": self.city,
+                        "country": self.country,
+                        "type": "membership",
+                    },
+                },
+                metadata={
+                    "name": f"{self.first_name} {self.last_name}",
+                    "customer_email": self.email,
+                    "phone": self.phone,
+                    "birthday": self.birthday,
+                    "address": self.address,
+                    "zip_code": self.zip_code,
+                    "city": self.city,
+                    "country": self.country,
+                    "type": "membership",
+                },
+                mode="subscription",
+                success_url=self.domain + "/success/",
+                cancel_url=self.domain + "/membership/",
+            )
+        except Exception as error:
+            logger.error(f"An exception occurred: {error}")
+            raise error
+        else:
+            logger.info("Session created successfully ... redirecting to checkout")
+            log_debug_info("Session url", self.checkout_session_object["url"])
+        
+    
+    
 
 class DonationView(View):
     template_name = "pages/donation.html"
