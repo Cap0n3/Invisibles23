@@ -43,6 +43,7 @@ class MembershipViewTest(TestCase):
             "address": "123 Test Street",
             "zip_code": "1234",
             "city": "Test City",
+            "country": "Suisse",
             "lookup_key": "reduced-yearly",
         }
 
@@ -86,6 +87,7 @@ class MembershipViewTest(TestCase):
                 "address",
                 "zip_code",
                 "city",
+                "country",
                 "email",
             ],
         )
@@ -193,6 +195,7 @@ class EventRegistrationViewTest(TestCase):
             "address": "Chemin du Pré-Fleuri 3",
             "zip_code": "1228",
             "city": "Plan-les-Ouates",
+            "country": "Suisse",
             "membership_status": "isMember",
         }
         for plan in plans:
@@ -220,6 +223,7 @@ class EventRegistrationViewTest(TestCase):
                 "email": "invalid_email",
                 "membership_status": "isMember",
                 "zip_code": "1228",
+                "country": "Suisse#",
                 "city": "Plan-les-Ouates",
             },
         )
@@ -234,7 +238,7 @@ class EventRegistrationViewTest(TestCase):
         # Checks
         error_inputs_list = list(error_inputs)  # Convert the dict_keys object to a list
         self.assertTemplateUsed(response, "pages/event-registration.html")
-        self.assertEqual(error_inputs_list, ["plan", "email", "phone", "address"])
+        self.assertEqual(error_inputs_list, ["plan", "email", "phone", "address", "country"])
         self.assertTrue(error_messages)
 
     # @unittest.skip("Skip test participant already registered")

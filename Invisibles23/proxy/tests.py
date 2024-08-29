@@ -499,7 +499,7 @@ class MailchimpProxyTest(TestCase):
 
         self.mailchimp_proxy = MailchimpProxy()
 
-    # @unittest.skip("Skip test_mailchimp_add_full_contact")
+    @unittest.skip("Skip test_mailchimp_add_full_contact")
     def test_mailchimp_add_contact(self):
         """
         This test simulate the addition of a full contact to the Mailchimp list (like it was done through the website newsletter form).

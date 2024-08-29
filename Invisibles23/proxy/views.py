@@ -264,14 +264,15 @@ class StripeWebhook(View):
             self._extract_customer_data()
             self._create_and_associate_participant_with_event()
             self._log_event()
-            self._send_event_registration_alerts()
-
         except ObjectDoesNotExist as e:
             logger.error(f"Event not found: {str(e)}")
         except ValueError as e:
             logger.error(f"Invalid data in webhook payload: {str(e)}")
         except Exception as e:
             logger.error(f"Error processing checkout completed event: {str(e)}")
+        else:
+            logger.info("Checkout completed event completed.")
+            self._send_event_registration_alerts()
 
     def _extract_member_data(self) -> None:
         """

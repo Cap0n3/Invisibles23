@@ -475,7 +475,7 @@ class MembershipView(View):
             self.city = form.cleaned_data["city"]
             self.country = form.cleaned_data["country"]
         except Exception as error:
-            logger.error(f"An exception occurred: {error}")
+            logger.error(f"An exception occurred while extracting form data: {error}")
             raise error
 
     def _check_already_has_active_subscription(self) -> bool:
