@@ -206,6 +206,7 @@ class EventRegistrationView(View):
     - talkGroup-registration-normal
     - talkGroup-registration-support
     """
+
     template_name = "pages/event-registration.html"
 
     def get(self, request, pk):
@@ -379,7 +380,6 @@ class MembershipView(View):
         "frequency": "yearly",
     }  # Default state of radio buttons
 
-
     @staticmethod
     def choosePricing(subscription, frequency):
         """
@@ -414,14 +414,12 @@ class MembershipView(View):
 
         return _lookup_key
 
-    
     def get_queryset(self):
         # Text for the membership adhesion
         return {
             "sections_content": MembershipSection.objects.all(),
         }
 
-    
     def get(self, request):
         form = MembershipForm(initial=self.initial_form_state)
         sections = self.get_queryset()
@@ -431,7 +429,6 @@ class MembershipView(View):
         }
         return render(request, self.template_name, context)
 
-    
     def post(self, request):
         form = MembershipForm(request.POST)
         domain = (
@@ -494,7 +491,7 @@ class MembershipView(View):
                 )
 
                 log_debug_info("Prices list", prices)
-                
+
                 # Create checkout session to redirect to Stripe
                 logger.info("Creating checkout session ...")
                 checkout_session = stripe.checkout.Session.create(

@@ -78,7 +78,16 @@ class MembershipViewTest(TestCase):
         self.assertTrue(error_inputs)
         self.assertEqual(
             error_inputs_list,
-            ["frequency", "fname", "phone", "birthday", "address", "zip_code", "city", "email"],
+            [
+                "frequency",
+                "fname",
+                "phone",
+                "birthday",
+                "address",
+                "zip_code",
+                "city",
+                "email",
+            ],
         )
         logger.debug(f"Error inputs: {error_inputs_list}")
 
@@ -932,4 +941,3 @@ class EventParticipantsModelTest(TestCase):
         logger.debug(
             f"Event {updated_event.title} is no longer fully booked, state: {updated_event.is_fully_booked}"
         )
-

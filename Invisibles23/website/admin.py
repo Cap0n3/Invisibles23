@@ -169,10 +169,11 @@ class ParticipantAdmin(admin.ModelAdmin):
     """
     Customize the Participant admin page.
     """
+
     list_display = (
         "email",
         "lname",
-        "fname", 
+        "fname",
         "phone",
     )  # Customize fields displayed in list view
     search_fields = (

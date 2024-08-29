@@ -259,6 +259,7 @@ class Event(models.Model):
     """
     Event model to manage the events on the website (e.g. talk group, standard event)
     """
+
     is_talk_event = models.BooleanField(default=False, verbose_name="Groupe de parole")
     title = models.CharField(
         max_length=100,
@@ -273,7 +274,9 @@ class Event(models.Model):
         default="Description courte de l'évènement",
     )
     full_description = RichTextField(
-        verbose_name="Description complète de l'évènement", blank=False, default="Description complète de l'évènement"
+        verbose_name="Description complète de l'évènement",
+        blank=False,
+        default="Description complète de l'évènement",
     )
     date = models.DateField(verbose_name="Date de l'évènement", blank=False)
     start_time = models.TimeField(
@@ -308,20 +311,26 @@ class Event(models.Model):
         Check if the event is not in the past
         """
         log_debug_info("Cleaning event data:", self, inspect_attributes=True)
-        
+
         # Check if mandatory fields are filled
         if not self.title:
             raise ValidationError("Le titre de l'évènement est obligatoire !")
         if not self.short_description:
-            raise ValidationError("La description courte de l'évènement est obligatoire !")
+            raise ValidationError(
+                "La description courte de l'évènement est obligatoire !"
+            )
         if not self.full_description:
-            raise ValidationError("La description complète de l'évènement est obligatoire !")
+            raise ValidationError(
+                "La description complète de l'évènement est obligatoire !"
+            )
         if not self.date:
             raise ValidationError("Veuillez renseigner la date de l'évènement !")
         if not self.start_time:
-            raise ValidationError("Veuillez renseigner l'heure de début de l'évènement !")
+            raise ValidationError(
+                "Veuillez renseigner l'heure de début de l'évènement !"
+            )
         if not self.end_time:
-            raise ValidationError("Veuillez renseigner l'heure de fin de l'évènement !")            
+            raise ValidationError("Veuillez renseigner l'heure de fin de l'évènement !")
 
         if self.date < date.today():
             raise ValidationError(

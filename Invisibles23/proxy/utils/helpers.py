@@ -5,6 +5,11 @@ from email.mime.multipart import MIMEMultipart
 import environ
 from Invisibles23.settings import BASE_DIR
 from Invisibles23.logging_config import logger
+import mailchimp_marketing as MailchimpMarketing
+from mailchimp_marketing.api_client import ApiClientError
+from django.http import JsonResponse
+from django.conf import settings
+from datetime import datetime
 
 # Read the environment variables
 env = environ.Env()
@@ -86,3 +91,71 @@ def find_key_in_dict(d, target) -> str:
             if result is not None:
                 return result
     return None
+
+
+def mailchimp_add_subscriber(
+    mailchimp_api_key, server_prefix, list_id, member_info
+) -> JsonResponse:
+    """
+    This function is used to add a subscriber to a Mailchimp list through the Mailchimp API.
+
+    Parameters
+    ----------
+    mailchimp_api_key: str
+        The Mailchimp API key
+    server_prefix: str
+        The server prefix of the Mailchimp API key (e.g. us9, us10, etc.)
+    list_id: str
+        The ID of the Mailchimp list to add the subscriber to
+    member_info: dict
+        A dictionary containing the information of the subscriber to add to the list
+
+    Returns
+    -------
+    JsonResponse
+        A JSON response containing the message of the operation
+    """
+    logger.info("Adding subscriber to Mailchimp list...")
+
+    try:
+        client = MailchimpMarketing.Client()
+        client.set_config({"api_key": mailchimp_api_key, "server": server_prefix})
+        response = client.lists.add_list_member(list_id, member_info)
+        logger.info(f"Mailchimp response: {response}")
+
+        return JsonResponse(
+            {
+                "message": "You have successfully subscribed to our mailing list.",
+            },
+            status=200,
+        )
+    except ApiClientError as error:
+        logger.error(f"An exception occurred: {error.text}")
+
+        return JsonResponse(
+            {
+                "message": f"An error occurred: {error.text}",
+            },
+            status=error.status_code,
+        )
+
+
+def format_birthdate_for_mailchimp(birthdate) -> str:
+    """
+    Format the birthdate to the required format for Mailchimp (mm/dd).
+    If the birthdate is not in the correct format, it is set to an empty string.
+    """
+    formats = [
+        "%Y-%m-%d",  # For format like 2024-12-01
+        "%d-%m-%Y",  # For format like 31-12-2024
+    ]
+
+    for fmt in formats:
+        try:
+            date_obj = datetime.strptime(birthdate, fmt)
+            return date_obj.strftime("%m/%d")
+        except ValueError:
+            continue
+
+    logger.warning(f"Invalid birthdate format: {birthdate}")
+    return ""

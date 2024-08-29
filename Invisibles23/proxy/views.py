@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views import View
 from website.models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
@@ -14,7 +13,13 @@ from django.utils.decorators import method_decorator
 import environ
 import requests
 import stripe
-from .utils.helpers import sendEmail, find_key_in_dict
+from datetime import datetime
+from .utils.helpers import (
+    sendEmail,
+    find_key_in_dict,
+    mailchimp_add_subscriber,
+    format_birthdate_for_mailchimp,
+)
 
 # Read the .env file
 env = environ.Env()
@@ -74,37 +79,22 @@ class AushaProxy(View):
 
 class MailchimpProxy(View):
     """
-    This view handles the subscription to the mailing list. It uses the Mailchimp API to add a new member to the list.
+    This view handles all subscription requests sent by the newsletter subscription form (frontend).
     """
 
     http_method_names = ["post"]  # Only POST requests are allowed
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.server_prefix = None
         self.mailchimp_api_key = env("MAILCHIMP_API_KEY")
         self.list_id = env("MAILCHIMP_LIST_ID")
         self.subscriber_email = None
-        self.subscriber_fname = None
-        self.subscriber_lname = None
 
     def post(self, request):
         logger.info("MailchimpProxy initiated ...")
-
-        # email = request.POST.get("email")
         self.subscriber_email = request.POST.get("email")
-        self.subscriber_fname = request.POST.get("fname") or ""
-        self.subscriber_lname = request.POST.get("lname") or ""
-        self.phone = request.POST.get("phone") or ""
-        self.birthday = request.POST.get("birthday") or ""
-        self.address = request.POST.get("address") or ""
-        test_status = request.POST.get("test_status")
-        test_status = int(test_status) if test_status != "null" else None
-        
-        logger.info(f"Adding subscriber {self.subscriber_email} to the mailing list ...")
-        log_debug_info(
-            f"Subscriber email: {self.subscriber_email} Subscriber name: {self.subscriber_fname} {self.subscriber_lname}"
-        )
+        logger.info(f"A person subscribed to the newsletter through the website form: {self.subscriber_email}")
+        self._handle_test_status(request)
 
         if not self.subscriber_email:
             logger.error("No email provided for newsletter subscription")
@@ -113,54 +103,31 @@ class MailchimpProxy(View):
         member_info = {
             "email_address": self.subscriber_email,
             "status": "subscribed",
-            "merge_fields": {
-                "FNAME": self.subscriber_fname,
-                "LNAME": self.subscriber_lname,
-                "ADDRESS": self.address,
-                "BIRTHDAY": self.birthday,
-                "PHONE": self.phone,
-            },
+            "tags": ["Abonné"],
         }
 
         # Mailchimp API endpoint
-        try:
-            self._set_server_prefix()
-            if test_status and isinstance(test_status, int):
-                # Simulating a test error with custom status code and error message
-                raise ApiClientError("An error occurred", status_code=test_status)
+        response = mailchimp_add_subscriber(
+            self.mailchimp_api_key,
+            "us9" if settings.DEBUG else "us21",
+            self.list_id,
+            member_info,
+        )
 
-            client = MailchimpMarketing.Client()
-            client.set_config(
-                {"api_key": self.mailchimp_api_key, "server": self.server_prefix}
-            )
-            response = client.lists.add_list_member(self.list_id, member_info)
-            logger.info(f"Mailchimp response: {response}")
+        return response
 
-            return JsonResponse(
-                {
-                    "message": "You have successfully subscribed to our mailing list.",
-                },
-                status=200,
-            )
-        except ApiClientError as error:
-            # Same with f string
-            logger.error(f"An exception occurred: {error.text}")
-
-            return JsonResponse(
-                {
-                    "message": f"An error occurred: {error.text}",
-                },
-                status=error.status_code,
-            )
-
-    def _set_server_prefix(self):
+    def _handle_test_status(self, request):
         """
-        Set the Mailchimp server prefix based on the DEBUG mode.
-        Note: Server prefix is used in the Mailchimp API URL.
+        To easily test the error handling in frontend, this method simulates an error based on the test_status parameter.
+
+        Example:
+        - test_status=400: Simulates a 400 Bad Request error
+        - test_status="null": No error, normal behavior
         """
-        prefix = "us9" if settings.DEBUG else "us21"
-        logger.info(f"Mailchimp server prefix set to : {prefix}")
-        self.server_prefix = prefix
+        test_status = request.POST.get("test_status")
+        if test_status and test_status != "null":
+            test_status = int(test_status)
+            raise ApiClientError("An error occurred", status_code=test_status)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -173,7 +140,8 @@ class StripeWebhook(View):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Your custom initialization code here
+        self.request = None
+        self.csrf_token = None
         self.owner_email = (
             settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
         )
@@ -197,7 +165,7 @@ class StripeWebhook(View):
         Handle the POST request for the Stripe webhook.
         """
         logger.info("Stripe event registration webhook initiated ...")
-
+        self.request = request
         try:
             payload = request.body
             sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
@@ -207,7 +175,6 @@ class StripeWebhook(View):
             self.event_type = event["type"]
 
             log_debug_info(f"Event type: {self.event_type}")
-            # log_debug_info("Event data", event["data"])
 
             # Get metadata from event data
             self.data = event["data"]
@@ -509,18 +476,33 @@ class StripeWebhook(View):
         """
         Subscribe the member to the mailing list (Mailchimp).
         """
-        try:
-            # Use mailchimp proxy to add member to mailing list
-            logger.info("Adding member to mailing list ...")
-            mailchimp_data = {
-                "email": self.member_email,
-                "test_status": None,
-            }
-            response = requests.post(reverse("mailchimp-proxy"), data=mailchimp_data)
-
-            logger.info(f"Mailchimp response: {response}")
-        except Exception as e:
-            logger.error(f"Error adding member to mailing list: {str(e)}")
+        logger.info("Subscribing member to the mailing list ...")
+        member_info = {
+            "email_address": self.member_email,
+            "status": "subscribed",
+            "merge_fields": {
+                "FNAME": self.member_name.split(" ")[0],
+                "LNAME": self.member_name.split(" ")[1],
+                "COUNTRY": "-",                
+                "ADDRESS": {
+                    "addr1": self.metadata["address"],
+                    "city": self.metadata["city"],
+                    "state": "-",
+                    "zip": self.metadata["zip_code"],
+                },
+                "PHONE": self.metadata["phone"],
+                "BIRTHDAY": format_birthdate_for_mailchimp(self.metadata["birthday"]),
+            },
+            "tags": ["Membre"],
+        }
+        response = mailchimp_add_subscriber(
+            env("MAILCHIMP_API_KEY"),
+            "us9" if settings.DEBUG else "us21",
+            env("MAILCHIMP_LIST_ID"),
+            member_info,
+        )
+        logger.info(f"Mailchimp response status: {response.status_code}")
+        logger.info(f"Mailchimp response message: {response.content}")
 
     def _log_event(self) -> None:
         """

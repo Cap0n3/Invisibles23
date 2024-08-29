@@ -6,7 +6,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 import unittest
 import requests
-from proxy.views import StripeWebhook
+from proxy.views import StripeWebhook, MailchimpProxy
 from website.models import Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
 from django.test import TestCase, RequestFactory, Client
@@ -16,11 +16,12 @@ import random
 import string
 
 
-class StripeWebhookTestCase(TestCase):
+class StripeWebhookTest(TestCase):
     """
     Test case for the Stripe webhook view (member registration and event registration).
     Note: This test is a simulation of a Stripe webhook event, it does not actually send a request to Stripe.
     """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -32,13 +33,11 @@ class StripeWebhookTestCase(TestCase):
         cls.override = override_settings(DEBUG=True)
         cls.override.enable()
 
-    
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         cls.override.disable()
 
-    
     def setUp(self):
         self.factory = RequestFactory()
         # Create test event
@@ -52,11 +51,12 @@ class StripeWebhookTestCase(TestCase):
             end_time="14:00",
         )
 
-
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
     @patch("proxy.views.stripe.Customer.modify", return_value=None)
-    def test_stripe_membership_webhook(self, mock_stripe_customer_modify, mock_construct_event):
+    def test_stripe_membership_webhook(
+        self, mock_stripe_customer_modify, mock_construct_event
+    ):
         """
         This test simulates a Stripe webhook event for a membership payment.
         It uses invoice.paid event to simulate a successful payment.
@@ -285,8 +285,8 @@ class StripeWebhookTestCase(TestCase):
         }
 
         mock_construct_event.return_value = mock_event_data
-        #mock_stripe_customer_modify.return_value = None
-        
+        # mock_stripe_customer_modify.return_value = None
+
         # Simulated payload
         payload = b'{\n  "id": "evt_3PqcGjBpqKPTmGHq28tgNN8c",\n  "object": "event",\n  "api_version": "2023-10-16",\n  "created": 1724337945,\n  "data": {\n    "object": {\n      "id": "pi_3PqcGjBpqKPTmGHq25tIse2a",\n      "object": "payment_intent",\n      "amount": 3000,\n      "currency": "usd",\n      "status": "requires_payment_method",\n      "shipping": {\n        "address": {\n          "city": "San Francisco",\n          "country": "US",\n          "line1": "510 Townsend St",\n          "postal_code": "94103",\n          "state": "CA"\n        },\n        "name": "Jenny Rosen"\n      }\n    }\n  },\n  "livemode": false,\n  "pending_webhooks": 2,\n  "request": {\n    "id": "req_88lDWA22gUCC9F",\n    "idempotency_key": "be9654eb-1ac6-4066-9632-06061b826f44"\n  },\n  "type": "invoice.paid"\n}'
 
@@ -304,7 +304,6 @@ class StripeWebhookTestCase(TestCase):
         # Assert that the response status is 200 OK
         self.assertEqual(response.status_code, 200)
 
-    
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
     def test_stripe_event_registration_webhook(self, mock_construct_event):
@@ -450,24 +449,27 @@ class StripeWebhookTestCase(TestCase):
 
         # Assert that the response status is 200 OK
         self.assertEqual(response.status_code, 200)
-        
+
         # Check that the participant has been created
         participant = Participant.objects.get(email="afra.amaya@tutanota.com")
         self.assertEqual(participant.email, "afra.amaya@tutanota.com")
         self.assertEqual(participant.fname, "Marc")
         self.assertEqual(participant.lname, "Cash")
-        
+
         # Check that the participant has been added to the event
-        event_participant = EventParticipants.objects.get(event=self.event, participant=participant)
+        event_participant = EventParticipants.objects.get(
+            event=self.event, participant=participant
+        )
         self.assertEqual(event_participant.event, self.event)
         self.assertEqual(event_participant.participant, participant)
-        
-        
-class MailchimpProxyTestCase(TestCase):
+
+
+class MailchimpProxyTest(TestCase):
     """
-    Important: This test case requires a Mailchimp account and a list to be created. 
+    Important: This test case requires a Mailchimp account and a list to be created.
     Don't forget that many of the tests will add a fake contact to the list, so you may need to remove them manually.
     """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -479,131 +481,107 @@ class MailchimpProxyTestCase(TestCase):
         cls.override = override_settings(DEBUG=True)
         cls.override.enable()
 
-    
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         cls.override.disable()
-       
-     
+
     def setUp(self):
         # Create a random email address
-        self.random_email = MailchimpProxyTestCase._generate_random_email()
-        self.random_fname, self.random_lname = MailchimpProxyTestCase._generate_fake_name()
+        self.random_email = MailchimpProxyTest._generate_random_email()
+        (
+            self.random_fname,
+            self.random_lname,
+        ) = MailchimpProxyTest._generate_fake_name()
 
+        self.mailchimp_proxy = MailchimpProxy()
 
-    @unittest.skip("Skip test_mailchimp_add_full_contact")
-    def test_mailchimp_add_full_contact(self):
+    # @unittest.skip("Skip test_mailchimp_add_full_contact")
+    def test_mailchimp_add_contact(self):
         """
-        This actually test adding a contact to the Mailchimp list (in a test account).
+        This test simulate the addition of a full contact to the Mailchimp list (like it was done through the website newsletter form).
         IMPORTANT: This test will fail if the contact already exists in the list, you MUST manually remove contact from the list.
         """
         client = Client()
         response = client.post(
-            reverse('mailchimp-proxy'),
+            reverse("mailchimp-proxy"),
             data={
                 "email": self.random_email,
-                "fname": self.random_fname,
-                "lname": self.random_lname,
-                "phone": "075 701 58 68",
-                "birthday": "01/31",
-                "address": "Chemin des Fauvettes 6, 1212 Lancy",
                 "test_status": "null",
-            }
+            },
         )
         self.assertEqual(response.status_code, 200)
-        
-    @unittest.skip("Skip test_mailchimp_add_partial_contact")
-    def test_mailchimp_add_partial_contact(self):
-        """
-        This test adds a contact to the Mailchimp list without specifying all the fields (like in a newsletter subscription form).
-        """
-        client = Client()
-        response = client.post(
-            reverse('mailchimp-proxy'),
-            data={
-                "email": self.random_email,
-                "test_status": "null",
-            }
-        )
-        self.assertEqual(response.status_code, 200)
+
     
-    
-    @unittest.skip("Skip test_mailchimp_add_contact_with_invalid_email")
-    def test_double_subscription(self):
-        """
-        This test tries to add the same contact twice to the Mailchimp list.
-        """        
-        client = Client()
-        response = client.post(
-            reverse('mailchimp-proxy'),
-            data={
-                "email": self.random_email,
-                "fname": self.random_fname,
-                "lname": self.random_lname,
-                "phone": "075 701 58 68",
-                "birthday": "01/31",
-                "address": "Chemin des Fauvettes 6, 1212 Lancy",
-                "test_status": "null",
-            }
-        )
-        self.assertEqual(response.status_code, 200)
-        
-        # Try to add the same contact again
-        response = client.post(
-            reverse('mailchimp-proxy'),
-            data={
-                "email": self.random_email,
-                "fname": self.random_fname,
-                "lname": self.random_lname,
-                "phone": "075 701 58 68",
-                "birthday": "01/31",
-                "address": "Chemin des Fauvettes 6, 1212 Lancy",
-                "test_status": "null",
-            }
-        )
-        log_debug_info("Response content: ", response.content)
-        self.assertEqual(response.status_code, 400)
-    
-    
-    @staticmethod  
+    @staticmethod
     def _generate_random_email():
         """
         Generate a realistic but random email address with a fake username and domain.
         """
         # Generate a random username (mix of letters)
         username_length = random.randint(5, 10)
-        random_username = ''.join(random.choices(string.ascii_lowercase, k=username_length))
-        
+        random_username = "".join(
+            random.choices(string.ascii_lowercase, k=username_length)
+        )
+
         # Generate random numbers
-        random_numbers = ''.join(random.choices(string.digits, k=random.randint(1, 5)))
-        
+        random_numbers = "".join(random.choices(string.digits, k=random.randint(1, 5)))
+
         # List of possible domains
-        domains = ['com', 'ch', 'fr']
-        
+        domains = ["com", "ch", "fr"]
+
         # Randomly select a domain
         domain = random.choice(domains)
-        
+
         # Construct and return the email address
         return f"{random_username}_{random_numbers}@fallen.{domain}"
-    
-    
+
     @staticmethod
     def _generate_fake_name():
         """
         Generate a fake first name and last name for testing purposes.
-        
+
         Returns
         -------
         tuple
             A tuple containing the fake first name and last name.
         """
         # Lists of sample first names and last names
-        first_names = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Katie', 'Michael', 'Sarah', 'David', 'Laura', 'Kevin', 'Rachel', 'Mark', 'Julie']
-        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Martinez', 'Taylor', 'Clark', 'Lewis', 'Lee', 'Walker']
-        
+        first_names = [
+            "John",
+            "Jane",
+            "Alex",
+            "Emily",
+            "Chris",
+            "Katie",
+            "Michael",
+            "Sarah",
+            "David",
+            "Laura",
+            "Kevin",
+            "Rachel",
+            "Mark",
+            "Julie",
+        ]
+        last_names = [
+            "Smith",
+            "Johnson",
+            "Williams",
+            "Brown",
+            "Jones",
+            "Miller",
+            "Davis",
+            "Garcia",
+            "Martinez",
+            "Taylor",
+            "Clark",
+            "Lewis",
+            "Lee",
+            "Walker",
+        ]
+
         # Randomly select a first name and last name
         first_name = random.choice(first_names)
         last_name = random.choice(last_names)
-        
+
         return first_name, last_name

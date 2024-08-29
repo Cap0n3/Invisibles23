@@ -9,7 +9,7 @@ import re
 
 
 class PhoneWidget(forms.TextInput):
-    input_type = 'tel'
+    input_type = "tel"
 
 
 # Custom phone number field
@@ -29,13 +29,13 @@ class PhoneNumber(forms.Field):
             required=required,
             label=label,
             initial=initial,
-            widget=widget or PhoneWidget(attrs={'placeholder': 'xxx-xxx-xxxx'}),
+            widget=widget or PhoneWidget(attrs={"placeholder": "xxx-xxx-xxxx"}),
             help_text=help_text,
             validators=validators,
             *args,
             **kwargs
         )
-    
+
     def clean(self, value):
         value = super().clean(value)
         if value is None:
