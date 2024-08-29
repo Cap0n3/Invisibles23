@@ -515,7 +515,6 @@ class MailchimpProxyTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    
     @staticmethod
     def _generate_random_email():
         """

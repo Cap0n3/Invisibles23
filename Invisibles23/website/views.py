@@ -380,10 +380,12 @@ class MembershipView(View):
         "subscription": "normal",
         "frequency": "yearly",
     }  # Default state of radio buttons
-    
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self.domain = ("http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}")
+        self.domain = (
+            "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+        )
         self.subscription = None
         self.frequency = None
         self.first_name = None
@@ -425,7 +427,7 @@ class MembershipView(View):
             try:
                 self._extract_form_data(form)
                 # Check if customer already exists
-                if self._check_already_has_active_subscription():            
+                if self._check_already_has_active_subscription():
                     return render(
                         request,
                         self.template_name,
@@ -434,11 +436,11 @@ class MembershipView(View):
                             "error_messages": f"Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}",
                         },
                     )
-                    
+
                 self._create_lookup_key()
                 self._get_stripe_price_list()
                 self._create_checkout_session()
-                
+
                 return redirect(self.checkout_session_object["url"], code=303)
 
             except Exception as error:
@@ -480,14 +482,14 @@ class MembershipView(View):
         """
         This function checks if a customer already exists in the Stripe database and
         if the customer exists, it will check if they have an active subscription.
-        
+
         Returns
         -------
         bool
             True if the customer already has an active subscription, False otherwise
         """
         logger.info("Checking if customer already exists ...")
-        
+
         try:
             # Search for customer
             customer_search = stripe.Customer.search(
@@ -496,7 +498,7 @@ class MembershipView(View):
         except Exception as error:
             logger.error(f"An exception occurred: {error}")
             raise error
-        
+
         if customer_search:
             logger.warning(f"Customer already exists: {customer_search.data[0]}")
             existing_customer_id = customer_search.data[0].id
@@ -517,7 +519,7 @@ class MembershipView(View):
                         )
                         return True
         return False
-    
+
     def _create_lookup_key(self) -> None:
         """
         This function creates a lookup key based on the subscription and frequency.
@@ -547,7 +549,7 @@ class MembershipView(View):
                 f"Invalid subscription or frequency: {self.subscription}, {self.frequency}"
             )
             raise ValueError("Invalid subscription or frequency")
-    
+
     def _get_stripe_price_list(self) -> None:
         """
         This function gets the prices from Stripe based on the lookup key.
@@ -613,9 +615,7 @@ class MembershipView(View):
         else:
             logger.info("Session created successfully ... redirecting to checkout")
             log_debug_info("Session url", self.checkout_session_object["url"])
-        
-    
-    
+
 
 class DonationView(View):
     template_name = "pages/donation.html"

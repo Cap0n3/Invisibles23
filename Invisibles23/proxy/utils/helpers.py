@@ -35,37 +35,40 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}) -> None:
         A dictionary of placeholders and their values
     """
     logger.info(f"Sending email to {receiver_email}...")
-    sender_email = "association@lesinvisibles.ch"
-    sender_password = env("INFOMANIAK_EMAIL_PASSWORD")
+    try:
+        sender_email = "association@lesinvisibles.ch"
+        sender_password = env("INFOMANIAK_EMAIL_PASSWORD")
 
-    # Create a MIMEText object to represent the email
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = receiver_email
-    message["Subject"] = subject
+        # Create a MIMEText object to represent the email
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        message["Subject"] = subject
 
-    # Read the email file
-    with open(f"{CURR_PATH}/email_templates/{email_file}", "r") as f:
-        html_content = f.read()
+        # Read the email file
+        with open(f"{CURR_PATH}/email_templates/{email_file}", "r") as f:
+            html_content = f.read()
 
-    # Replace the placeholders in email with the actual values
-    if len(placeholders) != 0:
-        for key, value in placeholders.items():
-            html_content = html_content.replace(
-                f"{{{key}}}", value if value is not None else "None"
-            )
+        # Replace the placeholders in email with the actual values
+        if len(placeholders) != 0:
+            for key, value in placeholders.items():
+                html_content = html_content.replace(
+                    f"{{{key}}}", value if value is not None else "None"
+                )
 
-    # Create a MIMEText object for HTML content
-    html_part = MIMEText(html_content, "html")
+        # Create a MIMEText object for HTML content
+        html_part = MIMEText(html_content, "html")
 
-    # Attach the HTML part to the message
-    message.attach(html_part)
+        # Attach the HTML part to the message
+        message.attach(html_part)
 
-    # Connect to the SMTP server and send the email
-    with smtplib.SMTP("mail.infomaniak.com", 587) as server:
-        server.starttls()  # Enable encryption
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, receiver_email, message.as_string())
+        # Connect to the SMTP server and send the email
+        with smtplib.SMTP("mail.infomaniak.com", 587) as server:
+            server.starttls()  # Enable encryption
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+    except Exception as e:
+        logger.error(f"An error occurred while sending the email: {e}")
 
 
 def find_key_in_dict(d, target) -> str:

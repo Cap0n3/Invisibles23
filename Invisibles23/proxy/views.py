@@ -93,7 +93,9 @@ class MailchimpProxy(View):
     def post(self, request):
         logger.info("MailchimpProxy initiated ...")
         self.subscriber_email = request.POST.get("email")
-        logger.info(f"A person subscribed to the newsletter through the website form: {self.subscriber_email}")
+        logger.info(
+            f"A person subscribed to the newsletter through the website form: {self.subscriber_email}"
+        )
         self._handle_test_status(request)
 
         if not self.subscriber_email:
@@ -148,7 +150,7 @@ class StripeWebhook(View):
         self.member_id = None
         self.member_name = None
         self.member_email = None
-        self.member_country = None
+        self.member_country_code = None
         self.member_invoice_url = None
         self.member_plan = None
         self.customer_name = None
@@ -211,9 +213,6 @@ class StripeWebhook(View):
         except ValueError as e:
             logger.error(f"Invalid payload: {str(e)}")
             return HttpResponse(status=400)
-        except stripe.error.SignatureVerificationError as e:
-            logger.error(f"Invalid signature: {str(e)}")
-            return HttpResponse(status=403)
         except Exception as e:
             logger.error(f"Unexpected error in webhook: {str(e)}")
             return HttpResponse(status=500)
@@ -282,7 +281,7 @@ class StripeWebhook(View):
         self.member_id = find_key_in_dict(self.data["object"], "customer")
         self.member_name = find_key_in_dict(self.data["object"], "customer_name")
         self.member_email = find_key_in_dict(self.data["object"], "customer_email")
-        self.member_country = find_key_in_dict(self.data["object"], "country")
+        self.member_country_code = find_key_in_dict(self.data["object"], "country")
         self.member_invoice_url = find_key_in_dict(
             self.data["object"], "hosted_invoice_url"
         )
@@ -296,7 +295,7 @@ class StripeWebhook(View):
             missing_fields.append("member_name")
         if not self.member_email:
             missing_fields.append("member_email")
-        if not self.member_country:
+        if not self.member_country_code:
             missing_fields.append("member_country")
         if not self.member_invoice_url:
             missing_fields.append("member_invoice_url")
@@ -307,6 +306,9 @@ class StripeWebhook(View):
             raise ValueError(
                 f"Missing member data in event payload: {', '.join(missing_fields)}"
             )
+        logger.info(
+            f"Member data extracted: {self.member_name}, {self.member_email}, {self.member_plan}, {self.member_country_code}, {self.member_id}"
+        )
 
     def _extract_customer_data(self) -> None:
         """
@@ -386,6 +388,9 @@ class StripeWebhook(View):
         Send email alerts to the member and owner after a successful membership subscription.
         """
         # Sending confirmation to member
+        logger.info(
+            f"Sending notification and invoice to member at {self.member_email} ..."
+        )
         sendEmail(
             self.member_email,
             "Confirmation d'adhésion à l'association Les Invisibles",
@@ -420,7 +425,7 @@ class StripeWebhook(View):
             {
                 "name": self.member_name,
                 "email": self.member_email,
-                "country": self.member_country,
+                "country": self.member_country_code,
             },
         )
 
@@ -478,32 +483,37 @@ class StripeWebhook(View):
         Subscribe the member to the mailing list (Mailchimp).
         """
         logger.info("Subscribing member to the mailing list ...")
-        member_info = {
-            "email_address": self.member_email,
-            "status": "subscribed",
-            "merge_fields": {
-                "FNAME": self.member_name.split(" ")[0],
-                "LNAME": self.member_name.split(" ")[1],            
-                "ADDRESS": {
-                    "addr1": self.metadata["address"],
-                    "city": self.metadata["city"],
-                    "state": "-",
-                    "zip": self.metadata["zip_code"],
-                    "country": self.metadata["country"],
+        try:
+            member_info = {
+                "email_address": self.member_email,
+                "status": "subscribed",
+                "merge_fields": {
+                    "FNAME": self.member_name.split(" ")[0],
+                    "LNAME": self.member_name.split(" ")[1],
+                    "ADDRESS": {
+                        "addr1": self.metadata["address"],
+                        "city": self.metadata["city"],
+                        "state": "-",
+                        "zip": self.metadata["zip_code"],
+                        "country": self.member_country_code, # only accepts country code
+                    },
+                    "PHONE": self.metadata["phone"],
+                    "BIRTHDAY": format_birthdate_for_mailchimp(
+                        self.metadata["birthday"]
+                    ),
                 },
-                "PHONE": self.metadata["phone"],
-                "BIRTHDAY": format_birthdate_for_mailchimp(self.metadata["birthday"]),
-            },
-            "tags": ["Membre"],
-        }
-        response = mailchimp_add_subscriber(
-            env("MAILCHIMP_API_KEY"),
-            "us9" if settings.DEBUG else "us21",
-            env("MAILCHIMP_LIST_ID"),
-            member_info,
-        )
-        logger.info(f"Mailchimp response status: {response.status_code}")
-        logger.info(f"Mailchimp response message: {response.content}")
+                "tags": ["Membre"],
+            }
+            response = mailchimp_add_subscriber(
+                env("MAILCHIMP_API_KEY"),
+                "us9" if settings.DEBUG else "us21",
+                env("MAILCHIMP_LIST_ID"),
+                member_info,
+            )
+            logger.info(f"Mailchimp response status: {response.status_code}")
+            logger.info(f"Mailchimp response message: {response.content}")
+        except Exception as e:
+            logger.error(f"Error subscribing member to the mailing list: {str(e)}")
 
     def _log_event(self) -> None:
         """
@@ -512,7 +522,7 @@ class StripeWebhook(View):
         if self.event_type == "invoice.paid":
             logger.info(f"Invoice paid for: customer ID {self.member_id}")
             logger.info(
-                f"Member name: {self.member_name}, email: {self.member_email}, country: {self.member_country}, plan: {self.member_plan}"
+                f"Member name: {self.member_name}, email: {self.member_email}, country code: {self.member_country_code}, plan: {self.member_plan}"
             )
             logger.info(f"Invoice URL: {self.member_invoice_url}")
             log_debug_info("Event data for invoice paid:", self.data)
