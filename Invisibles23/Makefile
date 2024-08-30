@@ -8,7 +8,7 @@ help:
 	@echo "  mkmigs-dry-run \tDisplay the changes that would be made in the database without actually applying them."
 	@echo "  migrate-all \t\tCreate and apply migrations for all apps."
 	@echo "  test-all \t\tRun all tests."
-	@echo "  test-case \t\tRun a specific test case. Example: make test-case case=EventParticipantsModelTest"
+	@echo "  website-test-case \t\tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
 	@echo "  proxy-test-case \tRun a specific test case for the proxy app. Example: make proxy-test-case case=ProxyModelTest"
 
 mkmigs:
@@ -31,8 +31,8 @@ test-all:
 	python manage.py test -v 2
 
 # Launch a specific test case by passing the test case name as an argument
-# Example: make test-case case=EventParticipantsModelTest
-test-case:
+# Example: make website-test-case case=EventParticipantsModelTest
+website-test-case:
 	python manage.py test website.tests.$(case) -v 2
 
 proxy-test-case:

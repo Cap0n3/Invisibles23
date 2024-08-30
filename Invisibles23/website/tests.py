@@ -223,7 +223,7 @@ class EventRegistrationViewTest(TestCase):
                 "email": "invalid_email",
                 "membership_status": "isMember",
                 "zip_code": "1228",
-                "country": "Suisse#",
+                "country": "/&Suisse#",
                 "city": "Plan-les-Ouates",
             },
         )
@@ -251,9 +251,11 @@ class EventRegistrationViewTest(TestCase):
             fname="John",
             lname="Doe",
             email="test@gmail.com",
+            phone="+41 79 723 45 67",
             address="Chemin du Pré-Fleuri 3",
             zip_code="1228",
             city="Plan-les-Ouates",
+            country="Suisse",
         )
         self.test_participant = Participant.objects.get(email="test@gmail.com")
         logger.debug(f"Created participant for testing: {self.test_participant}")
@@ -271,13 +273,17 @@ class EventRegistrationViewTest(TestCase):
                 "fname": "John",
                 "lname": "Doe",
                 "email": "test@gmail.com",
+                "phone": "+41 79 723 45 67",
                 "membership_status": "isMember",
                 "plan": "normal",
                 "address": "Chemin du Pré-Fleuri 3",
                 "zip_code": "1228",
                 "city": "Plan-les-Ouates",
+                "country": "Suisse",
             },
         )
+        self.assertEqual(response.status_code, 200) # Means the form was not processed
+        logger.debug(f"Response: {response}")
         # Get context data from the response
         error_message = response.context.get("error_messages")
         self.assertTrue(error_message)

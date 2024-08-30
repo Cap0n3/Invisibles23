@@ -209,6 +209,28 @@ class EventRegistrationView(View):
     """
 
     template_name = "pages/event-registration.html"
+    
+    def __init__(self, **kwargs: Any) -> None:
+            super().__init__(**kwargs)
+            self.domain = (
+                "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
+            )
+            self.membership_status = None
+            self.plan = None
+            self.first_name = None
+            self.last_name = None
+            self.email = None
+            self.phone = None
+            self.address = None
+            self.zip_code = None
+            self.city = None
+            self.country = None
+            self.lookup_key = None
+            self.event = None
+            self.prices = None
+            self.checkout_session_object = None
+            self.metadata = None
+            self.custom_error_message = None
 
     def get(self, request, pk):
         event = Event.objects.get(pk=pk)
@@ -220,143 +242,187 @@ class EventRegistrationView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        form = EventRegistrationForm(request.POST)
-        domain = (
-            "http://127.0.0.1:8000" if settings.DEBUG else f"https://{settings.DOMAIN}"
-        )
-        stripe.api_key = env("STRIPE_API_TOKEN")
-
         log_debug_info("||====== DEBUG MODE IS ON ! ======||")
-        log_debug_info("Domain", domain)
+        log_debug_info("Domain", self.domain)
         log_debug_info("Request data", request.POST)
+        
+        form = EventRegistrationForm(request.POST)
+        stripe.api_key = env("STRIPE_API_TOKEN")
 
         if form.is_valid():
             logger.info("Event registration form is valid")
-            membership_status = form.cleaned_data["membership_status"]
-            plan = form.cleaned_data["plan"]
-            first_name = form.cleaned_data["fname"]
-            last_name = form.cleaned_data["lname"]
-            phone = form.cleaned_data["phone"]
-            address = form.cleaned_data["address"]
-            zip_code = form.cleaned_data["zip_code"]
-            city = form.cleaned_data["city"]
-            email = form.cleaned_data["email"]
-
-            # Get the event
             try:
-                event = Event.objects.get(pk=pk)
-                logger.info(f"Event found: {event}")
-            except Event.DoesNotExist:
-                logger.error(f"Event with ID {pk} does not exist")
-                return render(
-                    request,
-                    self.template_name,
-                    {"form": form, "error_messages": "L'événement n'existe pas."},
-                )
-
-            # Check if participant is already registered with this event
-            if Participant.objects.filter(email=email).exists():
-                participant = Participant.objects.get(email=email)
-                logger.info(
-                    f"Participant is already in the database: {participant.email}"
-                )
-
-                if EventParticipants.objects.filter(
-                    event=event, participant=participant
-                ).exists():
-                    logger.warning(
-                        f"Participant already registered for this event: {event}, it'll be redirected to the event page"
-                    )
-                    return render(
-                        request,
-                        self.template_name,
-                        {
-                            "form": form,
-                            "event": event,
-                            "error_messages": f"Il semblerait que vous soyez déjà inscrit à cet événement. Si vous avez des questions, veuillez nous contacter à l'adresse suivante",
-                        },
-                    )
-
-            # Create metadata for the checkout session
-            metadata = {
-                "event_id": event.id,
-                "event_infos": f"{event.date} - {event.title}",
-                "event_description": event.short_description,
-                "fname": first_name,
-                "lname": last_name,
-                "phone": phone,
-                "membership_status": membership_status,
-                "address": address,
-                "zip_code": zip_code,
-                "city": city,
-                "customer_email": email,
-                "type": "talk-group",
-            }
-
-            # Create lookup key based on the plan
-            lookup_key = f"talkGroup-registration-{plan}"
-
-            log_debug_info("Metadata", metadata)
-            log_debug_info("Lookup key", lookup_key)
-
-            try:
-                # Get prices from Stripe
-                logger.info("Getting prices from Stripe ...")
-                prices = stripe.Price.list(
-                    lookup_keys=[lookup_key], expand=["data.product"]
-                )
-
-                log_debug_info("Prices list", prices)
-
-                # Create checkout session to redirect to Stripe
-                logger.info("Creating checkout session ...")
-                checkout_session = stripe.checkout.Session.create(
-                    line_items=[
-                        {
-                            "price": prices.data[0].id,
-                            "quantity": 1,
-                        },
-                    ],
-                    currency="chf",
-                    allow_promotion_codes=True,
-                    customer_email=email,
-                    metadata=metadata,
-                    payment_intent_data={
-                        "metadata": metadata,
-                    },
-                    custom_text={
-                        "submit": {
-                            "message": "Si vous êtes membres de l'association, n'oubliez pas d'appliquer votre code promo lors du paiement (colonne de gauche).",
-                        },
-                        "after_submit": {
-                            "message": "Vous serrez redirigé vers le site de l'association après le paiement sécurisé.",
-                        },
-                    },
-                    mode="payment",
-                    success_url=domain + "/success/",
-                    cancel_url=domain + "/rendez-vous/",
-                )
-
-                logger.info("Session created successfully ... redirecting to checkout")
-                log_debug_info("Session url", checkout_session["url"])
-
-                return redirect(checkout_session["url"], code=303)
-
+                self._extract_form_data(form)
+                self._get_event(pk)
+                self._check_participant_already_registered()
+                self._create_metadata()
+                self._create_lookup_key()
+                self._get_stripe_price_list()
+                self._create_event_stripe_checkout_session()
+                return redirect(self.checkout_session_object["url"], code=303)
             except Exception as error:
-                logger.error(
-                    f"(EventRegistrationView) -> An exception occurred: {error}"
-                )
+                logger.error(f"(EventRegistrationView) -> An exception occurred: {error}")
+                logger.error(f"Custom error message: {self.custom_error_message}")
                 return render(
                     request,
                     self.template_name,
                     {
                         "form": form,
-                        "error_messages": f"An error occurred during the request. Please try again later or contact us at the following address: {settings.DEV_EMAIL}",
+                        "error_messages": self.custom_error_message,
                     },
                 )
         else:
             error_context = createFormErrorContext(form)
             return render(request, self.template_name, error_context)
+
+    def _extract_form_data(self, form) -> None:
+        """
+        Extracts the data from the form and assigns it to the class attributes.
+        """
+        logger.info("Extracting form data ...")
+        try:   
+            self.membership_status = form.cleaned_data["membership_status"]
+            self.plan = form.cleaned_data["plan"]
+            self.first_name = form.cleaned_data["fname"]
+            self.last_name = form.cleaned_data["lname"]
+            self.email = form.cleaned_data["email"]
+            self.phone = form.cleaned_data["phone"]
+            self.address = form.cleaned_data["address"]
+            self.zip_code = form.cleaned_data["zip_code"]
+            self.city = form.cleaned_data["city"]
+            self.country = form.cleaned_data["country"]
+        except Exception as error:
+            logger.error(f"An exception occurred while extracting form data: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
+            raise error
+        else:
+            logger.info("Form data extracted successfully !")
+
+    def _get_event(self, pk) -> Event:
+        """
+        Get the event from the database.
+        """
+        try:
+            self.event = Event.objects.get(pk=pk)
+            logger.info(f"Event found: {self.event}")
+        except Event.DoesNotExist:
+            logger.error(f"Event with ID {pk} does not exist")
+            self.custom_error_message = f"L'événement avec l'ID {pk} n'existe pas."
+            raise Event.DoesNotExist(f"L'événement avec l'ID {pk} n'existe pas.")
+        else:
+            logger.info(f"Event with ID {pk} retrieved successfully !")
+
+    def _check_participant_already_registered(self) -> None:
+        """
+        Check if the participant is already registered for the event.
+        """
+        if Participant.objects.filter(email=self.email).exists():
+            participant = Participant.objects.get(email=self.email)
+            logger.info(f"Participant is stored in the database: {participant.email}")
+
+            if EventParticipants.objects.filter(
+                event=self.event, participant=participant
+            ).exists():
+                logger.warning(
+                    f"Participant already registered for this event: {self.event}"
+                )
+                self.custom_error_message = f"Il semblerait que vous soyez déjà inscrit à cet événement. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}"
+                raise ValueError(
+                    f"Participant already registered for this event: {self.event}"
+                )
+
+    def _create_metadata(self) -> None:
+        """
+        Create metadata for the checkout session.
+        """
+        self.metadata = {
+            "event_id": self.event.id,
+            "event_infos": f"{self.event.date} - {self.event.title}",
+            "event_description": self.event.short_description,
+            "fname": self.first_name,
+            "lname": self.last_name,
+            "customer_email": self.email,
+            "phone": self.phone,
+            "membership_status": self.membership_status,
+            "address": self.address,
+            "zip_code": self.zip_code,
+            "city": self.city,
+            "country": self.country,
+            "type": "talk-group",
+        }
+        
+        if None in self.metadata.values():
+            logger.error(f"Some metadata values are missing from the metadata: {self.metadata}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
+            raise ValueError("Some metadata values are missing")
+
+        logger.info("Metadata created successfully !")
+
+    def _create_lookup_key(self) -> None:
+        """
+        Create a lookup key based on the plan.
+        """
+        self.lookup_key = f"talkGroup-registration-{self.plan}"
+        log_debug_info("Lookup key", self.lookup_key)
+    
+    def _get_stripe_price_list(self) -> None:
+        """
+        This function gets the prices from Stripe based on the lookup key.
+        """
+        try:
+            # Get prices from Stripe
+            logger.info("Getting prices from Stripe ...")
+            self.prices = stripe.Price.list(
+                lookup_keys=[self.lookup_key], expand=["data.product"]
+            )
+            log_debug_info("Prices list", self.prices)
+        except Exception as error:
+            logger.error(f"An exception occurred while getting the prices from Stripe: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
+            raise error
+        else:
+            logger.info("Prices retrieved successfully !")
+        
+    def _create_event_stripe_checkout_session(self) -> None:
+        """
+        Create a checkout session for the event registration.
+        """
+        logger.info("Creating checkout session for event registration ...")
+        try:
+            self.checkout_session_object = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        "price": self.prices.data[0].id,
+                        "quantity": 1,
+                    },
+                ],
+                currency="chf",
+                allow_promotion_codes=True,
+                customer_email=self.email,
+                metadata=self.metadata,
+                payment_intent_data={
+                    "metadata": self.metadata,
+                },
+                custom_text={
+                    "submit": {
+                        "message": "Si vous êtes membres de l'association, n'oubliez pas d'appliquer votre code promo lors du paiement (colonne de gauche).",
+                    },
+                    "after_submit": {
+                        "message": "Vous serrez redirigé vers le site de l'association après le paiement sécurisé.",
+                    },
+                },
+                mode="payment",
+                success_url=self.domain + "/success/",
+                cancel_url=self.domain + "/rendez-vous/",
+            )
+        except Exception as error:
+            logger.error(f"An exception occurred while creating the checkout session for the event registration: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
+            raise error
+        else:
+            logger.info("Checkout session created successfully ! Redirecting to checkout ...")
+            log_debug_info("Session url", self.checkout_session_object["url"])
+
 
 
 class ContactView(View):
@@ -400,6 +466,7 @@ class MembershipView(View):
         self.lookup_key = None
         self.prices = None
         self.checkout_session_object = None
+        self.custom_error_message = None
 
     def get_queryset(self):
         # Text for the membership adhesion
@@ -423,34 +490,22 @@ class MembershipView(View):
 
         if form.is_valid():
             logger.info("Membership form is valid")
-
             try:
                 self._extract_form_data(form)
-                # Check if customer already exists
-                if self._check_already_has_active_subscription():
-                    return render(
-                        request,
-                        self.template_name,
-                        {
-                            "form": form,
-                            "error_messages": f"Vous êtes déjà membre de notre association ! Si vous souhaitez modifier votre abonnement, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}",
-                        },
-                    )
-
+                self._check_already_has_active_subscription()
                 self._create_lookup_key()
                 self._get_stripe_price_list()
-                self._create_checkout_session()
-
+                self._create_stripe_checkout_session()
                 return redirect(self.checkout_session_object["url"], code=303)
-
             except Exception as error:
                 logger.error(f"(MembershipView) -> An exception occurred: {error}")
+                logger.error(f"Custom error message: {self.custom_error_message}")
                 return render(
                     request,
                     self.template_name,
                     {
                         "form": form,
-                        "error_messages": f"Une erreur s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}",
+                        "error_messages": self.custom_error_message,
                     },
                 )
 
@@ -476,50 +531,40 @@ class MembershipView(View):
             self.country = form.cleaned_data["country"]
         except Exception as error:
             logger.error(f"An exception occurred while extracting form data: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
             raise error
+        else:
+            logger.info("Form data extracted successfully !")
 
-    def _check_already_has_active_subscription(self) -> bool:
+    def _check_already_has_active_subscription(self) -> None:
         """
         This function checks if a customer already exists in the Stripe database and
         if the customer exists, it will check if they have an active subscription.
-
-        Returns
-        -------
-        bool
-            True if the customer already has an active subscription, False otherwise
         """
-        logger.info("Checking if customer already exists ...")
-
-        try:
-            # Search for customer
-            customer_search = stripe.Customer.search(
-                query=f"name:'{self.first_name} {self.last_name}' AND email:'{self.email}'",
-            )
-        except Exception as error:
-            logger.error(f"An exception occurred: {error}")
-            raise error
+        logger.info("Checking if customer already exists ...")  
+        # Search for customer
+        customer_search = stripe.Customer.search(
+            query=f"name:'{self.first_name} {self.last_name}' AND email:'{self.email}'",
+        )
 
         if customer_search:
             logger.warning(f"Customer already exists: {customer_search.data[0]}")
             existing_customer_id = customer_search.data[0].id
-            # Search for active subscription
-            try:
-                subscription_search = stripe.Subscription.search(
-                    query=f"status:'active'",
-                )
-            except Exception as error:
-                logger.error(f"An exception occurred: {error}")
-                raise error
-            else:
-                # Loop through subscriptions and find the one with the customer ID
-                for subscription in subscription_search.data:
-                    if subscription.customer == existing_customer_id:
-                        logger.warning(
-                            f"Customer already has an active subscription: {subscription}"
-                        )
-                        return True
-        return False
-
+            # Get all active subscriptions
+            subscription_search = stripe.Subscription.search(
+                query=f"status:'active'",
+            )
+            # Loop through subscriptions and find the one with the customer ID
+            for subscription in subscription_search.data:
+                if subscription.customer == existing_customer_id:
+                    logger.warning(
+                        f"Customer already has an active subscription: {subscription}"
+                    )
+                    self.custom_error_message = f"Il semblerait que vous ayez déjà une adhésion active. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}"
+                    raise ValueError(
+                        "Customer already has an active subscription"
+                    )
+    
     def _create_lookup_key(self) -> None:
         """
         This function creates a lookup key based on the subscription and frequency.
@@ -548,6 +593,7 @@ class MembershipView(View):
             logger.error(
                 f"Invalid subscription or frequency: {self.subscription}, {self.frequency}"
             )
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
             raise ValueError("Invalid subscription or frequency")
 
     def _get_stripe_price_list(self) -> None:
@@ -562,10 +608,13 @@ class MembershipView(View):
             )
             log_debug_info("Prices list", self.prices)
         except Exception as error:
-            logger.error(f"An exception occurred: {error}")
+            logger.error(f"An exception occurred while getting the prices from Stripe: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
             raise error
+        else:
+            logger.info("Prices retrieved successfully from Stripe !")
 
-    def _create_checkout_session(self) -> None:
+    def _create_stripe_checkout_session(self) -> None:
         """
         This function creates a checkout session for the membership subscription.
         It also creates metadata that will be used to store the member's information.
@@ -610,10 +659,11 @@ class MembershipView(View):
                 cancel_url=self.domain + "/membership/",
             )
         except Exception as error:
-            logger.error(f"An exception occurred: {error}")
+            logger.error(f"An exception occurred while creating the checkout session for the membership: {error}")
+            self.custom_error_message = f"Une erreur interne s'est produite lors de la demande. Veuillez réessayer plus tard ou nous contacter à l'adresse suivante : {settings.DEV_EMAIL}"
             raise error
         else:
-            logger.info("Session created successfully ... redirecting to checkout")
+            logger.info("Checkout session created successfully ! Redirecting to checkout ...")
             log_debug_info("Session url", self.checkout_session_object["url"])
 
 

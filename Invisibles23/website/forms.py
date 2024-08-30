@@ -225,5 +225,12 @@ class EventRegistrationForm(forms.Form):
         validators=[validate_names],
         required=True,
     )
-    # Hidden input to store the event pk (NO NEED FOR THIS, CAN BE DONE WITH URL PARAMETER)
-    # event = forms.IntegerField(widget=forms.HiddenInput(), required=True)
+    country = forms.CharField(
+        min_length=2,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control normal-input", "placeholder": "Pays"}
+        ),
+        validators=[validate_names],
+        required=True,
+    )

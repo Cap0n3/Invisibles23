@@ -445,6 +445,7 @@ class Participant(models.Model):
     address = models.CharField(max_length=100, verbose_name="Adresse")
     zip_code = models.CharField(max_length=100, verbose_name="Code postal")
     city = models.CharField(max_length=100, verbose_name="Ville")
+    country = models.CharField(max_length=100, verbose_name="Pays", default="N/A")
 
     class Meta:
         verbose_name = "Participant"
