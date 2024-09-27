@@ -1,11 +1,11 @@
 # === Migration commands === #
-.PHONY: help, mkmigs, migrate, mkmigs-dry-run, migrate-all, test-all, test-case, proxy-test-case
+.PHONY: help, mkmigs, migrate, mkmigs-dry, migrate-all, test-all, test-case, proxy-test-case
 
 help:
 	@echo "Available commands:"
 	@echo "  mkmigs \t\tCreate new migrations based on the changes detected in the models."
+	@echo "  mkmigs-dry \tDisplay the changes that would be made in the database without actually applying them."
 	@echo "  migrate \t\tApply the migrations to the database."
-	@echo "  mkmigs-dry-run \tDisplay the changes that would be made in the database without actually applying them."
 	@echo "  migrate-all \t\tCreate and apply migrations for all apps."
 	@echo "  test-all \t\tRun all tests."
 	@echo "  website-test-case \t\tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
@@ -17,7 +17,7 @@ mkmigs:
 migrate:
 	python manage.py migrate
 
-mkmigs-dry-run:
+mkmigs-dry:
 	python manage.py makemigrations --dry-run
 
 migrate-all:

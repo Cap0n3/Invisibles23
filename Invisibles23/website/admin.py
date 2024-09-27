@@ -122,6 +122,13 @@ class EventAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Lien de la réunion Zoom",
+            {
+                "fields": ("talk_event_link",),
+                "description": "Si il s'agit d'un événement de type 'Groupe de parole', veuillez ajouter le lien de la réunion Zoom ici.",
+            }
+        ),
+        (
             "Limitation du nombre de participants (si groupe de parole)",
             {
                 "fields": ("participants_limit",),
@@ -147,10 +154,10 @@ class EventAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Participants",
+            "Participants (groupes de parole)",
             {
                 "fields": (),
-                "description": "Après le paiement sur Stripe, les participants seront ajoutés automatiquement à la liste ci-dessous. Vous pouvez également ajouter des participants manuellement en cliquant sur le bouton 'Ajouter un participant'. Attention, si vous effacer un participant, il ne sera pas automatiquement remboursé.",
+                "description": "Après le paiement sur Stripe, les participants seront ajoutés automatiquement à la liste ci-dessous. Vous pouvez également ajouter des participants manuellement en cliquant sur le bouton 'Ajouter un participant'. Attention, si vous effacez un participant, il ne sera pas automatiquement remboursé.",
             },
         ),
     )

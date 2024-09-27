@@ -257,7 +257,7 @@ class YoutubeVideos(models.Model):
 
 class Event(models.Model):
     """
-    Event model to manage the events on the website (e.g. talk group, standard event)
+    Event model to manage the events on the website (e.g. talk group OR standard event)
     """
 
     is_talk_event = models.BooleanField(default=False, verbose_name="Groupe de parole")
@@ -288,7 +288,8 @@ class Event(models.Model):
     address = models.CharField(
         max_length=100, blank=True, verbose_name="Adresse de l'évènement"
     )
-    link = models.URLField(blank=True)
+    link = models.URLField(blank=True, verbose_name="Lien de l'événement (optionnel)") # Optional link to the event
+    talk_event_link = models.URLField(blank=True, verbose_name="Lien de réunion Zoom") # Link to the talk event
     participants_limit = models.PositiveIntegerField(
         default=9, verbose_name="Nombre maximum de participants (groupe de parole)"
     )
@@ -308,23 +309,27 @@ class Event(models.Model):
 
     def clean(self):
         """
-        Check if the event is not in the past
+        Necessary validations for the event data
         """
         log_debug_info("Cleaning event data:", self, inspect_attributes=True)
 
         # Check if mandatory fields are filled
         if not self.title:
             raise ValidationError("Le titre de l'évènement est obligatoire !")
+        
         if not self.short_description:
             raise ValidationError(
                 "La description courte de l'évènement est obligatoire !"
             )
+        
         if not self.full_description:
             raise ValidationError(
                 "La description complète de l'évènement est obligatoire !"
             )
+        
         if not self.date:
             raise ValidationError("Veuillez renseigner la date de l'évènement !")
+        
         if not self.start_time:
             raise ValidationError(
                 "Veuillez renseigner l'heure de début de l'évènement !"
@@ -365,6 +370,13 @@ class Event(models.Model):
             if self.participants_limit < participant_count:
                 raise ValidationError(
                     "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
+                )
+        
+        # If it's a talk event, check if the link is provided    
+        if self.is_talk_event:
+            if not self.talk_event_link:
+                raise ValidationError(
+                    "Le lien vers le groupe de parole est obligatoire !"
                 )
 
         logger.info("Event data is valid !")
