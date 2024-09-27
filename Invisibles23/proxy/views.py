@@ -153,9 +153,6 @@ class StripeWebhook(View):
         self.member_country_code = None
         self.member_invoice_url = None
         self.member_plan = None
-        self.customer_name = None
-        self.customer_email = None
-        self.customer_country = None
         self.meeting_id = None
         self.meeting = None
         self.talk_event_link = None
@@ -262,7 +259,8 @@ class StripeWebhook(View):
         logger.info("[EVENT] Checkout completed event initiated ...")
 
         try:
-            self._extract_customer_data()
+            #self._extract_customer_data()
+            self._extract_meeting_id()
             self._create_and_associate_participant_with_event()
             self._get_talk_event_zoom_link()
             self._log_event()
@@ -313,37 +311,6 @@ class StripeWebhook(View):
             f"Member data extracted: {self.member_name}, {self.member_email}, {self.member_plan}, {self.member_country_code}, {self.member_id}"
         )
 
-    def _extract_customer_data(self) -> None:
-        """
-        Extract customer data from the event data (only for event registration)(setter).
-        """
-        self.customer_name = find_key_in_dict(
-            self.data["object"]["customer_details"], "name"
-        )
-        self.customer_email = find_key_in_dict(
-            self.data["object"]["customer_details"], "email"
-        )
-        self.customer_country = find_key_in_dict(
-            self.data["object"]["customer_details"], "country"
-        )
-        self.meeting_id = self.metadata.get("event_id")
-
-        missing_fields = []
-
-        if not self.customer_name:
-            missing_fields.append("customer_name")
-        if not self.customer_email:
-            missing_fields.append("customer_email")
-        if not self.customer_country:
-            missing_fields.append("customer_country")
-        if not self.meeting_id:
-            missing_fields.append("meeting_id")
-
-        if missing_fields:
-            raise ValueError(
-                f"Missing customer data in event payload: {', '.join(missing_fields)}"
-            )
-
     def _extract_metadata(self) -> None:
         """
         Extract metadata from the event data based on the event type (setter).
@@ -360,6 +327,15 @@ class StripeWebhook(View):
                 self.data["object"]["lines"]["data"][0], "metadata"
             )
 
+    def _extract_meeting_id(self) -> None:
+        """
+        Extract the meeting ID from the event data (setter).
+        Note: This method must be called after extracting metadata.
+        """
+        self.meeting_id = self.metadata.get("event_id")
+        if not self.meeting_id:
+            raise ValueError("Meeting ID not found in metadata")
+    
     def _create_and_associate_participant_with_event(self) -> None:
         """
         This method creates a new participant if they do not already exist in the database and associates them with the event.
@@ -368,7 +344,7 @@ class StripeWebhook(View):
         logger.info(f"Extracted all data for event registration: {self.meeting}")
 
         participant, created = Participant.objects.get_or_create(
-            email=self.customer_email,
+            email=self.metadata["customer_email"],
             defaults={
                 "fname": self.metadata["fname"],
                 "lname": self.metadata["lname"],
@@ -479,7 +455,7 @@ class StripeWebhook(View):
 
         # Sending confirmation to participant
         sendEmail(
-            self.customer_email,
+            self.metadata["customer_email"],
             "Confirmation d'inscription à un groupe de parole",
             "event_confirmation_email.html",
             {
@@ -546,7 +522,7 @@ class StripeWebhook(View):
         elif self.event_type == "checkout.session.completed":
             logger.info(f"Checkout completed for: event ID {self.meeting_id}")
             logger.info(
-                f"Customer name: {self.customer_name}, email: {self.customer_email}, country: {self.customer_country}"
+                f"Customer name: {self.metadata['fname']} {self.metadata['lname']}, email: {self.metadata['customer_email']}, country: {self.metadata['country']}"
             )
             log_debug_info("Event data for payment:", self.data)
 

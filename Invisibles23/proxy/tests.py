@@ -398,6 +398,7 @@ class StripeWebhookTest(TestCase):
                         "membership_status": "isNotMember",
                         "phone": "+41 75 701 58 68",
                         "zip_code": "1212",
+                        "country": "Suisse",
                         "type": "talk-group",
                     },
                     "mode": "payment",
