@@ -49,6 +49,7 @@ class StripeWebhookTest(TestCase):
             date="2022-12-12",
             start_time="12:00",
             end_time="14:00",
+            talk_event_link="https://iamazoomlink.com",
         )
 
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
@@ -59,7 +60,8 @@ class StripeWebhookTest(TestCase):
     ):
         """
         This test simulates a Stripe webhook event for a membership payment.
-        It uses invoice.paid event to simulate a successful payment.
+        It uses invoice.paid event to simulate a successful payment. It should
+        trigger notification emails to the user and the admin.
         """
         # Setup the mock to return a simulated Stripe event
         mock_event_data = {

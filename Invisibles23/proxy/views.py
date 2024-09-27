@@ -158,6 +158,7 @@ class StripeWebhook(View):
         self.customer_country = None
         self.meeting_id = None
         self.meeting = None
+        self.talk_event_link = None
         self.data = None
         self.metadata = None
         self.event_type = None
@@ -263,6 +264,7 @@ class StripeWebhook(View):
         try:
             self._extract_customer_data()
             self._create_and_associate_participant_with_event()
+            self._get_talk_event_zoom_link()
             self._log_event()
         except ObjectDoesNotExist as e:
             logger.error(f"Event not found: {str(e)}")
@@ -384,6 +386,16 @@ class StripeWebhook(View):
         EventParticipants.objects.create(event=self.meeting, participant=participant)
         logger.info(f"Participant {participant} registered for event {self.meeting}")
 
+    def _get_talk_event_zoom_link(self) -> str:
+        """
+        Get the Zoom link for the talk event from the Event
+        """
+        zoom_link = Event.objects.get(id=self.meeting_id).talk_event_link
+        if not zoom_link:
+            logger.error("No Zoom link found for the event, clean() verification failed to catch this")
+        
+        self.talk_event_link = zoom_link
+    
     def _send_membership_alerts(self) -> None:
         """
         Send email alerts to the member and owner after a successful membership subscription.
@@ -461,6 +473,7 @@ class StripeWebhook(View):
                 "event_date": self.meeting.date.strftime("%d/%m/%Y"),
                 "event_start_time": self.meeting.start_time.strftime("%H:%M"),
                 "event_end_time": self.meeting.end_time.strftime("%H:%M"),
+                "talk_event_link": self.talk_event_link,
             },
         )
 
@@ -476,6 +489,7 @@ class StripeWebhook(View):
                 "event_date": self.meeting.date.strftime("%d/%m/%Y"),
                 "event_start_time": self.meeting.start_time.strftime("%H:%M"),
                 "event_end_time": self.meeting.end_time.strftime("%H:%M"),
+                "talk_event_link": self.talk_event_link,
             },
         )
 
