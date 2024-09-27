@@ -4,11 +4,11 @@
 help:
 	@echo "Available commands:"
 	@echo "  mkmigs \t\tCreate new migrations based on the changes detected in the models."
-	@echo "  mkmigs-dry \tDisplay the changes that would be made in the database without actually applying them."
+	@echo "  mkmigs-dry \t\tDisplay the changes that would be made in the database without actually applying them."
 	@echo "  migrate \t\tApply the migrations to the database."
 	@echo "  migrate-all \t\tCreate and apply migrations for all apps."
 	@echo "  test-all \t\tRun all tests."
-	@echo "  website-test-case \t\tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
+	@echo "  website-test-case \tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
 	@echo "  proxy-test-case \tRun a specific test case for the proxy app. Example: make proxy-test-case case=ProxyModelTest"
 
 mkmigs:

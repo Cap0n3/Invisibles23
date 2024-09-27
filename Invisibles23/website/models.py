@@ -257,7 +257,7 @@ class YoutubeVideos(models.Model):
 
 class Event(models.Model):
     """
-    Event model to manage the events on the website (e.g. talk group OR standard event)
+    Event model to manage the events on the website (e.g. talk event OR standard event)
     """
 
     is_talk_event = models.BooleanField(default=False, verbose_name="Groupe de parole")
@@ -289,7 +289,7 @@ class Event(models.Model):
         max_length=100, blank=True, verbose_name="Adresse de l'évènement"
     )
     link = models.URLField(blank=True, verbose_name="Lien de l'événement (optionnel)") # Optional link to the event
-    talk_event_link = models.URLField(blank=True, verbose_name="Lien de réunion Zoom") # Link to the talk event
+    talk_event_link = models.URLField(blank=True, verbose_name="Lien de réunion Zoom")
     participants_limit = models.PositiveIntegerField(
         default=9, verbose_name="Nombre maximum de participants (groupe de parole)"
     )
@@ -309,7 +309,7 @@ class Event(models.Model):
 
     def clean(self):
         """
-        Necessary validations for the event data
+        Necessary validations for the event data (clean method is only called in the admin console or with ModelForm)
         """
         log_debug_info("Cleaning event data:", self, inspect_attributes=True)
 
@@ -372,14 +372,13 @@ class Event(models.Model):
                     "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
                 )
         
-        # If it's a talk event, check if the link is provided    
+        # If it's a talk event, check if the meeting link is provided (talk_event_link)
         if self.is_talk_event:
             if not self.talk_event_link:
-                raise ValidationError(
-                    "Le lien vers le groupe de parole est obligatoire !"
-                )
+                logger.error(f"No Zoom link provided for talk event with ID '{self.pk}'")
+                raise ValidationError("Veuillez renseigner le lien de la réunion Zoom !")
 
-        logger.info("Event data is valid !")
+        logger.info(f"Admin form is clean. Event {self.title} with ID '{self.pk}' has been validated !")
         super().clean()
 
     def save(self, *args, **kwargs):

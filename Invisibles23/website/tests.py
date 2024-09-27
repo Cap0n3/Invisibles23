@@ -294,17 +294,32 @@ class EventModelTest(TestCase):
     """
     This test case will test the Event model. It will test if:
     - A standard event can be created
-    - An empty talk group can be created
-    - A talk group event with 5 participants can be created and is not set to fully booked (default limit is 9)
+    - An empty talk event can be created
+    - A talk event with 5 participants can be created and is not set to fully booked (default limit is 9)
         - If you add 4 more participants, the event should be fully booked
-    - A talk group event with 9 participants can be created and is set to fully booked (default limit is 9)
+    - A talk event with 9 participants can be created and is set to fully booked (default limit is 9)
         - If you remove a participant, the event should no longer be fully booked
-    - A talk group event with 11 participants cannot be created (exceeding the limit)
+    - A talk event with 11 participants cannot be created (exceeding the limit)
     - If an event has 5 participants and the limit is lowered to 5, event should be fully booked
         - If the limit is lowered to 4, the model should return an error
     - If an event has 9 participants and is fully booked, if a participant cancels, the event should no longer be fully booked
     """
+    @classmethod
+    def setUpClass(cls):
+        """
+        Necessary to override the DEBUG setting to True, otherwise DEBUG mode is set to OFF.
+        I don't know why it is necessary to do this, environs seems to not load the .env file correctly
+        during testing (therefore setting DEBUG to false, see settings.py).
+        """
+        super().setUpClass()
+        cls.override = override_settings(DEBUG=True)
+        cls.override.enable()
 
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.override.disable()
+    
     def setUp(self):
         # Create a talk group event (default limit is 9)
         self.talk_group_event = Event.objects.create(
@@ -340,27 +355,26 @@ class EventModelTest(TestCase):
         self.assertTrue(Event.objects.filter(title="Standard Test Event").exists())
         logger.debug(f"Event 'Standard Test Event' successfully created.")
 
-    # @unittest.skip("Skip test create empty talk group")
-    def test_create_empty_talk_group(self):
+    # @unittest.skip("Skip test create empty talk event")
+    def test_create_empty_talk_event(self):
         """
-        Test if an empty talk group event can be created
+        Test if an empty talk event can be created
         """
         self.event = Event.objects.create(
-            is_talk_event=False,
-            title="Talk Group Event",
+            is_talk_event=True,
+            title="Empty Talk Group Event",
+            talk_event_link="https://www.iamalinktozoommeeting.com",
             short_description="This is a test event",
             full_description="This is a test event, please ignore it.",
             date="2022-12-12",
             start_time="12:00:00",
             end_time="14:00:00",
-            address="Chemin de la Mairie 1",
-            link="https://www.myevent.com",
         )
-        self.assertTrue(Event.objects.filter(title="Talk Group Event").exists())
-        logger.debug(f"Event 'Talk Group Event' successfully created.")
-
-    # @unittest.skip("Skip test create talk group event")
-    def test_create_talk_group_event(self):
+        self.assertTrue(Event.objects.filter(title="Empty Talk Group Event").exists())
+        logger.debug(f"Event 'Empty Talk Group Event' successfully created.")
+    
+    # @unittest.skip("Skip test create talk event")
+    def test_create_talk_event(self):
         """
         Test if a talk group event with 5 participants can be created and is not fully booked.
         Then, add 4 more participants to the event and check if it is fully booked.
@@ -385,8 +399,8 @@ class EventModelTest(TestCase):
         self.assertTrue(updated_event.is_fully_booked)
         logger.debug(f"Event 'Test Event' is now fully booked with 9 participants.")
 
-    # @unittest(skip="Skip test create fully booked talk group event")
-    def test_create_fully_booked_talk_group_event(self):
+    # @unittest(skip="Skip test create fully booked talk event")
+    def test_create_fully_booked_talk_event(self):
         """
         Test if a talk group event with 9 participants can be created and is fully booked.
         Then, remove a participant from the event and check if it is no longer fully booked.
@@ -492,12 +506,11 @@ class AdminFormSubmissionTest(TestCase):
     This test case will test the admin console form submission. It simulates the form submission process and checks if the form is processed correctly.
     It will test if:
     - A standard event can be successfully created from the admin console
-    - A talk group event with 9 participants can be successfully created from the admin console
-    - A talk group event with 11 participants cannot be created (exceeding the limit) from the admin console (inlines)
-    - A participant can be removed from a fully booked talk group event from admin, making it no longer fully booked
-    - Starting from a not fully booked talk group event with 3 participants, if the user lower the limit to less than the number of participants, the form should return an error
+    - A talk event with 9 participants can be successfully created from the admin console
+    - A talk event with 11 participants cannot be created (exceeding the limit) from the admin console (inlines)
+    - A participant can be removed from a fully booked talk event from admin, making it no longer fully booked
+    - Starting from a not fully booked talk event with 3 participants, if the user lower the limit to less than the number of participants, the form should return an error
     """
-
     @classmethod
     def setUpClass(cls):
         """
@@ -592,6 +605,7 @@ class AdminFormSubmissionTest(TestCase):
             "start_time": "09:00:00",
             "end_time": "11:00:00",
             "address": "123 Rue Exemple, Ville",
+            "talk_event_link": "http://iamalinktozoommeeting.com",
             "link": "http://example.com",
             "is_fully_booked": False,
             "participants_limit": 10,
@@ -633,6 +647,54 @@ class AdminFormSubmissionTest(TestCase):
         for participant in event.participants.all():
             self.assertTrue(participant.id in participant_ids)
 
+    # @unittest.skip("Skip test no meeting link")
+    def test_talk_event_no_meeting_link(self):
+        """
+        Test if the admin form submission for a talk event without a meeting link is prevented.
+        """
+        
+        url = reverse("admin:website_event_add")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        csrf_token = self.client.cookies["csrftoken"].value
+
+        # Get participant IDs
+        participant_ids = [participant.id for participant in self.participants[:9]]
+        logger.debug(f"Participant IDs: {participant_ids}")
+
+        # Create a talk event without talk_event_link
+        data = {
+            "csrfmiddlewaretoken": csrf_token,
+            "is_talk_event": True,
+            "title": "Test Talk Event No Meeting Link",
+            "short_description": "Description courte de l'évènement (max 300 caractères)",
+            "full_description": "<p>Description complète de l'évènement</p>",
+            "date": "2045-07-31",  # Use the correct date format YYYY-MM-DD
+            "start_time": "09:00:00",
+            "end_time": "11:00:00",
+            "address": "123 Rue Exemple, Ville",
+            "link": "http://example.com",
+            "is_fully_booked": False,
+            "participants_limit": 10,
+            # Required hidden fields for managing inline formsets (it's the inline form visible in the admin)
+            "eventparticipants_set-TOTAL_FORMS": str(len(participant_ids)),
+            "eventparticipants_set-INITIAL_FORMS": "0",
+            "eventparticipants_set-MIN_NUM_FORMS": "0",
+            "eventparticipants_set-MAX_NUM_FORMS": "1000",
+        }
+
+        # Associate all participants with the event (through the inline form)
+        for index, participant_id in enumerate(participant_ids):
+            data[f"eventparticipants_set-{index}-id"] = ""
+            data[f"eventparticipants_set-{index}-event"] = ""
+            data[f"eventparticipants_set-{index}-participant"] = participant_id
+
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200) # Ensure the form is processed
+        
+        # Check if a form was returned with an error
+        self.assertIn("errorlist", str(response.context["adminform"].errors))
+                
     # @unittest.skip("Skip test insert too much participants")
     def test_insert_too_much_participants(self):
         """
@@ -657,6 +719,7 @@ class AdminFormSubmissionTest(TestCase):
             "start_time": "09:00:00",
             "end_time": "11:00:00",
             "address": "123 Rue Exemple, Ville",
+            "talk_event_link": "http://iamalinktozoommeeting.com",
             "link": "http://example.com",
             "is_fully_booked": False,
             "participants_limit": 10,  # Limit is 10, but we try to add 11 participants
@@ -674,6 +737,7 @@ class AdminFormSubmissionTest(TestCase):
             data[f"eventparticipants_set-{index}-participant"] = participant_id
 
         with self.assertRaises(Exception):
+            # Here it's the save() method that raises the exception
             response = self.client.post(url, data, follow=True)
 
         logger.debug(
@@ -705,6 +769,7 @@ class AdminFormSubmissionTest(TestCase):
             "start_time": "09:00:00",
             "end_time": "11:00:00",
             "address": "123 Rue Exemple, Ville",
+            "talk_event_link": "http://iamalinktozoommeeting.com",
             "link": "http://example.com",
             "is_fully_booked": False,
             "participants_limit": 10,  # Limit is 10, but we try to add 11 participants
@@ -771,6 +836,7 @@ class AdminFormSubmissionTest(TestCase):
             "start_time": "09:00:00",
             "end_time": "11:00:00",
             "address": "123 Rue Exemple, Ville",
+            "talk_event_link": "http://iamalinktozoommeeting.com",
             "link": "http://example.com",
             "is_fully_booked": False,
             "participants_limit": 10,
@@ -813,10 +879,8 @@ class AdminFormSubmissionTest(TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)  # Ensure the form is processed
 
-        # If the form is returned, there was an error (expected)
-        if response.context and "adminform" in response.context:
-            form = response.context["adminform"].form
-            self.assertIsNotNone(form)
+        # Check if a form was returned with an error
+        self.assertIn("errorlist", str(response.context["adminform"].errors))
 
 
 class EventParticipantsModelTest(TestCase):
