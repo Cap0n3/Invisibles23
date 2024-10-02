@@ -89,7 +89,7 @@ export function formValidation(formID) {
             }
         }        
     });
-
+    
     validator.onSuccess((formEvent) => {
 
         if (formID === "#contactForm" || formID === "#contactFormPage") {
@@ -105,6 +105,7 @@ export function formValidation(formID) {
         }
     });
 }
+
 
 async function handleSubmit(formObject, token) {
     const toggleSpinner = (showSpinner) => {
