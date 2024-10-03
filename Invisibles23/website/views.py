@@ -20,6 +20,7 @@ from .models import (
     Event,
     Participant,
     EventParticipants,
+    TalkEventExplanationSection,
     ContactSection,
     AssoStatus,
     MembershipSection,
@@ -233,9 +234,11 @@ class EventRegistrationView(View):
             self.custom_error_message = None
 
     def get(self, request, pk):
+        talk_event_explanation = TalkEventExplanationSection.objects.first()
         event = Event.objects.get(pk=pk)
         form = EventRegistrationForm(initial={"event": event.pk})
         context = {
+            "section": talk_event_explanation,
             "form": form,
             "event": event,
         }
@@ -422,7 +425,6 @@ class EventRegistrationView(View):
         else:
             logger.info("Checkout session created successfully ! Redirecting to checkout ...")
             log_debug_info("Session url", self.checkout_session_object["url"])
-
 
 
 class ContactView(View):

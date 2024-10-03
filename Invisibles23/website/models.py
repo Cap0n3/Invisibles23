@@ -564,6 +564,18 @@ class EventParticipants(models.Model):
         return f"{self.participant.email} - {self.event.title} - {self.event.date.strftime('%d/%m/%Y') if isinstance(self.event.date, date) else 'Évènement sans date'}"
 
 
+class TalkEventExplanationSection(BaseSections):
+    """
+    Talk event explanation section, to explain to visitors how the talk events registration works
+    """
+    class Meta:
+        verbose_name = "Page inscription aux groupes de parole"
+        verbose_name_plural = "Page inscription aux groupes de parole"
+
+    def __str__(self):
+        return self.title
+
+
 class MembershipSection(BaseSections):
     class Meta:
         verbose_name = "Page Adhésion"

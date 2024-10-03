@@ -13,6 +13,7 @@ from .models import (
     Event,
     Participant,
     EventParticipants,
+    TalkEventExplanationSection,
     ContactSection,
     AssoStatus,
     MembershipSection,
@@ -194,7 +195,6 @@ class ParticipantAdmin(admin.ModelAdmin):
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
 
-
 # Register the models
 custom_admin_site.register(User)
 custom_admin_site.register(Permission)
@@ -211,6 +211,7 @@ custom_admin_site.register(DonationSection)
 custom_admin_site.register(Event, EventAdmin)
 custom_admin_site.register(Participant, ParticipantAdmin)
 custom_admin_site.register(EventParticipants)
+custom_admin_site.register(TalkEventExplanationSection)
 custom_admin_site.register(ContactSection)
 custom_admin_site.register(YoutubeVideos)
 custom_admin_site.register(AssoStatus)
