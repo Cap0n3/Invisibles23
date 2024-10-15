@@ -1,5 +1,5 @@
 from django.views import View
-from website.models import Event, Participant, EventParticipants
+from website.models import Members, MembershipPlans, Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
 from Invisibles23.logging_utils import log_debug_info
 import mailchimp_marketing as MailchimpMarketing
@@ -153,6 +153,7 @@ class StripeWebhook(View):
         self.member_country_code = None
         self.member_invoice_url = None
         self.member_plan = None
+        self.plan_lookup_key = None
         self.meeting_id = None
         self.meeting = None
         self.talk_event_link = None
@@ -223,6 +224,25 @@ class StripeWebhook(View):
         try:
             # Extract member data from the event data
             self._extract_member_data()
+            
+            # Get the right membership plan with lookup key
+            member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
+            
+            # Add member to Members database if not already present
+            Members.objects.get_or_create(
+                email=self.member_email,
+                defaults={
+                    "fname": self.member_name.split(" ")[0],
+                    "lname": self.member_name.split(" ")[1],
+                    "email": self.member_email,
+                    "phone": self.metadata["phone"],
+                    "address": self.metadata["address"],
+                    "zip_code": self.metadata["zip_code"],
+                    "city": self.metadata["city"],
+                    "country": self.member_country_code,
+                    "membership_plan": member_plan,
+                },
+            )
 
             # Update the member's metadata in Stripe
             stripe.Customer.modify(
@@ -244,6 +264,9 @@ class StripeWebhook(View):
         except ValueError as e:
             logger.error(f"Invalid data in webhook payload: {str(e)}")
             raise ValueError("Invalid data in webhook payload")
+        except ObjectDoesNotExist as e:
+            logger.error(f"Membership plan not found: {str(e)}")
+            raise ObjectDoesNotExist("Membership plan not found")
         except Exception as e:
             logger.error(f"Error processing membership event: {str(e)}")
             raise Exception("Error processing membership event")
@@ -288,6 +311,7 @@ class StripeWebhook(View):
             self.data["object"], "hosted_invoice_url"
         )
         self.member_plan = self.data["object"]["lines"]["data"][0]["description"]
+        self.plan_lookup_key = self.data["object"]["lines"]["data"][0]["plan"]["lookup_key"]
 
         missing_fields = []
 
@@ -303,6 +327,8 @@ class StripeWebhook(View):
             missing_fields.append("member_invoice_url")
         if not self.member_plan:
             missing_fields.append("member_plan")
+        if not self.plan_lookup_key:
+            missing_fields.append("plan_lookup_key")
 
         if missing_fields:
             raise ValueError(
