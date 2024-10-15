@@ -224,6 +224,7 @@ class StripeWebhook(View):
             # Extract member data from the event data
             self._extract_member_data()
 
+            # Update the member's metadata in Stripe
             stripe.Customer.modify(
                 self.member_id,
                 metadata={
