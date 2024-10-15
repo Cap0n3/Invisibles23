@@ -207,6 +207,7 @@ class MembershipPlanAdmin(admin.ModelAdmin):
         "price",
     )
     
+
 class MembersAdmin(admin.ModelAdmin):
     """
     Customize the Members admin page.
@@ -215,9 +216,9 @@ class MembersAdmin(admin.ModelAdmin):
         "email",
         "lname",
         "fname",
-        "phone",
         "membership_plan",
         "join_date",
+        "is_subscription_active",
     )  # Customize fields displayed in list view
     search_fields = (
         "fname",
@@ -240,9 +241,9 @@ class MembersAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Type de cotisation",
+            "Information sur le plan d'adhésion",
             {
-                "fields": ("membership_plan",),
+                "fields": ("membership_plan", "is_subscription_active"),
             },
         ),
     )

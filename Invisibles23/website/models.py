@@ -688,6 +688,9 @@ class Members(models.Model):
     membership_plan = models.ForeignKey(
         "MembershipPlans", on_delete=models.CASCADE, verbose_name="Plan d'adhésion"
     )
+    is_subscription_active = models.BooleanField(
+        default=True, verbose_name="Adhésion active"
+    )
     join_date = models.DateField(
         verbose_name="Date d'adhésion", auto_now_add=True, blank=True
     )
