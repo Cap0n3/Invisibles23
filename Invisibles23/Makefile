@@ -1,5 +1,5 @@
 # === Migration commands === #
-.PHONY: help, mkmigs, migrate, mkmigs-dry, migrate-all, test-all, test-case, proxy-test-case
+.PHONY: help, run, mkmigs, migrate, mkmigs-dry, migrate-all, test-all, test-case, proxy-test-case
 
 help:
 	@echo "Available commands:"
@@ -10,6 +10,8 @@ help:
 	@echo "  test-all \t\tRun all tests."
 	@echo "  website-test-case \tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
 	@echo "  proxy-test-case \tRun a specific test case for the proxy app. Example: make proxy-test-case case=ProxyModelTest"
+run:
+	python manage.py runserver
 
 mkmigs:
 	python manage.py makemigrations

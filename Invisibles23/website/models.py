@@ -144,8 +144,8 @@ class BaseRessources(models.Model):
 
 class AdminRessources(BaseRessources):
     class Meta:
-        verbose_name = "Ressources administratives"
-        verbose_name_plural = "Ressources administratives"
+        verbose_name = "Page Ressources - Administratives"
+        verbose_name_plural = "Page Ressources - Administratives"
 
     def __str__(self):
         return self.title
@@ -153,8 +153,8 @@ class AdminRessources(BaseRessources):
 
 class TherapeuticRessources(BaseRessources):
     class Meta:
-        verbose_name = "Ressources thérapeutiques"
-        verbose_name_plural = "Ressources thérapeutiques"
+        verbose_name = "Page Ressources - Thérapeutiques"
+        verbose_name_plural = "Page Ressources - Thérapeutiques"
 
     def __str__(self):
         return self.title
@@ -162,8 +162,8 @@ class TherapeuticRessources(BaseRessources):
 
 class FinancialRessources(BaseRessources):
     class Meta:
-        verbose_name = "Bibliothèque"
-        verbose_name_plural = "Bibliothèque"
+        verbose_name = "Page Ressources - Bibliothèque"
+        verbose_name_plural = "Page Ressources - Bibliothèque"
 
     def __str__(self):
         return self.title
@@ -171,6 +171,9 @@ class FinancialRessources(BaseRessources):
 
 # == Models for the website == #
 class HomeSections(BaseSections):
+    """
+    Home page sections model
+    """
     class Meta:
         verbose_name = "Page d'accueil"
         verbose_name_plural = "Page d'accueil"
@@ -180,6 +183,9 @@ class HomeSections(BaseSections):
 
 
 class AboutSections(BaseSections):
+    """
+    About page sections model
+    """
     class Meta:
         verbose_name = "Page à propos"
         verbose_name_plural = "Page à propos"
@@ -189,6 +195,9 @@ class AboutSections(BaseSections):
 
 
 class AssoSections(BaseSections):
+    """
+    Association page sections model
+    """
     class Meta:
         verbose_name = "Page association"
         verbose_name_plural = "Page association"
@@ -198,24 +207,33 @@ class AssoSections(BaseSections):
 
 
 class ChronicTabSections(BaseThematic):
+    """
+    Chronic diseases tab sections model
+    """
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
         # Change visible name of the model in the admin
-        verbose_name = "Maladies chroniques"
-        verbose_name_plural = "Maladies chroniques"
+        verbose_name = "Page Thématiques - Maladies chroniques"
+        verbose_name_plural = "Page Thématiques - Maladies chroniques"
 
 
 class InvsibleTabSections(BaseThematic):
+    """
+    Invisible diseases tab sections model
+    """
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
         # Change visible name of the model in the admin
-        verbose_name = "Maladies invisibles"
-        verbose_name_plural = "Maladies invisibles"
+        verbose_name = "Page Thématiques - Maladies invisibles"
+        verbose_name_plural = "Page Thématiques - Maladies invisibles"
 
 
 class MiscarriageTabSections(BaseThematic):
+    """
+    Not used in the website, but can be used to add a new tab for the miscarriage section
+    """
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
@@ -225,6 +243,9 @@ class MiscarriageTabSections(BaseThematic):
 
 
 class YoutubeVideos(models.Model):
+    """
+    Store the youtube videos to display them on the website
+    """
     title = models.CharField(max_length=50)
     video_url = models.URLField()
 
@@ -447,6 +468,9 @@ class Event(models.Model):
 
 
 class Participant(models.Model):
+    """
+    Participant model to manage the participants of the events (talk events)
+    """
     fname = models.CharField(max_length=50, verbose_name="Prénom")
     lname = models.CharField(max_length=50, verbose_name="Nom")
     email = models.EmailField(verbose_name="Email", unique=True)
@@ -577,6 +601,9 @@ class TalkEventExplanationSection(BaseSections):
 
 
 class MembershipSection(BaseSections):
+    """
+    Membership section to explain the membership process and join the association
+    """
     class Meta:
         verbose_name = "Page Adhésion"
         verbose_name_plural = "Page Adhésion"
@@ -586,6 +613,9 @@ class MembershipSection(BaseSections):
 
 
 class DonationSection(BaseSections):
+    """
+    Donation section to explain the donation process and support the association
+    """
     class Meta:
         verbose_name = "Page Dons"
         verbose_name_plural = "Page Dons"
@@ -595,6 +625,9 @@ class DonationSection(BaseSections):
 
 
 class ContactSection(models.Model):
+    """
+    Contact section to display the contact information of the association
+    """
     title = models.CharField(max_length=50, verbose_name="Titre de la section")
     text = models.TextField(
         max_length=500, verbose_name="Texte de la section (max 500 caractères)"
@@ -607,8 +640,8 @@ class ContactSection(models.Model):
     address = models.CharField(max_length=100, verbose_name="Adresse du contact")
 
     class Meta:
-        verbose_name = "Section Contact"
-        verbose_name_plural = "Section Contact"
+        verbose_name = "Pag contact"
+        verbose_name_plural = "Page contact"
 
     def clean(self):
         if ContactSection.objects.exists() and self.pk is None:
@@ -619,12 +652,15 @@ class ContactSection(models.Model):
 
 
 class AssoStatus(models.Model):
+    """
+    Association status model to display the association status
+    """
     title = models.CharField(max_length=50, verbose_name="Titre du statut")
     richText = RichTextField(verbose_name="Texte du statut")
 
     class Meta:
-        verbose_name = "Statut de l'association"
-        verbose_name_plural = "Statuts de l'association"
+        verbose_name = "Page statut de l'association"
+        verbose_name_plural = "Page statuts de l'association"
 
     def clean(self):
         if AssoStatus.objects.exists() and self.pk is None:
@@ -632,3 +668,60 @@ class AssoStatus(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Members(models.Model):
+    """
+    Members model to store the members of the association
+    """
+    fname = models.CharField(max_length=50, verbose_name="Prénom")
+    lname = models.CharField(max_length=50, verbose_name="Nom")
+    email = models.EmailField(verbose_name="Email", unique=True)
+    phone = models.CharField(
+        max_length=20, verbose_name="Numéro de téléphone", blank=True
+    )
+    birthdate = models.DateField(verbose_name="Date de naissance")
+    address = models.CharField(max_length=100, verbose_name="Adresse")
+    zip_code = models.CharField(max_length=100, verbose_name="Code postal")
+    city = models.CharField(max_length=100, verbose_name="Ville")
+    country = models.CharField(max_length=100, verbose_name="Pays", default="N/A")
+    membership_plan = models.ForeignKey(
+        "MembershipPlans", on_delete=models.CASCADE, verbose_name="Plan d'adhésion"
+    )
+    join_date = models.DateField(
+        verbose_name="Date d'adhésion", auto_now_add=True, blank=True
+    )
+
+    class Meta:
+        verbose_name = "Membre"
+        verbose_name_plural = "Membres"
+
+    def __str__(self):
+        return self.lname + " " + self.fname
+    
+    
+class MembershipPlans(models.Model):
+    """
+    Membership plans model to store the different membership plans
+    """
+    name = models.CharField(max_length=50, verbose_name="Nom du plan")
+    description = models.TextField(
+        max_length=500, verbose_name="Description du plan (max 500 caractères)", blank=True
+    )
+    price = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Prix du plan (CHF)"
+    )
+    frequency = models.CharField(
+        max_length=50, verbose_name="Fréquence de paiement", default="Annuel", choices=[("yearly", "Annuel"), ("monthly", "Mensuel")]
+    )
+    lookup_key = models.CharField(
+        max_length=50, verbose_name="Clé de recherche", unique=True
+    )
+    
+    class Meta:
+        verbose_name = "Plan d'adhésion"
+        verbose_name_plural = "Plans d'adhésion"
+        unique_together = ("name", "price", "frequency")
+        
+    def __str__(self):
+        return self.name + " - " + self.frequency + " - " + str(self.price) + " CHF"

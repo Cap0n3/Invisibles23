@@ -18,9 +18,12 @@ from .models import (
     AssoStatus,
     MembershipSection,
     DonationSection,
+    Members,
+    MembershipPlans,
 )
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
+from Invisibles23.logging_config import logger
 
 
 class CustomAdminSite(AdminSite):
@@ -45,8 +48,10 @@ class CustomAdminSite(AdminSite):
             "Youtube videos": 13,
             "Asso statuses": 14,
         }
+        
+        # Get the original app list
         app_dict = self._build_app_dict(request)
-
+                
         # Sort apps based on the ordering dictionary
         app_list = sorted(
             app_dict.values(), key=lambda x: ordering.get(x["name"], float("inf"))
@@ -192,6 +197,56 @@ class ParticipantAdmin(admin.ModelAdmin):
     )  # Add search functionality
 
 
+class MembershipPlanAdmin(admin.ModelAdmin):
+    """
+    Customize the MembershipPlan admin page.
+    """
+    list_display = (
+        "name",
+        "frequency",
+        "price",
+    )
+    
+class MembersAdmin(admin.ModelAdmin):
+    """
+    Customize the Members admin page.
+    """
+    list_display = (
+        "email",
+        "lname",
+        "fname",
+        "phone",
+        "membership_plan",
+        "join_date",
+    )  # Customize fields displayed in list view
+    search_fields = (
+        "fname",
+        "lname",
+        "email",
+        "phone",
+    )  # Add search functionality
+
+    fieldsets = (
+        (
+            "Informations personnelles",
+            {
+                "fields": ("fname", "lname", "email", "phone", "birthdate"),
+            },
+        ),
+        (
+            "Adresse",
+            {
+                "fields": ("address", "city", "zip_code", "country"),
+            },
+        ),
+        (
+            "Type de cotisation",
+            {
+                "fields": ("membership_plan",),
+            },
+        ),
+    )
+
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
 
@@ -215,6 +270,8 @@ custom_admin_site.register(TalkEventExplanationSection)
 custom_admin_site.register(ContactSection)
 custom_admin_site.register(YoutubeVideos)
 custom_admin_site.register(AssoStatus)
+custom_admin_site.register(Members, MembersAdmin)
+custom_admin_site.register(MembershipPlans, MembershipPlanAdmin)
 
 custom_admin_site.site_header = "Les Invisibles Administration"
 custom_admin_site.site_title = "Les Invisibles Admin"
