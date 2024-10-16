@@ -246,6 +246,12 @@ class MembersAdmin(admin.ModelAdmin):
                 "fields": ("membership_plan", "is_subscription_active"),
             },
         ),
+        (
+            "Informations sur le paiement",
+            {
+                "fields": ("stripe_customer_id", "payment_info_name", "payment_info_country"),
+            },
+        ),
     )
 
 # Create an instance of the custom admin site

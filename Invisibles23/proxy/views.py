@@ -240,8 +240,11 @@ class StripeWebhook(View):
                     "address": self.metadata["address"],
                     "zip_code": self.metadata["zip_code"],
                     "city": self.metadata["city"],
-                    "country": self.customer_country_code,
+                    "country": self.metadata["country"],
                     "membership_plan": member_plan,
+                    "stripe_customer_id": self.customer_id,
+                    "payment_info_name": self.customer_name,
+                    "payment_info_country": self.customer_country_code,
                 },
             )
             

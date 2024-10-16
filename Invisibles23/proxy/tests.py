@@ -94,6 +94,14 @@ class StripeWebhookTest(TestCase):
         member = Members.objects.get(email="afra.amaya@tutanota.com")
         self.assertEqual(member.fname, "Anita")
         self.assertEqual(member.lname, "Cassiette")
+        self.assertEqual(member.phone, "076 543 22 11")
+        self.assertEqual(member.address, "Chemin des Fauvettes 6")
+        self.assertEqual(member.zip_code, "1212")
+        self.assertEqual(member.city, "Lancy")
+        self.assertEqual(member.country, "Suisse")
+        self.assertEqual(member.stripe_customer_id, "cus_Qhzk8mRaY916py")
+        self.assertEqual(member.payment_info_name, "Anita Cassiette")
+        self.assertEqual(member.payment_info_country, "CH")
         self.assertEqual(member.membership_plan.lookup_key, "reduced-yearly")
 
     @patch("proxy.views.stripe.Webhook.construct_event")
@@ -151,9 +159,7 @@ class StripeWebhookTest(TestCase):
         self.assertEqual(member.address, "Chemin des Fauvettes 6")
         self.assertEqual(member.zip_code, "1212")
         self.assertEqual(member.city, "Lancy")
-        
-        # Based on the payload customer details (more accurate than user input)
-        self.assertEqual(member.country, "CH") 
+        self.assertEqual(member.country, "Suisse")
         
     @patch("proxy.views.stripe.Webhook.construct_event")
     def test_stripe_event_registration_webhook(self, mock_construct_event):

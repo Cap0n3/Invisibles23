@@ -691,6 +691,15 @@ class Members(models.Model):
     is_subscription_active = models.BooleanField(
         default=True, verbose_name="Adhésion active"
     )
+    stripe_customer_id = models.CharField(
+        max_length=250, verbose_name="ID client Stripe", blank=True
+    )
+    payment_info_name = models.CharField(
+        max_length=50, verbose_name="Nom pour le paiement", blank=True
+    )
+    payment_info_country = models.CharField(
+        max_length=50, verbose_name="Pays pour le paiement", blank=True
+    )
     join_date = models.DateField(
         verbose_name="Date d'adhésion", auto_now_add=True, blank=True
     )
