@@ -20,9 +20,9 @@ urlpatterns = [
         name="therapeutic-ressources",
     ),
     path(
-        "ressources-financieres/",
+        "ressources-bibliotheque/",
         views.FinancialRessourcesView.as_view(),
-        name="financial-ressources",
+        name="library-ressources",
     ),
     path("rendez-vous/", views.EventListView.as_view(), name="events"),
     path("rendez-vous/<int:pk>/", views.EventDetailView.as_view(), name="event-detail"),
