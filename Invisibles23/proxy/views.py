@@ -226,9 +226,11 @@ class StripeWebhook(View):
             self._extract_member_data()
             
             # Get the right membership plan with lookup key
+            logger.info(f"Getting membership plan from database with lookup key: {self.plan_lookup_key}")
             member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
             
             # Add member to Members database if not already present
+            logger.info(f"Adding member to database: {self.member_name}, {self.member_email}")
             Members.objects.get_or_create(
                 email=self.member_email,
                 defaults={
@@ -236,6 +238,7 @@ class StripeWebhook(View):
                     "lname": self.member_name.split(" ")[1],
                     "email": self.member_email,
                     "phone": self.metadata["phone"],
+                    "birthdate": self.metadata["birthday"],
                     "address": self.metadata["address"],
                     "zip_code": self.metadata["zip_code"],
                     "city": self.metadata["city"],
@@ -245,6 +248,7 @@ class StripeWebhook(View):
             )
 
             # Update the member's metadata in Stripe
+            logger.info("Updating customer metadata on Stripe ...")
             stripe.Customer.modify(
                 self.member_id,
                 metadata={
@@ -311,7 +315,7 @@ class StripeWebhook(View):
             self.data["object"], "hosted_invoice_url"
         )
         self.member_plan = self.data["object"]["lines"]["data"][0]["description"]
-        self.plan_lookup_key = self.data["object"]["lines"]["data"][0]["plan"]["lookup_key"]
+        self.plan_lookup_key = self.data["object"]["lines"]["data"][0]["price"]["lookup_key"]
 
         missing_fields = []
 

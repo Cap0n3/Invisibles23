@@ -7,7 +7,7 @@ from django.urls import reverse
 import unittest
 import requests
 from proxy.views import StripeWebhook, MailchimpProxy
-from website.models import Event, Participant, EventParticipants
+from website.models import Members, MembershipPlans, Event, Participant, EventParticipants
 from Invisibles23.logging_config import logger
 from django.test import TestCase, RequestFactory, Client
 from unittest.mock import patch, Mock
@@ -50,6 +50,15 @@ class StripeWebhookTest(TestCase):
             start_time="12:00",
             end_time="14:00",
             talk_event_link="https://iamazoomlink.com",
+        )
+        
+        # Create a test membership plan
+        self.membership_plan = MembershipPlans.objects.create(
+            name="Test Membership Plan",
+            description="This is a test membership plan",
+            price=25.00,
+            frequency="yearly",
+            lookup_key="reduced-yearly",
         )
 
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
@@ -308,6 +317,12 @@ class StripeWebhookTest(TestCase):
 
         # Assert that the response status is 200 OK
         self.assertEqual(response.status_code, 200)
+        
+        # Check if member was added to the database
+        member = Members.objects.get(email="afra.amaya@tutanota.com")
+        self.assertEqual(member.fname, "Anita")
+        self.assertEqual(member.lname, "Cassiette")
+        self.assertEqual(member.membership_plan.lookup_key, "reduced-yearly")
 
     # @unittest.skip("Skip test_stripe_event_registration_webhook")
     @patch("proxy.views.stripe.Webhook.construct_event")
