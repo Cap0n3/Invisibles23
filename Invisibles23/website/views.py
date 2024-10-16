@@ -344,7 +344,7 @@ class EventRegistrationView(View):
             "event_description": self.event.short_description,
             "fname": self.first_name,
             "lname": self.last_name,
-            "customer_email": self.email,
+            "email": self.email,
             "phone": self.phone,
             "membership_status": self.membership_status,
             "address": self.address,

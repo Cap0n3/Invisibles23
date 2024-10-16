@@ -234,7 +234,7 @@ class StripeWebhook(View):
                 defaults={
                     "fname": self.metadata["fname"],
                     "lname": self.metadata["lname"],
-                    "email": self.customer_email,
+                    "email": self.metadata["email"],
                     "phone": self.metadata["phone"],
                     "birthdate": self.metadata["birthday"],
                     "address": self.metadata["address"],
