@@ -634,7 +634,8 @@ class MembershipView(View):
                 customer_email=self.email,
                 subscription_data={
                     "metadata": {
-                        "name": f"{self.first_name} {self.last_name}",
+                        "fname": self.first_name,
+                        "lname": self.last_name,
                         "email": self.email,
                         "phone": self.phone,
                         "birthday": self.birthday,
@@ -646,7 +647,8 @@ class MembershipView(View):
                     },
                 },
                 metadata={
-                    "name": f"{self.first_name} {self.last_name}",
+                    "fname": self.first_name,
+                    "lname": self.last_name,
                     "email": self.email,
                     "phone": self.phone,
                     "birthday": self.birthday,

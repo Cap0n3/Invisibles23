@@ -87,7 +87,8 @@ MOCK_MEMBERSHIP_EVENT = {
                         "invoice": "in_1PqZkjBpqKPTmGHq9GboPpEb",
                         "livemode": False,
                         "metadata": {
-                            "name": "Anita Cassiette",
+                            "fname": "Anita",
+                            "lname": "Cassiette",
                             "email": "afra.amaya@tutanota.com",
                             "phone": "076 543 22 11",
                             "address": "Chemin des Fauvettes 6",
@@ -203,7 +204,8 @@ MOCK_MEMBERSHIP_EVENT = {
             "subscription": "sub_1PqZkjBpqKPTmGHq9L9WTWI1",
             "subscription_details": {
                 "metadata": {
-                    "name": "Anita Cassiette",
+                    "fname": "Anita",
+                    "lname": "Cassiette",
                     "email": "afra.amaya@tutanota.com",
                     "phone": "076 543 22 11",
                     "address": "Chemin des Fauvettes 6",

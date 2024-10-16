@@ -230,12 +230,12 @@ class StripeWebhook(View):
             member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
             
             # Add member to Members database if not already present
-            logger.info(f"Adding member to database: {self.metadata['name']}")
+            logger.info(f"Adding member to Member database: {self.metadata['email']} ({self.metadata['fname']} {self.metadata['lname']})")
             obj, created = Members.objects.update_or_create(
                 email=self.customer_email,
                 defaults={
-                    "fname": self.metadata["name"].split(" ")[0],
-                    "lname": self.metadata["name"].split(" ")[1],
+                    "fname": self.metadata["fname"],
+                    "lname": self.metadata["lname"],
                     "email": self.customer_email,
                     "phone": self.metadata["phone"],
                     "birthdate": self.metadata["birthday"],
@@ -257,7 +257,8 @@ class StripeWebhook(View):
             stripe.Customer.modify(
                 self.customer_id,
                 metadata={
-                    "name": self.metadata["name"],
+                    "fname": self.metadata["fname"],
+                    "lname": self.metadata["lname"],
                     "birthday": self.metadata["birthday"],
                     "email": self.metadata["email"],
                     "phone": self.metadata["phone"],
