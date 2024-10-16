@@ -546,7 +546,7 @@ class MembershipView(View):
         logger.info("Checking if customer already exists ...")  
         # Search for customer
         customer_search = stripe.Customer.search(
-            query=f"name:'{self.first_name} {self.last_name}' AND email:'{self.email}'",
+            query=f"email:'{self.email}'",
         )
 
         if customer_search:
