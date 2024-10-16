@@ -144,9 +144,7 @@ class StripeWebhook(View):
         super().__init__(*args, **kwargs)
         self.request = None
         self.csrf_token = None
-        self.owner_email = (
-            settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
-        )
+        self.owner_email = env("OWNER_EMAIL")
         self.customer_id = None
         self.customer_name = None
         self.customer_email = None
@@ -585,7 +583,7 @@ class EmailSender(View):
             try:
                 logger.info("Recaptcha verified. Sending email...")
                 sendEmail(
-                    settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL,
+                    env("OWNER_EMAIL"),
                     "Un nouveau message a été envoyé depuis le site web",
                     "contact_email.html",
                     {

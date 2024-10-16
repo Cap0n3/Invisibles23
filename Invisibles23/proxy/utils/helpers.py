@@ -36,7 +36,7 @@ def sendEmail(receiver_email, subject, email_file, placeholders={}) -> None:
     """
     logger.info(f"Sending email to {receiver_email}...")
     try:
-        sender_email = "association@lesinvisibles.ch"
+        sender_email = env("OWNER_EMAIL")
         sender_password = env("INFOMANIAK_EMAIL_PASSWORD")
 
         # Create a MIMEText object to represent the email

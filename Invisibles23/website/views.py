@@ -329,7 +329,7 @@ class EventRegistrationView(View):
                 logger.warning(
                     f"Participant already registered for this event: {self.event}"
                 )
-                self.custom_error_message = f"Il semblerait que vous soyez déjà inscrit à cet événement. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}"
+                self.custom_error_message = f"Il semblerait que vous soyez déjà inscrit à cet événement. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {env('OWNER_EMAIL')}"
                 raise ValueError(
                     f"Participant already registered for this event: {self.event}"
                 )
@@ -562,7 +562,7 @@ class MembershipView(View):
                     logger.warning(
                         f"Customer already has an active subscription: {subscription}"
                     )
-                    self.custom_error_message = f"Il semblerait que vous ayez déjà une adhésion active. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {settings.OWNER_EMAIL}"
+                    self.custom_error_message = f"Il semblerait que vous ayez déjà une adhésion active. Si vous avez des questions, veuillez nous contacter à l'adresse suivante : {env('OWNER_EMAIL')}"
                     raise ValueError(
                         "Customer already has an active subscription"
                     )
