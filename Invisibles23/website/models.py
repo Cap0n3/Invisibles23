@@ -160,7 +160,7 @@ class TherapeuticRessources(BaseRessources):
         return self.title
 
 
-class FinancialRessources(BaseRessources):
+class LibraryRessources(BaseRessources):
     class Meta:
         verbose_name = "Page Ressources - Bibliothèque"
         verbose_name_plural = "Page Ressources - Bibliothèque"

@@ -21,7 +21,7 @@ urlpatterns = [
     ),
     path(
         "ressources-bibliotheque/",
-        views.FinancialRessourcesView.as_view(),
+        views.LibraryRessourcesView.as_view(),
         name="library-ressources",
     ),
     path("rendez-vous/", views.EventListView.as_view(), name="events"),

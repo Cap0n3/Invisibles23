@@ -9,7 +9,7 @@ from .models import (
     InvsibleTabSections,
     AdminRessources,
     TherapeuticRessources,
-    FinancialRessources,
+    LibraryRessources,
     Event,
     Participant,
     EventParticipants,
@@ -260,7 +260,7 @@ custom_admin_site.register(ChronicTabSections)
 custom_admin_site.register(InvsibleTabSections)
 custom_admin_site.register(TherapeuticRessources)
 custom_admin_site.register(AdminRessources)
-custom_admin_site.register(FinancialRessources)
+custom_admin_site.register(LibraryRessources)
 custom_admin_site.register(AssoSections)
 custom_admin_site.register(MembershipSection)
 custom_admin_site.register(DonationSection)

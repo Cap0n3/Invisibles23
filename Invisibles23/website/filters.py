@@ -2,7 +2,7 @@ import django_filters
 from .models import (
     AdminRessources,
     TherapeuticRessources,
-    FinancialRessources,
+    LibraryRessources,
 )
 from django.db.models import Q
 
@@ -48,6 +48,6 @@ class TherapeuticRessourcesFilter(BaseRessourcesFilter):
         model = TherapeuticRessources
 
 
-class FinancialRessourcesFilter(BaseRessourcesFilter):
+class LibraryRessourcesFilter(BaseRessourcesFilter):
     class Meta(BaseRessourcesFilter.Meta):
-        model = FinancialRessources
+        model = LibraryRessources

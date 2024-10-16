@@ -14,7 +14,7 @@ from .models import (
     InvsibleTabSections,
     AdminRessources,
     TherapeuticRessources,
-    FinancialRessources,
+    LibraryRessources,
     MiscarriageTabSections,
     YoutubeVideos,
     Event,
@@ -29,7 +29,7 @@ from .models import (
 from .filters import (
     AdminRessourcesFilter,
     TherapeuticRessourcesFilter,
-    FinancialRessourcesFilter,
+    LibraryRessourcesFilter,
 )
 from django.http import JsonResponse
 import environ
@@ -154,9 +154,9 @@ class TherapeuticRessourcesView(BaseRessourcesView):
     filter_class = TherapeuticRessourcesFilter
 
 
-class FinancialRessourcesView(BaseRessourcesView):
-    model = FinancialRessources
-    filter_class = FinancialRessourcesFilter
+class LibraryRessourcesView(BaseRessourcesView):
+    model = LibraryRessources
+    filter_class = LibraryRessourcesFilter
 
 
 class AssociationView(View):
