@@ -151,7 +151,9 @@ class StripeWebhookTest(TestCase):
         self.assertEqual(member.address, "Chemin des Fauvettes 6")
         self.assertEqual(member.zip_code, "1212")
         self.assertEqual(member.city, "Lancy")
-        self.assertEqual(member.country, "Suisse")
+        
+        # Based on the payload customer details (more accurate than user input)
+        self.assertEqual(member.country, "CH") 
         
     @patch("proxy.views.stripe.Webhook.construct_event")
     def test_stripe_event_registration_webhook(self, mock_construct_event):
