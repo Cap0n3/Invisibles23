@@ -415,24 +415,25 @@ class StripeWebhook(View):
         """
         # Sending confirmation to member
         logger.info(
-            f"Sending notification and invoice to member at {self.customer_email} ..."
+            f"Sending notification and invoice to member at {self.metadata['email']} ..."
         )
         sendEmail(
-            self.customer_email,
+            self.metadata["email"],
             "Confirmation d'adhésion à l'association Les Invisibles",
             "adhesion_email.html",
             {
-                "name": self.customer_name,
+                "fname": self.metadata["fname"],
             },
         )
 
         sendEmail(
-            self.customer_email,
+            self.metadata["email"],
             "Reçu de paiement adhésion",
             "invoice_email.html",
             {
-                "name": self.customer_name,
-                "email": self.customer_email,
+                "fname": self.metadata["fname"],
+                "lname": self.metadata["lname"],
+                "email": self.metadata["email"],
                 "invoice_url": self.customer_invoice_url,
                 "customer_id": self.customer_id,
                 "membership_plan": self.customer_subscription_plan,
@@ -449,8 +450,8 @@ class StripeWebhook(View):
             "Un nouveau membre a rejoint l'association Les Invisibles",
             "adhesion_notification.html",
             {
-                "name": self.customer_name,
-                "email": self.customer_email,
+                "member_name": f"{self.metadata['fname']} {self.metadata['lname']}",
+                "member_email": self.metadata["email"],
                 "country": self.customer_country_code,
             },
         )
@@ -460,10 +461,13 @@ class StripeWebhook(View):
             "Reçu de paiement adhésion",
             "invoice_email_accounting.html",
             {
-                "name": self.customer_name,
-                "email": self.customer_email,
+                "member_name": f"{self.metadata['fname']} {self.metadata['lname']}",
+                "member_email": self.metadata["email"],
                 "invoice_url": self.customer_invoice_url,
                 "customer_id": self.customer_id,
+                "customer_name": self.customer_name,
+                "customer_email": self.customer_email,
+                "customer_country_code": self.customer_country_code,
                 "membership_plan": self.customer_subscription_plan,
             },
         )
