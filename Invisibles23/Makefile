@@ -38,4 +38,4 @@ website-test-case:
 	python manage.py test website.tests.$(case) -v 2
 
 proxy-test-case:
-	python manage.py test proxy.tests.$(case) -v 2 --keepdb
+	python manage.py test proxy.tests.$(case) -v 2

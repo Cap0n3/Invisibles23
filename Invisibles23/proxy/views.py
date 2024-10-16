@@ -231,7 +231,7 @@ class StripeWebhook(View):
             
             # Add member to Members database if not already present
             logger.info(f"Adding member to database: {self.member_name}, {self.member_email}")
-            Members.objects.get_or_create(
+            obj, created = Members.objects.update_or_create(
                 email=self.member_email,
                 defaults={
                     "fname": self.member_name.split(" ")[0],
@@ -242,10 +242,15 @@ class StripeWebhook(View):
                     "address": self.metadata["address"],
                     "zip_code": self.metadata["zip_code"],
                     "city": self.metadata["city"],
-                    "country": self.member_country_code,
+                    "country": self.metadata["country"],
                     "membership_plan": member_plan,
                 },
             )
+            
+            if created:
+                logger.info(f"New member added to database: {obj}")
+            else:
+                logger.warning(f"Member already exists in database, information updated.")
 
             # Update the member's metadata in Stripe
             logger.info("Updating customer metadata on Stripe ...")
