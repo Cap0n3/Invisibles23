@@ -147,12 +147,12 @@ class StripeWebhook(View):
         self.owner_email = (
             settings.DEV_EMAIL if (settings.DEBUG) else settings.OWNER_EMAIL
         )
-        self.member_id = None
-        self.member_name = None
-        self.member_email = None
-        self.member_country_code = None
-        self.member_invoice_url = None
-        self.member_plan = None
+        self.customer_id = None
+        self.customer_name = None
+        self.customer_email = None
+        self.customer_country_code = None
+        self.customer_invoice_url = None
+        self.customer_subscription_plan = None
         self.plan_lookup_key = None
         self.meeting_id = None
         self.meeting = None
@@ -223,20 +223,20 @@ class StripeWebhook(View):
         """
         try:
             # Extract member data from the event data
-            self._extract_member_data()
+            self._extract_customer_data()
             
             # Get the right membership plan with lookup key
             logger.info(f"Getting membership plan from database with lookup key: {self.plan_lookup_key}")
             member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
             
             # Add member to Members database if not already present
-            logger.info(f"Adding member to database: {self.member_name}, {self.member_email}")
+            logger.info(f"Adding member to database: {self.metadata['name']}")
             obj, created = Members.objects.update_or_create(
-                email=self.member_email,
+                email=self.customer_email,
                 defaults={
-                    "fname": self.member_name.split(" ")[0],
-                    "lname": self.member_name.split(" ")[1],
-                    "email": self.member_email,
+                    "fname": self.metadata["name"].split(" ")[0],
+                    "lname": self.metadata["name"].split(" ")[1],
+                    "email": self.customer_email,
                     "phone": self.metadata["phone"],
                     "birthdate": self.metadata["birthday"],
                     "address": self.metadata["address"],
@@ -255,11 +255,11 @@ class StripeWebhook(View):
             # Update the member's metadata in Stripe
             logger.info("Updating customer metadata on Stripe ...")
             stripe.Customer.modify(
-                self.member_id,
+                self.customer_id,
                 metadata={
                     "name": self.metadata["name"],
                     "birthday": self.metadata["birthday"],
-                    "customer_email": self.metadata["customer_email"],
+                    "email": self.metadata["email"],
                     "phone": self.metadata["phone"],
                     "address": self.metadata["address"],
                     "zip_code": self.metadata["zip_code"],
@@ -307,35 +307,35 @@ class StripeWebhook(View):
             logger.info("Checkout completed event completed.")
             self._send_event_registration_alerts()
 
-    def _extract_member_data(self) -> None:
+    def _extract_customer_data(self) -> None:
         """
-        Extract member data from the event data (only for membership subscription)(setter).
+        Extract customer data from the event data (only for membership subscription)(setter).
         """
 
-        self.member_id = find_key_in_dict(self.data["object"], "customer")
-        self.member_name = find_key_in_dict(self.data["object"], "customer_name")
-        self.member_email = find_key_in_dict(self.data["object"], "customer_email")
-        self.member_country_code = find_key_in_dict(self.data["object"], "country")
-        self.member_invoice_url = find_key_in_dict(
+        self.customer_id = find_key_in_dict(self.data["object"], "customer")
+        self.customer_name = find_key_in_dict(self.data["object"], "customer_name")
+        self.customer_email = find_key_in_dict(self.data["object"], "customer_email")
+        self.customer_country_code = find_key_in_dict(self.data["object"], "country")
+        self.customer_invoice_url = find_key_in_dict(
             self.data["object"], "hosted_invoice_url"
         )
-        self.member_plan = self.data["object"]["lines"]["data"][0]["description"]
+        self.customer_subscription_plan = self.data["object"]["lines"]["data"][0]["description"]
         self.plan_lookup_key = self.data["object"]["lines"]["data"][0]["price"]["lookup_key"]
 
         missing_fields = []
 
-        if not self.member_id:
-            missing_fields.append("member_id")
-        if not self.member_name:
-            missing_fields.append("member_name")
-        if not self.member_email:
-            missing_fields.append("member_email")
-        if not self.member_country_code:
-            missing_fields.append("member_country")
-        if not self.member_invoice_url:
-            missing_fields.append("member_invoice_url")
-        if not self.member_plan:
-            missing_fields.append("member_plan")
+        if not self.customer_id:
+            missing_fields.append("customer_id")
+        if not self.customer_name:
+            missing_fields.append("customer_name")
+        if not self.customer_email:
+            missing_fields.append("customer_email")
+        if not self.customer_country_code:
+            missing_fields.append("customer_country_code")
+        if not self.customer_invoice_url:
+            missing_fields.append("customer_invoice_url")
+        if not self.customer_subscription_plan:
+            missing_fields.append("customer_subscription_plan")
         if not self.plan_lookup_key:
             missing_fields.append("plan_lookup_key")
 
@@ -344,7 +344,7 @@ class StripeWebhook(View):
                 f"Missing member data in event payload: {', '.join(missing_fields)}"
             )
         logger.info(
-            f"Member data extracted: {self.member_name}, {self.member_email}, {self.member_plan}, {self.member_country_code}, {self.member_id}"
+            f"Customer data extracted: {self.customer_name}, {self.customer_email}, {self.customer_subscription_plan}, {self.customer_country_code}, {self.customer_id}"
         )
 
     def _extract_metadata(self) -> None:
@@ -380,11 +380,11 @@ class StripeWebhook(View):
         logger.info(f"Extracted all data for event registration: {self.meeting}")
 
         participant, created = Participant.objects.get_or_create(
-            email=self.metadata["customer_email"],
+            email=self.metadata["email"],
             defaults={
                 "fname": self.metadata["fname"],
                 "lname": self.metadata["lname"],
-                "email": self.metadata["customer_email"],
+                "email": self.metadata["email"],
                 "phone": self.metadata["phone"],
                 "address": self.metadata["address"],
                 "zip_code": self.metadata["zip_code"],
@@ -414,27 +414,27 @@ class StripeWebhook(View):
         """
         # Sending confirmation to member
         logger.info(
-            f"Sending notification and invoice to member at {self.member_email} ..."
+            f"Sending notification and invoice to member at {self.customer_email} ..."
         )
         sendEmail(
-            self.member_email,
+            self.customer_email,
             "Confirmation d'adhésion à l'association Les Invisibles",
             "adhesion_email.html",
             {
-                "name": self.member_name,
+                "name": self.customer_name,
             },
         )
 
         sendEmail(
-            self.member_email,
+            self.customer_email,
             "Reçu de paiement adhésion",
             "invoice_email.html",
             {
-                "name": self.member_name,
-                "email": self.member_email,
-                "invoice_url": self.member_invoice_url,
-                "customer_id": self.member_id,
-                "membership_plan": self.member_plan,
+                "name": self.customer_name,
+                "email": self.customer_email,
+                "invoice_url": self.customer_invoice_url,
+                "customer_id": self.customer_id,
+                "membership_plan": self.customer_subscription_plan,
             },
         )
 
@@ -448,9 +448,9 @@ class StripeWebhook(View):
             "Un nouveau membre a rejoint l'association Les Invisibles",
             "adhesion_notification.html",
             {
-                "name": self.member_name,
-                "email": self.member_email,
-                "country": self.member_country_code,
+                "name": self.customer_name,
+                "email": self.customer_email,
+                "country": self.customer_country_code,
             },
         )
 
@@ -459,11 +459,11 @@ class StripeWebhook(View):
             "Reçu de paiement adhésion",
             "invoice_email_accounting.html",
             {
-                "name": self.member_name,
-                "email": self.member_email,
-                "invoice_url": self.member_invoice_url,
-                "customer_id": self.member_id,
-                "membership_plan": self.member_plan,
+                "name": self.customer_name,
+                "email": self.customer_email,
+                "invoice_url": self.customer_invoice_url,
+                "customer_id": self.customer_id,
+                "membership_plan": self.customer_subscription_plan,
             },
         )
 
@@ -476,7 +476,7 @@ class StripeWebhook(View):
             {
                 "fname": self.metadata["fname"],
                 "lname": self.metadata["lname"],
-                "email": self.metadata["customer_email"],
+                "email": self.metadata["email"],
                 "phone": self.metadata["phone"],
                 "address": self.metadata["address"],
                 "zip_code": self.metadata["zip_code"],
@@ -491,7 +491,7 @@ class StripeWebhook(View):
 
         # Sending confirmation to participant
         sendEmail(
-            self.metadata["customer_email"],
+            self.metadata["email"],
             "Confirmation d'inscription à un groupe de parole",
             "event_confirmation_email.html",
             {
@@ -512,17 +512,17 @@ class StripeWebhook(View):
         logger.info("Subscribing member to the mailing list ...")
         try:
             member_info = {
-                "email_address": self.member_email,
+                "email_address": self.customer_email,
                 "status": "subscribed",
                 "merge_fields": {
-                    "FNAME": self.member_name.split(" ")[0],
-                    "LNAME": self.member_name.split(" ")[1],
+                    "FNAME": self.customer_name.split(" ")[0],
+                    "LNAME": self.customer_name.split(" ")[1],
                     "ADDRESS": {
                         "addr1": self.metadata["address"],
                         "city": self.metadata["city"],
                         "state": "-",
                         "zip": self.metadata["zip_code"],
-                        "country": self.member_country_code, # only accepts country code
+                        "country": self.customer_country_code, # only accepts country code
                     },
                     "PHONE": self.metadata["phone"],
                     "BIRTHDAY": format_birthdate_for_mailchimp(
@@ -547,18 +547,18 @@ class StripeWebhook(View):
         Log event data and metadata.
         """
         if self.event_type == "invoice.paid":
-            logger.info(f"Invoice paid for: customer ID {self.member_id}")
+            logger.info(f"Invoice paid for: customer ID {self.customer_id}")
             logger.info(
-                f"Member name: {self.member_name}, email: {self.member_email}, country code: {self.member_country_code}, plan: {self.member_plan}"
+                f"Member name: {self.customer_name}, email: {self.customer_email}, country code: {self.customer_country_code}, plan: {self.customer_subscription_plan}"
             )
-            logger.info(f"Invoice URL: {self.member_invoice_url}")
+            logger.info(f"Invoice URL: {self.customer_invoice_url}")
             log_debug_info("Event data for invoice paid:", self.data)
             log_debug_info("Metadata for customer:", self.metadata)
             logger.info("Updating customer metadata ...")
         elif self.event_type == "checkout.session.completed":
             logger.info(f"Checkout completed for: event ID {self.meeting_id}")
             logger.info(
-                f"Customer name: {self.metadata['fname']} {self.metadata['lname']}, email: {self.metadata['customer_email']}, country: {self.metadata['country']}"
+                f"Customer name: {self.metadata['fname']} {self.metadata['lname']}, email: {self.metadata['email']}, country: {self.metadata['country']}"
             )
             log_debug_info("Event data for payment:", self.data)
 

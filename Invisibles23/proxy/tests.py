@@ -182,6 +182,7 @@ class StripeWebhookTest(TestCase):
 
         # Check that the participant has been created
         participant = Participant.objects.get(email="afra.amaya@tutanota.com")
+        logger.info(f"PARTICIPANT EMAIL: {participant.email}")
         self.assertEqual(participant.email, "afra.amaya@tutanota.com")
         self.assertEqual(participant.fname, "Marc")
         self.assertEqual(participant.lname, "Cash")

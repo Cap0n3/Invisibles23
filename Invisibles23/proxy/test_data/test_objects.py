@@ -88,7 +88,7 @@ MOCK_MEMBERSHIP_EVENT = {
                         "livemode": False,
                         "metadata": {
                             "name": "Anita Cassiette",
-                            "customer_email": "afra.amaya@tutanota.com",
+                            "email": "afra.amaya@tutanota.com",
                             "phone": "076 543 22 11",
                             "address": "Chemin des Fauvettes 6",
                             "birthday": "2024-08-21",
@@ -204,7 +204,7 @@ MOCK_MEMBERSHIP_EVENT = {
             "subscription_details": {
                 "metadata": {
                     "name": "Anita Cassiette",
-                    "customer_email": "afra.amaya@tutanota.com",
+                    "email": "afra.amaya@tutanota.com",
                     "phone": "076 543 22 11",
                     "address": "Chemin des Fauvettes 6",
                     "birthday": "2024-08-21",
@@ -301,7 +301,7 @@ MOCK_TALK_EVENT = {
             "metadata": {
                 "address": "Chemin des Fauvettes 6",
                 "city": "Lancy",
-                "customer_email": "afra.amaya@tutanota.com",
+                "email": "afra.amaya@tutanota.com",
                 "event_description": "Maecenas gravida felis turpis, vitae imperdiet ante consequat sit amet. Morbi et nisi nec felis suscipit ultricies. Vivamus interdum sodales nunc, ac lobortis massa dictum bibendum.",
                 "event_id": 1,
                 "event_infos": "Test Event - 2022-12-12 - 12:00",
