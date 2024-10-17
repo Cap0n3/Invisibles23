@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 from datetime import date
 from cloudinary.models import CloudinaryField
 
+
 # == Base models to stay DRY == #
 class BaseSections(models.Model):
     """
@@ -174,6 +175,7 @@ class HomeSections(BaseSections):
     """
     Home page sections model
     """
+
     class Meta:
         verbose_name = "Page - Accueil"
         verbose_name_plural = "Page - Accueil"
@@ -186,6 +188,7 @@ class AboutSections(BaseSections):
     """
     About page sections model
     """
+
     class Meta:
         verbose_name = "Page - À propos"
         verbose_name_plural = "Page - À propos"
@@ -198,6 +201,7 @@ class AssoSections(BaseSections):
     """
     Association page sections model
     """
+
     class Meta:
         verbose_name = "Page - Association"
         verbose_name_plural = "Page - Association"
@@ -210,6 +214,7 @@ class ChronicTabSections(BaseThematic):
     """
     Chronic diseases tab sections model
     """
+
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
@@ -222,6 +227,7 @@ class InvsibleTabSections(BaseThematic):
     """
     Invisible diseases tab sections model
     """
+
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
@@ -234,6 +240,7 @@ class MiscarriageTabSections(BaseThematic):
     """
     Not used in the website, but can be used to add a new tab for the miscarriage section
     """
+
     class Meta:
         # Order the sections by the order field in the admin
         ordering = ["order"]
@@ -246,6 +253,7 @@ class YoutubeVideos(models.Model):
     """
     Store the youtube videos to display them on the website
     """
+
     title = models.CharField(max_length=50)
     video_url = models.URLField()
 
@@ -271,11 +279,11 @@ class YoutubeVideos(models.Model):
 
         if total_videos >= 5:
             raise ValidationError("Vous ne pouvez pas ajouter plus de 6 vidéos !")
- 
+
     class Meta:
         verbose_name = "Lien - Vidéo Youtube"
         verbose_name_plural = "Liens - Vidéos Youtube"
-    
+
     def __str__(self):
         return self.title
 
@@ -313,7 +321,9 @@ class Event(models.Model):
     address = models.CharField(
         max_length=100, blank=True, verbose_name="Adresse de l'évènement"
     )
-    link = models.URLField(blank=True, verbose_name="Lien de l'événement (optionnel)") # Optional link to the event
+    link = models.URLField(
+        blank=True, verbose_name="Lien de l'événement (optionnel)"
+    )  # Optional link to the event
     talk_event_link = models.URLField(blank=True, verbose_name="Lien de réunion Zoom")
     participants_limit = models.PositiveIntegerField(
         default=9, verbose_name="Nombre maximum de participants (groupe de parole)"
@@ -341,20 +351,20 @@ class Event(models.Model):
         # Check if mandatory fields are filled
         if not self.title:
             raise ValidationError("Le titre de l'évènement est obligatoire !")
-        
+
         if not self.short_description:
             raise ValidationError(
                 "La description courte de l'évènement est obligatoire !"
             )
-        
+
         if not self.full_description:
             raise ValidationError(
                 "La description complète de l'évènement est obligatoire !"
             )
-        
+
         if not self.date:
             raise ValidationError("Veuillez renseigner la date de l'évènement !")
-        
+
         if not self.start_time:
             raise ValidationError(
                 "Veuillez renseigner l'heure de début de l'évènement !"
@@ -396,14 +406,20 @@ class Event(models.Model):
                 raise ValidationError(
                     "Le nombre maximum de participants ne peut pas être inférieur au nombre actuel de participants déjà inscrits !"
                 )
-        
+
         # If it's a talk event, check if the meeting link is provided (talk_event_link)
         if self.is_talk_event:
             if not self.talk_event_link:
-                logger.error(f"No Zoom link provided for talk event with ID '{self.pk}'")
-                raise ValidationError("Veuillez renseigner le lien de la réunion Zoom !")
+                logger.error(
+                    f"No Zoom link provided for talk event with ID '{self.pk}'"
+                )
+                raise ValidationError(
+                    "Veuillez renseigner le lien de la réunion Zoom !"
+                )
 
-        logger.info(f"Admin form is clean. Event {self.title} with ID '{self.pk}' has been validated !")
+        logger.info(
+            f"Admin form is clean. Event {self.title} with ID '{self.pk}' has been validated !"
+        )
         super().clean()
 
     def save(self, *args, **kwargs):
@@ -475,6 +491,7 @@ class Participant(models.Model):
     """
     Participant model to manage the participants of the events (talk events)
     """
+
     fname = models.CharField(max_length=50, verbose_name="Prénom")
     lname = models.CharField(max_length=50, verbose_name="Nom")
     email = models.EmailField(verbose_name="Email", unique=True)
@@ -596,6 +613,7 @@ class TalkEventExplanationSection(BaseSections):
     """
     Talk event explanation section, to explain to visitors how the talk events registration works
     """
+
     class Meta:
         verbose_name = "Page - Inscription aux groupes de parole"
         verbose_name_plural = "Page - Inscription aux groupes de parole"
@@ -608,6 +626,7 @@ class MembershipSection(BaseSections):
     """
     Membership section to explain the membership process and join the association
     """
+
     class Meta:
         verbose_name = "Page - Adhésion membre"
         verbose_name_plural = "Page - Adhésion membres"
@@ -620,6 +639,7 @@ class DonationSection(BaseSections):
     """
     Donation section to explain the donation process and support the association
     """
+
     class Meta:
         verbose_name = "Page - Dons"
         verbose_name_plural = "Page - Dons"
@@ -632,6 +652,7 @@ class ContactSection(models.Model):
     """
     Contact section to display the contact information of the association
     """
+
     title = models.CharField(max_length=50, verbose_name="Titre de la section")
     text = models.TextField(
         max_length=500, verbose_name="Texte de la section (max 500 caractères)"
@@ -654,7 +675,7 @@ class ContactSection(models.Model):
     class Meta:
         verbose_name = "Page - Contact"
         verbose_name_plural = "Page - Contact"
-    
+
     def __str__(self):
         return self.title + " - " + self.name
 
@@ -663,6 +684,7 @@ class AssoStatus(models.Model):
     """
     Association status model to display the association status
     """
+
     title = models.CharField(max_length=50, verbose_name="Titre du statut")
     richText = RichTextField(verbose_name="Texte du statut")
 
@@ -677,7 +699,7 @@ class AssoStatus(models.Model):
     class Meta:
         verbose_name = "Page - Statut de l'association"
         verbose_name_plural = "Page - Statuts de l'association"
-    
+
     def __str__(self):
         return self.title
 
@@ -686,6 +708,7 @@ class Members(models.Model):
     """
     Members model to store the members of the association
     """
+
     fname = models.CharField(max_length=50, verbose_name="Prénom")
     lname = models.CharField(max_length=50, verbose_name="Nom")
     email = models.EmailField(verbose_name="Email", unique=True)
@@ -722,30 +745,80 @@ class Members(models.Model):
 
     def __str__(self):
         return self.lname + " " + self.fname
-    
-    
+
+
+class Volunteers(models.Model):
+    """
+    Volunteers model to store the volunteers of the association
+    """
+
+    fname = models.CharField(max_length=50, verbose_name="Prénom")
+    lname = models.CharField(max_length=50, verbose_name="Nom")
+    email = models.EmailField(verbose_name="Email", unique=True)
+    phone = models.CharField(
+        max_length=20, verbose_name="Numéro de téléphone", blank=True
+    )
+    birthdate = models.DateField(verbose_name="Date de naissance", blank=True, null=True)
+    address = models.CharField(max_length=100, verbose_name="Adresse", blank=True)
+    zip_code = models.CharField(max_length=100, verbose_name="Code postal", blank=True)
+    city = models.CharField(max_length=100, verbose_name="Ville", blank=True)
+    country = models.CharField(max_length=100, verbose_name="Pays", default="N/A")
+    occupation = models.CharField(max_length=100, verbose_name="Profession", blank=True)
+    role = models.CharField(max_length=100, verbose_name="Rôle", default="N/A", blank=True)
+    team = models.CharField(
+        max_length=100,
+        verbose_name="Équipe",
+        choices=[
+            ("team1", "Team 1"),
+            ("team2", "Team 2"),
+            ("team3", "Team 3"),
+        ],
+        blank=True,
+    )
+    notes = RichTextField(
+        max_length=3000, verbose_name="Notes (max 3000 caractères)", blank=True
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Bénévole actif")
+    join_date = models.DateField(
+        verbose_name="Date de la prise de fonction", auto_now_add=True, blank=True
+    )
+
+    class Meta:
+        verbose_name = "BDD - Volontaire"
+        verbose_name_plural = "BDD - Volontaires"
+
+    def __str__(self):
+        return self.lname + " " + self.fname
+
+
 class MembershipPlans(models.Model):
     """
     Membership plans model to store the different membership plans
     """
+
     name = models.CharField(max_length=50, verbose_name="Nom du plan")
     description = models.TextField(
-        max_length=500, verbose_name="Description du plan (max 500 caractères)", blank=True
+        max_length=500,
+        verbose_name="Description du plan (max 500 caractères)",
+        blank=True,
     )
     price = models.DecimalField(
         max_digits=6, decimal_places=2, verbose_name="Prix du plan (CHF)"
     )
     frequency = models.CharField(
-        max_length=50, verbose_name="Fréquence de paiement", default="Annuel", choices=[("yearly", "Annuel"), ("monthly", "Mensuel")]
+        max_length=50,
+        verbose_name="Fréquence de paiement",
+        default="Annuel",
+        choices=[("yearly", "Annuel"), ("monthly", "Mensuel")],
     )
     lookup_key = models.CharField(
         max_length=50, verbose_name="Clé de recherche", unique=True
     )
-    
+
     class Meta:
         verbose_name = "BDD - Plan d'adhésion"
         verbose_name_plural = "BDD - Plans d'adhésion"
         unique_together = ("name", "price", "frequency")
-        
+
     def __str__(self):
         return self.name + " - " + self.frequency + " - " + str(self.price) + " CHF"

@@ -20,6 +20,7 @@ from .models import (
     DonationSection,
     Members,
     MembershipPlans,
+    Volunteers,
 )
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
@@ -52,6 +53,7 @@ class CustomAdminSite(AdminSite):
             "EventParticipants",
             "Members",
             "MembershipPlans",
+            "Volunteers",
         ]
         
         # Get the original app list
@@ -268,6 +270,46 @@ class MembersAdmin(admin.ModelAdmin):
     )
 
 
+class VolunteersAdmin(admin.ModelAdmin):
+    """
+    Customize the Volunteers admin page.
+    """
+
+    list_display = (
+        "lname",
+        "fname",
+        "email",
+        "team",
+        "phone",
+        "role",
+    )  # Customize fields displayed in list view
+    search_fields = (
+        "fname",
+        "lname",
+        "email",
+        "phone",
+    )  # Add search functionality
+    fieldsets = (
+        (
+            "Informations personnelles",
+            {
+                "fields": ("fname", "lname", "email", "phone", "birthdate", "occupation"),
+            },
+        ),
+        (
+            "Adresse",
+            {
+                "fields": ("address", "city", "zip_code", "country"),
+            },
+        ),
+        (
+            "Informations sur le bénévole",
+            {
+                "fields": ("team", "role", "notes", "is_active"),
+            },
+        )
+    )
+
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
 
@@ -293,6 +335,7 @@ custom_admin_site.register(YoutubeVideos)
 custom_admin_site.register(AssoStatus)
 custom_admin_site.register(Members, MembersAdmin)
 custom_admin_site.register(MembershipPlans, MembershipPlanAdmin)
+custom_admin_site.register(Volunteers, VolunteersAdmin)
 
 custom_admin_site.site_header = "Les Invisibles Administration"
 custom_admin_site.site_title = "Les Invisibles Admin"
