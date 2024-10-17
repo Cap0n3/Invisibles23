@@ -103,22 +103,28 @@ class EventAdmin(admin.ModelAdmin):
     """
     Customize the Event admin page.
     """
+    # Order by date (most recent first)
+    ordering = ["-date"]
 
+    # Customize fields displayed in list view
     list_display = (
         "date",
         "title",
         "is_talk_event",
         "is_fully_booked",
-    )  # Customize fields displayed in list view
-    ordering = ("-date",)  # Order by date
-    search_fields = (
+    )
+    
+    # Add search functionality
+    search_fields = [
         "title",
         "date",
         "is_talk_event",
         "address",
         "start_time",
         "end_time",
-    )  # Add search functionality
+    ]
+    
+    # Add filters for date and location
     list_filter = (
         FutureEventsFilter,
         "date",
@@ -191,19 +197,24 @@ class ParticipantAdmin(admin.ModelAdmin):
     """
     Customize the Participant admin page.
     """
-
+    # Order by
+    ordering = ["lname", "fname"]
+    
+    # Customize fields displayed in list view
     list_display = (
         "email",
         "lname",
         "fname",
         "phone",
-    )  # Customize fields displayed in list view
-    search_fields = (
+    )
+    
+    # Add search functionality
+    search_fields = [
         "fname",
         "lname",
         "email",
         "phone",
-    )  # Add search functionality
+    ]  # Add search functionality
 
 
 class MembershipPlanAdmin(admin.ModelAdmin):
@@ -211,6 +222,7 @@ class MembershipPlanAdmin(admin.ModelAdmin):
     Customize the MembershipPlan admin page.
     """
 
+    # Customize fields displayed in list view
     list_display = (
         "name",
         "frequency",
@@ -222,7 +234,10 @@ class MembersAdmin(admin.ModelAdmin):
     """
     Customize the Members admin page.
     """
-
+    # Order by
+    ordering = ["lname", "fname"]
+    
+    # Customize fields displayed in list view
     list_display = (
         "email",
         "lname",
@@ -230,14 +245,20 @@ class MembersAdmin(admin.ModelAdmin):
         "membership_plan",
         "join_date",
         "is_subscription_active",
-    )  # Customize fields displayed in list view
-    search_fields = (
+    )
+    
+    # Add search functionality
+    search_fields = [
         "fname",
         "lname",
         "email",
         "phone",
-    )  # Add search functionality
+    ]
+    
+    # Add filters
+    list_filter = ("membership_plan", "is_subscription_active",)
 
+    # Separate fields into sections
     fieldsets = (
         (
             "Informations personnelles",
@@ -274,21 +295,32 @@ class VolunteersAdmin(admin.ModelAdmin):
     """
     Customize the Volunteers admin page.
     """
-
+    # Order by
+    ordering = ["lname", "fname"]
+    
+    # Customize fields displayed in list view
     list_display = (
         "lname",
         "fname",
         "email",
-        "team",
         "phone",
+        "team",
         "role",
-    )  # Customize fields displayed in list view
-    search_fields = (
+    )
+    
+    # Add search functionality
+    search_fields = [
         "fname",
         "lname",
         "email",
-        "phone",
-    )  # Add search functionality
+        "role",
+        "team",
+    ]
+    
+    # Add filters
+    list_filter = ("team", "role", "is_active")
+    
+    # Separate fields into sections
     fieldsets = (
         (
             "Informations personnelles",
@@ -309,6 +341,7 @@ class VolunteersAdmin(admin.ModelAdmin):
             },
         )
     )
+
 
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
