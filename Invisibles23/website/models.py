@@ -144,8 +144,8 @@ class BaseRessources(models.Model):
 
 class AdminRessources(BaseRessources):
     class Meta:
-        verbose_name = "Page Ressources - Administratives"
-        verbose_name_plural = "Page Ressources - Administratives"
+        verbose_name = "Page - Ressources: Administratives"
+        verbose_name_plural = "Page - Ressources: Administratives"
 
     def __str__(self):
         return self.title
@@ -153,8 +153,8 @@ class AdminRessources(BaseRessources):
 
 class TherapeuticRessources(BaseRessources):
     class Meta:
-        verbose_name = "Page Ressources - Thérapeutiques"
-        verbose_name_plural = "Page Ressources - Thérapeutiques"
+        verbose_name = "Page - Ressources: Thérapeutiques"
+        verbose_name_plural = "Page - Ressources: Thérapeutiques"
 
     def __str__(self):
         return self.title
@@ -162,8 +162,8 @@ class TherapeuticRessources(BaseRessources):
 
 class LibraryRessources(BaseRessources):
     class Meta:
-        verbose_name = "Page Ressources - Bibliothèque"
-        verbose_name_plural = "Page Ressources - Bibliothèque"
+        verbose_name = "Page - Ressources: Bibliothèque"
+        verbose_name_plural = "Page - Ressources: Bibliothèque"
 
     def __str__(self):
         return self.title
@@ -175,8 +175,8 @@ class HomeSections(BaseSections):
     Home page sections model
     """
     class Meta:
-        verbose_name = "Page d'accueil"
-        verbose_name_plural = "Page d'accueil"
+        verbose_name = "Page - Accueil"
+        verbose_name_plural = "Page - Accueil"
 
     def __str__(self):
         return self.title
@@ -187,8 +187,8 @@ class AboutSections(BaseSections):
     About page sections model
     """
     class Meta:
-        verbose_name = "Page à propos"
-        verbose_name_plural = "Page à propos"
+        verbose_name = "Page - À propos"
+        verbose_name_plural = "Page - À propos"
 
     def __str__(self):
         return self.title
@@ -199,8 +199,8 @@ class AssoSections(BaseSections):
     Association page sections model
     """
     class Meta:
-        verbose_name = "Page association"
-        verbose_name_plural = "Page association"
+        verbose_name = "Page - Association"
+        verbose_name_plural = "Page - Association"
 
     def __str__(self):
         return self.title
@@ -214,8 +214,8 @@ class ChronicTabSections(BaseThematic):
         # Order the sections by the order field in the admin
         ordering = ["order"]
         # Change visible name of the model in the admin
-        verbose_name = "Page Thématiques - Maladies chroniques"
-        verbose_name_plural = "Page Thématiques - Maladies chroniques"
+        verbose_name = "Page - Thématiques: Maladies chroniques"
+        verbose_name_plural = "Page - Thématiques: Maladies chroniques"
 
 
 class InvsibleTabSections(BaseThematic):
@@ -226,8 +226,8 @@ class InvsibleTabSections(BaseThematic):
         # Order the sections by the order field in the admin
         ordering = ["order"]
         # Change visible name of the model in the admin
-        verbose_name = "Page Thématiques - Maladies invisibles"
-        verbose_name_plural = "Page Thématiques - Maladies invisibles"
+        verbose_name = "Page - Thématiques: Maladies invisibles"
+        verbose_name_plural = "Page - Thématiques: Maladies invisibles"
 
 
 class MiscarriageTabSections(BaseThematic):
@@ -271,7 +271,11 @@ class YoutubeVideos(models.Model):
 
         if total_videos >= 5:
             raise ValidationError("Vous ne pouvez pas ajouter plus de 6 vidéos !")
-
+ 
+    class Meta:
+        verbose_name = "Lien - Vidéo Youtube"
+        verbose_name_plural = "Liens - Vidéos Youtube"
+    
     def __str__(self):
         return self.title
 
@@ -325,8 +329,8 @@ class Event(models.Model):
     )
 
     class Meta:
-        verbose_name = "Rendez-vous"
-        verbose_name_plural = "Rendez-vous"
+        verbose_name = "BDD - Rendez-vous"
+        verbose_name_plural = "BDD - Rendez-vous"
 
     def clean(self):
         """
@@ -483,8 +487,8 @@ class Participant(models.Model):
     country = models.CharField(max_length=100, verbose_name="Pays", default="N/A")
 
     class Meta:
-        verbose_name = "Participant"
-        verbose_name_plural = "Participants"
+        verbose_name = "BDD - Participant"
+        verbose_name_plural = "BDD - Participants"
 
     def __str__(self):
         return self.lname + " " + self.fname
@@ -499,8 +503,8 @@ class EventParticipants(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Participation"
-        verbose_name_plural = "Participations"
+        verbose_name = "BDD - Participation"
+        verbose_name_plural = "BDD - Participations"
         unique_together = ("event", "participant")
 
     def clean(self):
@@ -593,8 +597,8 @@ class TalkEventExplanationSection(BaseSections):
     Talk event explanation section, to explain to visitors how the talk events registration works
     """
     class Meta:
-        verbose_name = "Page inscription aux groupes de parole"
-        verbose_name_plural = "Page inscription aux groupes de parole"
+        verbose_name = "Page - Inscription aux groupes de parole"
+        verbose_name_plural = "Page - Inscription aux groupes de parole"
 
     def __str__(self):
         return self.title
@@ -605,8 +609,8 @@ class MembershipSection(BaseSections):
     Membership section to explain the membership process and join the association
     """
     class Meta:
-        verbose_name = "Page Adhésion"
-        verbose_name_plural = "Page Adhésion"
+        verbose_name = "Page - Adhésion membre"
+        verbose_name_plural = "Page - Adhésion membres"
 
     def __str__(self):
         return self.title
@@ -617,8 +621,8 @@ class DonationSection(BaseSections):
     Donation section to explain the donation process and support the association
     """
     class Meta:
-        verbose_name = "Page Dons"
-        verbose_name_plural = "Page Dons"
+        verbose_name = "Page - Dons"
+        verbose_name_plural = "Page - Dons"
 
     def __str__(self):
         return self.title
@@ -647,6 +651,10 @@ class ContactSection(models.Model):
         if ContactSection.objects.exists() and self.pk is None:
             raise ValidationError("Seulement une section contact est autorisée !")
 
+    class Meta:
+        verbose_name = "Page - Contact"
+        verbose_name_plural = "Page - Contact"
+    
     def __str__(self):
         return self.title + " - " + self.name
 
@@ -666,6 +674,10 @@ class AssoStatus(models.Model):
         if AssoStatus.objects.exists() and self.pk is None:
             raise ValidationError("Seulement un statut est autorisé !")
 
+    class Meta:
+        verbose_name = "Page - Statut de l'association"
+        verbose_name_plural = "Page - Statuts de l'association"
+    
     def __str__(self):
         return self.title
 
@@ -705,8 +717,8 @@ class Members(models.Model):
     )
 
     class Meta:
-        verbose_name = "Membre"
-        verbose_name_plural = "Membres"
+        verbose_name = "BDD - Membre"
+        verbose_name_plural = "BDD - Membres"
 
     def __str__(self):
         return self.lname + " " + self.fname
@@ -731,8 +743,8 @@ class MembershipPlans(models.Model):
     )
     
     class Meta:
-        verbose_name = "Plan d'adhésion"
-        verbose_name_plural = "Plans d'adhésion"
+        verbose_name = "BDD - Plan d'adhésion"
+        verbose_name_plural = "BDD - Plans d'adhésion"
         unique_together = ("name", "price", "frequency")
         
     def __str__(self):

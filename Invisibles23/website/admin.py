@@ -32,35 +32,42 @@ class CustomAdminSite(AdminSite):
         Return a sorted list of all the installed apps that have been
         registered in this site.
         """
-        ordering = {
-            "Home sections": 1,
-            "About sections": 2,
-            "Chronic tab sections": 3,
-            "Invsible tab sections": 4,
-            "Therapeutic ressources": 5,
-            "Admin ressources": 6,
-            "Financial ressources": 7,
-            "Asso sections": 8,
-            "Membership sections": 9,
-            "Donation sections": 10,
-            "Events": 11,
-            "Contact sections": 12,
-            "Youtube videos": 13,
-            "Asso statuses": 14,
-        }
+        order = [
+            "HomeSections",
+            "AboutSections",
+            "ChronicTabSections",
+            "InvsibleTabSections",
+            "TherapeuticRessources",
+            "AdminRessources",
+            "LibraryRessources",
+            "AssoSections",
+            "MembershipSection",
+            "DonationSection",
+            "TalkEventExplanationSection",
+            "ContactSection",
+            "AssoStatus",
+            "YoutubeVideos",
+            "Event",
+            "Participant",
+            "EventParticipants",
+            "Members",
+            "MembershipPlans",
+        ]
         
         # Get the original app list
         app_dict = self._build_app_dict(request)
-                
-        # Sort apps based on the ordering dictionary
-        app_list = sorted(
-            app_dict.values(), key=lambda x: ordering.get(x["name"], float("inf"))
-        )
 
-        for app in app_list:
-            app["models"].sort(key=lambda x: ordering.get(x["name"], float("inf")))
+        # Get models of website app
+        app_list = app_dict["website"]["models"]
 
-        return app_list
+        # Sort model dictionnaries
+        sorted_list = sorted(app_list, key=lambda x: order.index(x['object_name']))
+
+        # Replace original sorted list by new one
+        app_dict["website"]["models"] = sorted_list
+
+        # Return the app list
+        return app_dict.values()
 
 
 class FutureEventsFilter(admin.SimpleListFilter):
@@ -132,7 +139,7 @@ class EventAdmin(admin.ModelAdmin):
             {
                 "fields": ("talk_event_link",),
                 "description": "Si il s'agit d'un événement de type 'Groupe de parole', veuillez ajouter le lien de la réunion Zoom ici.",
-            }
+            },
         ),
         (
             "Limitation du nombre de participants (si groupe de parole)",
@@ -201,17 +208,19 @@ class MembershipPlanAdmin(admin.ModelAdmin):
     """
     Customize the MembershipPlan admin page.
     """
+
     list_display = (
         "name",
         "frequency",
         "price",
     )
-    
+
 
 class MembersAdmin(admin.ModelAdmin):
     """
     Customize the Members admin page.
     """
+
     list_display = (
         "email",
         "lname",
@@ -249,10 +258,15 @@ class MembersAdmin(admin.ModelAdmin):
         (
             "Informations sur le paiement",
             {
-                "fields": ("stripe_customer_id", "payment_info_name", "payment_info_country"),
+                "fields": (
+                    "stripe_customer_id",
+                    "payment_info_name",
+                    "payment_info_country",
+                ),
             },
         ),
     )
+
 
 # Create an instance of the custom admin site
 custom_admin_site = CustomAdminSite(name="custom_admin")
