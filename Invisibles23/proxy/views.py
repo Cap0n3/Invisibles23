@@ -232,18 +232,18 @@ class StripeWebhook(View):
             obj, created = Members.objects.update_or_create(
                 email=self.customer_email,
                 defaults={
-                    "fname": self.metadata["fname"],
-                    "lname": self.metadata["lname"],
+                    "fname": str.title(self.metadata["fname"]),
+                    "lname": str.title(self.metadata["lname"]),
                     "email": self.metadata["email"],
                     "phone": self.metadata["phone"],
                     "birthdate": self.metadata["birthday"],
-                    "address": self.metadata["address"],
+                    "address": self.metadata["address"].capitalize(),
                     "zip_code": self.metadata["zip_code"],
-                    "city": self.metadata["city"],
-                    "country": self.metadata["country"],
+                    "city": str.title(self.metadata["city"]),
+                    "country": str.title(self.metadata["country"]),
                     "membership_plan": member_plan,
                     "stripe_customer_id": self.customer_id,
-                    "payment_info_name": self.customer_name,
+                    "payment_info_name": str.title(self.customer_name),
                     "payment_info_country": self.customer_country_code,
                 },
             )
@@ -384,13 +384,13 @@ class StripeWebhook(View):
         participant, created = Participant.objects.get_or_create(
             email=self.metadata["email"],
             defaults={
-                "fname": self.metadata["fname"],
-                "lname": self.metadata["lname"],
+                "fname": str.title(self.metadata["fname"]),
+                "lname": str.title(self.metadata["lname"]),
                 "email": self.metadata["email"],
                 "phone": self.metadata["phone"],
-                "address": self.metadata["address"],
+                "address": self.metadata["address"].capitalize(),
                 "zip_code": self.metadata["zip_code"],
-                "city": self.metadata["city"],
+                "city": str.title(self.metadata["city"]),
             },
         )
 
