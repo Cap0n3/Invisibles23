@@ -95,7 +95,7 @@ class StripeWebhookTest(TestCase):
         self.assertEqual(member.fname, "Anita")
         self.assertEqual(member.lname, "Cassiette")
         self.assertEqual(member.phone, "076 543 22 11")
-        self.assertEqual(member.address, "Chemin des Fauvettes 6")
+        self.assertEqual(member.address, "Chemin des fauvettes 6")
         self.assertEqual(member.zip_code, "1212")
         self.assertEqual(member.city, "Lancy")
         self.assertEqual(member.country, "Suisse")
@@ -156,7 +156,7 @@ class StripeWebhookTest(TestCase):
         self.assertEqual(member.membership_plan.lookup_key, "reduced-yearly")
         
         # Check if member infos were updated in the database
-        self.assertEqual(member.address, "Chemin des Fauvettes 6")
+        self.assertEqual(member.address, "Chemin des fauvettes 6")
         self.assertEqual(member.zip_code, "1212")
         self.assertEqual(member.city, "Lancy")
         self.assertEqual(member.country, "Suisse")

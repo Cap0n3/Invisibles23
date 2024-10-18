@@ -220,56 +220,9 @@ class StripeWebhook(View):
         Note : Updating is the only way I found to transmit the metadata to stripe
         """
         try:
-            # Extract member data from the event data
             self._extract_customer_data()
-            
-            # Get the right membership plan with lookup key
-            logger.info(f"Getting membership plan from database with lookup key: {self.plan_lookup_key}")
-            member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
-            
-            # Add member to Members database if not already present
-            logger.info(f"Adding member to Member database: {self.metadata['email']} ({self.metadata['fname']} {self.metadata['lname']})")
-            obj, created = Members.objects.update_or_create(
-                email=self.customer_email,
-                defaults={
-                    "fname": str.title(self.metadata["fname"]),
-                    "lname": str.title(self.metadata["lname"]),
-                    "email": self.metadata["email"],
-                    "phone": self.metadata["phone"],
-                    "birthdate": self.metadata["birthday"],
-                    "address": self.metadata["address"].capitalize(),
-                    "zip_code": self.metadata["zip_code"],
-                    "city": str.title(self.metadata["city"]),
-                    "country": str.title(self.metadata["country"]),
-                    "membership_plan": member_plan,
-                    "stripe_customer_id": self.customer_id,
-                    "payment_info_name": str.title(self.customer_name),
-                    "payment_info_country": self.customer_country_code,
-                },
-            )
-            
-            if created:
-                logger.info(f"New member added to database: {obj}")
-            else:
-                logger.warning(f"Member already exists in database, information updated.")
-
-            # Update the member's metadata in Stripe
-            logger.info("Updating customer metadata on Stripe ...")
-            stripe.Customer.modify(
-                self.customer_id,
-                metadata={
-                    "fname": self.metadata["fname"],
-                    "lname": self.metadata["lname"],
-                    "birthday": self.metadata["birthday"],
-                    "email": self.metadata["email"],
-                    "phone": self.metadata["phone"],
-                    "address": self.metadata["address"],
-                    "zip_code": self.metadata["zip_code"],
-                    "city": self.metadata["city"],
-                    "country": self.metadata["country"],
-                },
-            )
-
+            self._add_member_to_database()
+            self._update_stripe_customer_metadata()
             self._log_event()
 
         except ValueError as e:
@@ -373,6 +326,62 @@ class StripeWebhook(View):
         self.meeting_id = self.metadata.get("event_id")
         if not self.meeting_id:
             raise ValueError("Meeting ID not found in metadata")
+    
+    def _add_member_to_database(self) -> None:
+        """
+        Subroutine to add or update the member to the database.
+        """
+        # Get the right membership plan with lookup key
+        logger.info(f"Getting membership plan from database with lookup key: {self.plan_lookup_key}")
+        member_plan = MembershipPlans.objects.get(lookup_key=self.plan_lookup_key)
+        
+        # Add member to Members database if not already present
+        logger.info(f"Adding member to Member database: {self.metadata['email']} ({self.metadata['fname']} {self.metadata['lname']})")
+        obj, created = Members.objects.update_or_create(
+            email=self.customer_email,
+            defaults={
+                "fname": str.title(self.metadata["fname"]),
+                "lname": str.title(self.metadata["lname"]),
+                "email": self.metadata["email"],
+                "phone": self.metadata["phone"],
+                "birthdate": self.metadata["birthday"],
+                "address": self.metadata["address"].capitalize(),
+                "zip_code": self.metadata["zip_code"],
+                "city": str.title(self.metadata["city"]),
+                "country": str.title(self.metadata["country"]),
+                "membership_plan": member_plan,
+                "stripe_customer_id": self.customer_id,
+                "payment_info_name": str.title(self.customer_name),
+                "payment_info_country": self.customer_country_code,
+            },
+        )
+        
+        if created:
+            logger.info(f"New member added to database: {obj}")
+        else:
+            logger.warning(f"Member already exists in database, information updated.")
+    
+    def _update_stripe_customer_metadata(self) -> None:
+        """
+        Update the customer metadata in Stripe.
+        Note: Updating is the only way I found to transmit the metadata to Stripe
+        """
+        # Update the member's metadata in Stripe
+        logger.info("Updating customer metadata on Stripe ...")
+        stripe.Customer.modify(
+            self.customer_id,
+            metadata={
+                "fname": self.metadata["fname"],
+                "lname": self.metadata["lname"],
+                "birthday": self.metadata["birthday"],
+                "email": self.metadata["email"],
+                "phone": self.metadata["phone"],
+                "address": self.metadata["address"],
+                "zip_code": self.metadata["zip_code"],
+                "city": self.metadata["city"],
+                "country": self.metadata["country"],
+            },
+        )
     
     def _create_and_associate_participant_with_event(self) -> None:
         """
