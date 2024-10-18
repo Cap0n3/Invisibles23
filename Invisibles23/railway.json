@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py migrate && gunicorn Invisibles23.wsgi:application --timeout 180",
+    "startCommand": "echo 'Starting custom deploy command' && echo 'Lauching migrate command...' && python manage.py migrate && gunicorn Invisibles23.wsgi:application --timeout 180",
     "numReplicas": 1,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
