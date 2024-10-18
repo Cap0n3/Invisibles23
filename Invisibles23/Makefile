@@ -1,5 +1,5 @@
 # === Migration commands === #
-.PHONY: help, run, mkmigs, migrate, mkmigs-dry, migrate-all, test-all, test-case, proxy-test-case
+.PHONY: help, run, mkmigs, migrate, mkmigs-dry, migrate-all, collectstatic, test-all, test-case, proxy-test-case
 
 help:
 	@echo "Available commands:"
@@ -7,6 +7,7 @@ help:
 	@echo "  mkmigs-dry \t\tDisplay the changes that would be made in the database without actually applying them."
 	@echo "  migrate \t\tApply the migrations to the database."
 	@echo "  migrate-all \t\tCreate and apply migrations for all apps."
+	@echo "  collectstatic \tCollect all static files into the STATIC_ROOT directory."
 	@echo "  test-all \t\tRun all tests."
 	@echo "  website-test-case \tRun a specific test case. Example: make website-test-case case=EventParticipantsModelTest"
 	@echo "  proxy-test-case \tRun a specific test case for the proxy app. Example: make proxy-test-case case=ProxyModelTest"
@@ -26,6 +27,9 @@ migrate-all:
 	@echo "Migrating all apps..."
 	python manage.py makemigrations
 	python manage.py migrate
+
+collectstatic:
+	python manage.py collectstatic
 
 # === Test commands === #
 test-all:
