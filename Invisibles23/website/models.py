@@ -784,8 +784,8 @@ class Volunteers(models.Model):
     )
 
     class Meta:
-        verbose_name = "BDD - Volontaire"
-        verbose_name_plural = "BDD - Volontaires"
+        verbose_name = "BDD - Bénévole"
+        verbose_name_plural = "BDD - Bénévoles"
 
     def __str__(self):
         return self.lname + " " + self.fname
