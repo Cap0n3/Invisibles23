@@ -33,44 +33,43 @@ class CustomAdminSite(AdminSite):
         Return a sorted list of all the installed apps that have been
         registered in this site.
         """
-        order = [
-            "HomeSections",
-            "AboutSections",
-            "ChronicTabSections",
-            "InvsibleTabSections",
-            "TherapeuticRessources",
-            "AdminRessources",
-            "LibraryRessources",
-            "AssoSections",
-            "MembershipSection",
-            "DonationSection",
-            "TalkEventExplanationSection",
-            "ContactSection",
-            "AssoStatus",
-            "YoutubeVideos",
-            "Event",
-            "Participant",
-            "EventParticipants",
-            "Members",
-            "MembershipPlans",
-            "Volunteers",
-        ]
+        ordering = {
+            "User": 1,
+            "Permission": 2,
+            "HomeSections": 3,
+            "AboutSections": 4,
+            "ChronicTabSections": 5,
+            "InvsibleTabSections": 6,
+            "TherapeuticRessources": 7,
+            "AdminRessources": 8,
+            "LibraryRessources": 9,
+            "AssoSections": 10,
+            "MembershipSection": 11,
+            "DonationSection": 12,
+            "TalkEventExplanationSection": 13,
+            "ContactSection": 14,
+            "AssoStatus": 15,
+            "YoutubeVideos": 16,
+            "Event": 17,
+            "Participant": 18,
+            "EventParticipants": 19,
+            "Members": 20,
+            "MembershipPlans": 121,
+            "Volunteers": 22,
+        }
         
         # Get the original app list
         app_dict = self._build_app_dict(request)
+        
+        # a.sort(key=lambda x: b.index(x[0]))
+        # Sort the apps alphabetically.
+        app_list = sorted(app_dict.values(), key=lambda x: x['name'])
 
-        # Get models of website app
-        app_list = app_dict["website"]["models"]
+        # Sort the models alphabetically within each app.
+        for app in app_list:
+            app['models'].sort(key=lambda x: ordering[x['object_name']])
 
-        # Sort model dictionnaries
-        sorted_list = sorted(app_list, key=lambda x: order.index(x['object_name']))
-
-        # Replace original sorted list by new one
-        app_dict["website"]["models"] = sorted_list
-
-        # Return the app list
-        return app_dict.values()
-
+        return app_list
 
 class FutureEventsFilter(admin.SimpleListFilter):
     """
