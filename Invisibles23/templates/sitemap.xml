@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/a-propos/</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/maladies-invisibles/</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/maladies-chroniques/</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/podcasts/</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/ressources-therapeutiques/</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/ressources-administratives/</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/association/</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/membership/</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/rendez-vous/</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/dons/</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/status/</loc>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://www.lesinvisibles.ch/contact/</loc>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>
